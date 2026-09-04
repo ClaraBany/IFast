@@ -11,7 +11,7 @@
       "@profile/*": ["./src/features/profile/*"],
       "@ride-offer/*": ["./src/features/ride-offer/*"],
       "@ride-request/*": ["./src/features/ride-request/*"],
-      "@vehicle/*": ["./src/features/vehicle/*"],
+      "@vehicle/*": ["./src/features/vehicle/*"]
     },
 
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",

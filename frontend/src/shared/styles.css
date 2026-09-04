@@ -1,0 +1,94 @@
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/700.css";
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #17842a;
+  --color-primary-selected: #9ed5a8;
+  --color-secondary: #008c89;
+  --color-tertiary: #6581ff;
+  --color-neutral-dark: #808080;
+  --color-neutral-light: #f3f3f3;
+  --color-danger: #e11248;
+
+  --text-button: 18px;
+  --text-button--font-weight: 700;
+  --text-label: 18px;
+  --text-label--font-weight: 500;
+
+  --font-inter: "Inter", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-neutral-light text-slate-900;
+    font-family: var(--font-inter);
+  }
+
+  ::selection {
+    background-color: var(--color-primary-selected);
+    @apply text-slate-900;
+  }
+
+  h1 {
+    font-size: 32px;
+    font-weight: 600;
+    font-family: var(--font-poppins);
+  }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 600;
+    font-family: var(--font-poppins);
+  }
+
+  h3 {
+    font-size: 24px;
+    font-weight: 600;
+    font-family: var(--font-poppins);
+  }
+
+  p {
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  label {
+    font-size: var(--text-label);
+    font-weight: var(--text-label--font-weight);
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  input,
+  select,
+  textarea {
+    min-height: 50px;
+    width: 100%;
+    border-radius: 10px;
+    padding-inline: 15px;
+    background-color: var(--color-neutral-light);
+  }
+
+  textarea {
+    resize: none;
+    field-sizing: content;
+    padding-block: 8px;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: 1px solid var(--color-primary-selected);
+  }
+}
+
+@utility field {
+  @apply flex flex-col gap-1.5;
+}
