@@ -25,13 +25,12 @@
 
 @layer base {
   body {
-    @apply bg-neutral-light text-slate-900;
+    @apply bg-neutral-light text-slate-900 caret-primary-selected accent-primary-selected min-h-screen;
     font-family: var(--font-inter);
   }
 
   ::selection {
-    background-color: var(--color-primary-selected);
-    @apply text-slate-900;
+    @apply text-slate-900 bg-primary-selected;
   }
 
   h1 {
@@ -85,10 +84,31 @@
   input:focus,
   select:focus,
   textarea:focus {
-    outline: 1px solid var(--color-primary-selected);
+    outline: 2px solid var(--color-primary-selected);
+  }
+
+  
+}
+
+@layer components {
+  .field {
+    @apply flex flex-col gap-1.5;
+  }
+
+  .btn {
+    @apply text-button w-full gap-1.5 flex-center cursor-pointer rounded-[10px] text-white hover:brightness-110 active:brightness-90 active:scale-95 transition-colors
+  }
+
+
+  .btn-sm {
+    height: 38px;
+  }
+
+  .btn-lg {
+    height: 54px;
   }
 }
 
-@utility field {
-  @apply flex flex-col gap-1.5;
+@utility flex-center {
+  @apply flex items-center justify-center
 }

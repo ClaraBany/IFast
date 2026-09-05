@@ -4,8 +4,19 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 
 import App from "./App.tsx";
 import "@shared/styles.css";
+import AuthLayout from "@auth/AuthLayout";
+import Login from "@auth/Login";
 
-const router = createBrowserRouter([{ path: "/", element: <App /> }]);
+const router = createBrowserRouter([
+  {
+    element: <AuthLayout />,
+    children: [
+      { path: "/login", element: <Login /> }
+    ]
+  },
+  { path: "/", element: <App /> }
+
+]);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
