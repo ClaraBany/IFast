@@ -25,12 +25,12 @@
 
 @layer base {
   body {
-    @apply bg-neutral-light text-slate-900 caret-primary-selected accent-primary-selected min-h-screen;
+    @apply min-h-screen bg-neutral-light text-slate-900 caret-primary-selected accent-primary-selected;
     font-family: var(--font-inter);
   }
 
   ::selection {
-    @apply text-slate-900 bg-primary-selected;
+    @apply bg-primary-selected text-slate-900;
   }
 
   h1 {
@@ -86,8 +86,6 @@
   textarea:focus {
     outline: 2px solid var(--color-primary-selected);
   }
-
-  
 }
 
 @layer components {
@@ -96,9 +94,8 @@
   }
 
   .btn {
-    @apply text-button w-full gap-1.5 flex-center cursor-pointer rounded-[10px] text-white hover:brightness-110 active:brightness-90 active:scale-95 transition-colors
+    @apply flex-center w-full cursor-pointer gap-1.5 rounded-[10px] text-button text-white transition-colors hover:brightness-110 active:scale-95 active:brightness-90;
   }
-
 
   .btn-sm {
     height: 38px;
@@ -110,5 +107,5 @@
 }
 
 @utility flex-center {
-  @apply flex items-center justify-center
+  @apply flex items-center justify-center;
 }

@@ -1,4 +1,4 @@
-import {Check, CirclePlus} from "lucide-react";
+import { Check, CirclePlus } from "lucide-react";
 
 export default function App() {
   return (
@@ -85,31 +85,20 @@ export default function App() {
             >
               Botão de Envio (Primary)
             </button>
-            <button
-              type="submit"
-              className="mt-4 btn btn-sm bg-primary"
-            >
+            <button type="submit" className="btn btn-sm mt-4 bg-primary">
               <Check />
               Botão de Envio (Primary)
             </button>
 
-            <button
-              type="submit"
-              className="mt-4 btn btn-lg bg-neutral-light text-slate-900"
-            >
+            <button type="submit" className="btn btn-lg mt-4 bg-neutral-light text-slate-900">
               <CirclePlus color="#0f172b" />
               Cadastrar Veículo
             </button>
 
-						
-            <button
-              type="submit"
-              className="mt-4 btn-ripple btn-lg bg-neutral-light text-slate-900"
-            >
+            <button type="submit" className="btn-ripple btn-lg mt-4 bg-neutral-light text-slate-900">
               <CirclePlus color="#0f172b" />
               Cadastrar Veículo
             </button>
-						
           </form>
         </section>
       </div>
