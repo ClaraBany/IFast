@@ -1,4 +1,5 @@
 import { Check, CirclePlus } from "lucide-react";
+import { Link } from "react-router";
 
 export default function App() {
   return (
@@ -95,10 +96,7 @@ export default function App() {
               Cadastrar Veículo
             </button>
 
-            <button type="submit" className="btn-ripple btn-lg mt-4 bg-neutral-light text-slate-900">
-              <CirclePlus color="#0f172b" />
-              Cadastrar Veículo
-            </button>
+            <Link to={"/register"}>Ir para register</Link>
           </form>
         </section>
       </div>

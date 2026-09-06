@@ -3,7 +3,7 @@ import Logo from "@assets/logo-primary.png";
 
 export default function AuthLayout() {
   return (
-    <main className="flex-center min-h-screen flex-col gap-5">
+    <main className="flex-center min-h-screen flex-col gap-5 p-5">
       <img src={Logo} alt="Logo" className="h-22.25" />
 
       <Outlet />

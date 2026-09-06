@@ -73,6 +73,11 @@
     border-radius: 10px;
     padding-inline: 15px;
     background-color: var(--color-neutral-light);
+    @apply focus:outline-2 focus:outline-primary-selected aria-invalid:outline-2 aria-invalid:outline-danger focus:aria-invalid:outline-danger;
+  }
+
+  select option {
+    @apply text-slate-900;
   }
 
   textarea {
@@ -80,17 +85,11 @@
     field-sizing: content;
     padding-block: 8px;
   }
-
-  input:focus,
-  select:focus,
-  textarea:focus {
-    outline: 2px solid var(--color-primary-selected);
-  }
 }
 
 @layer components {
   .field {
-    @apply flex flex-col gap-1.5;
+    @apply flex flex-col gap-1.5 has-aria-invalid:text-danger;
   }
 
   .btn {
@@ -104,8 +103,16 @@
   .btn-lg {
     height: 54px;
   }
+
+  .input-icon {
+    @apply absolute top-1/2 right-3 flex-center -translate-y-1/2 p-1;
+  }
 }
 
 @utility flex-center {
   @apply flex items-center justify-center;
+}
+
+@utility flex-column {
+  @apply flex flex-col;
 }

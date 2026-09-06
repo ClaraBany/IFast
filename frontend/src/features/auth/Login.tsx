@@ -2,8 +2,8 @@ import { Link } from "react-router";
 
 export default function Login() {
   return (
-    <div>
-      <div className="flex flex-col gap-4 rounded-2xl border border-primary bg-white px-5 py-4">
+    <div className="w-full sm:w-100">
+      <div className="flex-column gap-4 rounded-2xl border border-primary bg-white px-5 py-4">
         <h1 className="text-center">Login</h1>
 
         <div className="field">
