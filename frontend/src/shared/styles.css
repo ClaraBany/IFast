@@ -21,6 +21,9 @@
 
   --font-inter: "Inter", sans-serif;
   --font-poppins: "Poppins", sans-serif;
+
+  --ripple-light: rgba(255, 255, 255, 0.3);
+  --ripple-dark: rgba(0, 0, 0, 0.3);
 }
 
 @layer base {
@@ -93,7 +96,7 @@
   }
 
   .btn {
-    @apply flex-center w-full cursor-pointer gap-1.5 rounded-[10px] text-button text-white transition-colors hover:brightness-110 active:scale-95 active:brightness-90;
+    @apply relative flex-center w-full cursor-pointer gap-1.5 overflow-hidden rounded-[10px] text-button text-white transition-colors hover:brightness-110;
   }
 
   .btn-sm {
@@ -105,7 +108,7 @@
   }
 
   .input-icon {
-    @apply absolute top-1/2 right-3 flex-center -translate-y-1/2 p-1;
+    @apply absolute top-1/2 right-3 flex-center -translate-y-1/2 overflow-hidden rounded-full p-2;
   }
 }
 

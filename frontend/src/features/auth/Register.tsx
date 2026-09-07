@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
+import { Ripples } from "react-ripples-continued";
 
 const registerSchema = z
   .object({
@@ -51,6 +52,8 @@ export default function Register() {
 
   return (
     <div className="w-full sm:w-100">
+      <title>Cadastro</title>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex-column rounded-2xl border border-primary bg-white px-5 py-4"
@@ -108,6 +111,7 @@ export default function Register() {
 
             <button type="button" className="btn btn-lg mt-2.5 bg-primary" onClick={handleNext}>
               Avançar
+              <Ripples color="var(--ripple-light)" />
             </button>
           </div>
         ) : (
@@ -143,6 +147,7 @@ export default function Register() {
                   className="input-icon cursor-pointer"
                 >
                   {passwordVisible ? <Eye className="text-primary" /> : <EyeOff className="text-neutral-dark" />}
+                  <Ripples color="var(--ripple-dark)" />
                 </button>
               </div>
               {errors.password && <span>{errors.password.message}</span>}
@@ -166,6 +171,7 @@ export default function Register() {
                   className="input-icon cursor-pointer"
                 >
                   {passwordVisible ? <Eye className="text-primary" /> : <EyeOff className="text-neutral-dark" />}
+                  <Ripples color="var(--ripple-dark)" />
                 </button>
               </div>
               {errors.confirm_password && <span>{errors.confirm_password.message}</span>}
@@ -178,9 +184,11 @@ export default function Register() {
                 className="btn btn-lg w-1/3 bg-neutral-light text-neutral-dark"
               >
                 Voltar
+                <Ripples color="var(--ripple-dark)" />
               </button>
               <button type="submit" className="btn btn-lg w-2/3 bg-primary">
                 Criar Conta
+                <Ripples color="var(--ripple-light)" />
               </button>
             </div>
           </div>
@@ -189,6 +197,7 @@ export default function Register() {
 
       <Link to={"/login"} className="btn btn-sm mt-3 text-neutral-dark">
         Já tem uma conta? <span className="text-tertiary">Faça login</span>
+        <Ripples color="var(--ripple-dark)" />
       </Link>
     </div>
   );

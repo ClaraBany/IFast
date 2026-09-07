@@ -1,10 +1,11 @@
 import { Check, CirclePlus } from "lucide-react";
+import { Ripples } from "react-ripples-continued";
 import { Link } from "react-router";
 
 export default function App() {
   return (
     <>
-      <div className="mx-auto flex min-h-screen max-w-4xl flex-col gap-8 p-8">
+      <div className="mx-auto flex min-h-screen flex-col gap-8">
         {/* Seção de Tipografia e Cabeçalhos */}
         <header className="space-y-3">
           <h1>Título H1 (Poppins 32px / 600)</h1>
@@ -72,31 +73,28 @@ export default function App() {
               ></textarea>
             </div>
 
-            <div className="pt-2">
-              <div className="inline-block rounded-xl bg-slate-900 p-4">
-                <a href="#teste" onClick={(e) => e.preventDefault()}>
-                  Link de Exemplo (Estilo Base Branco)
-                </a>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="mt-4 w-full cursor-pointer rounded-xl bg-primary py-3 font-bold text-white transition-colors hover:bg-primary/90"
-            >
-              Botão de Envio (Primary)
-            </button>
-            <button type="submit" className="btn btn-sm mt-4 bg-primary">
+            <button type="submit" className="btn btn-sm bg-primary">
               <Check />
               Botão de Envio (Primary)
+              <Ripples color="var(--ripple-light)" />
+            </button>
+
+            <button type="submit" className="btn btn-sm bg-neutral-light text-neutral-dark">
+              <Check />
+              Botão de Envio (Primary)
+              <Ripples color="var(--ripple-dark)" />
             </button>
 
             <button type="submit" className="btn btn-lg mt-4 bg-neutral-light text-slate-900">
               <CirclePlus color="#0f172b" />
               Cadastrar Veículo
+              <Ripples color="var(--ripple-dark)" />
             </button>
 
-            <Link to={"/register"}>Ir para register</Link>
+            <Link to={"/register"} className="btn btn-lg mt-4 bg-neutral-light text-slate-900">
+              Ir para register
+              <Ripples color="var(--ripple-dark)" />
+            </Link>
           </form>
         </section>
       </div>
