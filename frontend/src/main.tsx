@@ -5,8 +5,12 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import App from "./App.tsx";
 import "@shared/styles.css";
 import AuthLayout from "@auth/AuthLayout";
+import MainLayout from "@shared/layouts/MainLayout";
 import Login from "@auth/Login";
 import Register from "@auth/Register";
+import Offer from "@ride-offer/Offer";
+import MyRides from "@my-rides/MyRides";
+import Request from "@ride-request/Request";
 
 const router = createBrowserRouter([
   {
@@ -16,7 +20,15 @@ const router = createBrowserRouter([
       { path: "/register", element: <Register /> },
     ],
   },
-  { path: "/", element: <App /> },
+  {
+    element: <MainLayout />,
+    children: [
+      { path: "/", element: <App /> },
+      { path: "/offer", element: <Offer /> },
+      { path: "/myrides", element: <MyRides /> },
+      { path: "/request", element: <Request /> },
+    ],
+  },
 ]);
 
 createRoot(document.getElementById("root")!).render(

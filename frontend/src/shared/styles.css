@@ -110,6 +110,22 @@
   .input-icon {
     @apply absolute top-1/2 right-3 flex-center -translate-y-1/2 overflow-hidden rounded-full p-2;
   }
+
+  .icon-btn {
+    @apply relative flex-center cursor-pointer overflow-hidden rounded-full p-2 transition-colors hover:bg-black/10;
+  }
+
+  .navlink {
+    @apply relative flex-center flex-col overflow-hidden rounded p-1 transition-colors hover:bg-black/10;
+
+    img {
+      @apply h-7;
+    }
+
+    .active-bar {
+      @apply hidden h-1.25 w-full rounded-xl bg-primary brightness-130 group-[.active]:block;
+    }
+  }
 }
 
 @utility flex-center {

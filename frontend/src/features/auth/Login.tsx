@@ -61,7 +61,7 @@ export default function Login() {
             <button
               type="button"
               onClick={() => setPasswordVisible(!passwordVisible)}
-              className="input-icon cursor-pointer"
+              className="input-icon cursor-pointer transition-colors hover:bg-black/10"
             >
               {passwordVisible ? <Eye className="text-primary" /> : <EyeOff className="text-neutral-dark" />}
               <Ripples color="var(--ripple-dark)" />
