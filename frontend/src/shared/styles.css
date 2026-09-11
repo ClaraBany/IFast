@@ -21,17 +21,19 @@
 
   --font-inter: "Inter", sans-serif;
   --font-poppins: "Poppins", sans-serif;
+
+  --ripple-light: rgba(255, 255, 255, 0.3);
+  --ripple-dark: rgba(0, 0, 0, 0.3);
 }
 
 @layer base {
   body {
-    @apply bg-neutral-light text-slate-900;
+    @apply min-h-screen bg-primary text-slate-900 caret-primary-selected accent-primary-selected;
     font-family: var(--font-inter);
   }
 
   ::selection {
-    background-color: var(--color-primary-selected);
-    @apply text-slate-900;
+    @apply bg-primary-selected text-slate-900;
   }
 
   h1 {
@@ -74,6 +76,11 @@
     border-radius: 10px;
     padding-inline: 15px;
     background-color: var(--color-neutral-light);
+    @apply focus:outline-2 focus:outline-primary-selected aria-invalid:ring-2 aria-invalid:ring-danger focus:aria-invalid:outline-4 focus:aria-invalid:outline-danger/40;
+  }
+
+  select option {
+    @apply text-slate-900;
   }
 
   textarea {
@@ -81,14 +88,58 @@
     field-sizing: content;
     padding-block: 8px;
   }
+}
 
-  input:focus,
-  select:focus,
-  textarea:focus {
-    outline: 1px solid var(--color-primary-selected);
+@layer components {
+  .field {
+    @apply flex flex-col gap-1.5 has-aria-invalid:text-danger;
+
+    span {
+      @apply text-sm text-pretty;
+    }
+  }
+
+  .btn {
+    @apply relative flex-center w-full cursor-pointer gap-2.5 overflow-hidden rounded-[10px] px-3 text-button text-white transition-colors hover:brightness-110;
+  }
+
+  .btn-sm {
+    min-height: 38px;
+  }
+
+  .btn-lg {
+    min-height: 54px;
+  }
+
+  .btn-side-menu {
+    @apply justify-start bg-neutral-light text-slate-900;
+  }
+
+  .input-icon {
+    @apply absolute top-1/2 right-3 flex-center -translate-y-1/2 overflow-hidden rounded-full p-2;
+  }
+
+  .icon-btn {
+    @apply relative flex-center cursor-pointer overflow-hidden rounded-full p-2 transition-colors hover:bg-black/10;
+  }
+
+  .navlink {
+    @apply relative flex-center flex-col overflow-hidden rounded p-1 transition-colors hover:bg-black/10;
+
+    img {
+      @apply h-7;
+    }
+
+    .active-bar {
+      @apply hidden h-1.25 w-full rounded-xl bg-primary brightness-130 group-[.active]:block;
+    }
   }
 }
 
-@utility field {
-  @apply flex flex-col gap-1.5;
+@utility flex-center {
+  @apply flex items-center justify-center;
+}
+
+@utility flex-column {
+  @apply flex flex-col;
 }

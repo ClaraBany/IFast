@@ -1,0 +1,132 @@
+import { useState } from "react";
+import { Link } from "react-router";
+import { useForm } from "react-hook-form";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
+import { Ripples } from "react-ripples-continued";
+
+const registerSchema = z
+  .object({
+    name: z.string().min(10, "Nome precisa conter pelo menos 10 caracteres"),
+    email: z.email("Email inválido").endsWith("ifnmg.edu.br", "Email precisa ser do IFNMG"),
+    password: z.string().min(6, "Senha precisa conter pelo menos 6 caracteres"),
+    confirm_password: z.string().nonempty("Digite uma senha"),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    error: "As senhas precisam ser iguais",
+    path: ["confirm_password"],
+  });
+
+export default function Register() {
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof registerSchema>>({ resolver: zodResolver(registerSchema), mode: "onTouched" });
+
+  const onSubmit = (data: z.infer<typeof registerSchema>) => {
+    console.log("dados válidos: ", data);
+  };
+
+  return (
+    <div className="w-full sm:w-100">
+      <title>Cadastro</title>
+
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex-column gap-4 rounded-2xl border border-primary bg-white px-5 py-4"
+      >
+        <h1 className="text-center">Cadastro</h1>
+
+        <div className="field">
+          <label htmlFor="name">Nome</label>
+          <input
+            {...register("name")}
+            aria-invalid={errors.name ? "true" : "false"}
+            type="text"
+            placeholder="Digite seu nome"
+            id="name"
+            autoComplete="name"
+          ></input>
+          {errors.name && <span>{errors.name.message}</span>}
+        </div>
+
+        <div className="field">
+          <label htmlFor="email">Email</label>
+          <input
+            {...register("email")}
+            aria-invalid={errors.email ? "true" : "false"}
+            type="email"
+            placeholder="Digite seu email"
+            id="email"
+            autoComplete="email"
+          ></input>
+          {errors.email && <span>{errors.email.message}</span>}
+        </div>
+
+        <div className="field">
+          <label htmlFor="password">Senha</label>
+          <div className="relative">
+            <input
+              {...register("password")}
+              aria-invalid={errors.password ? "true" : "false"}
+              type={passwordVisible ? "text" : "password"}
+              placeholder="Digite sua senha"
+              id="password"
+              className="pe-13"
+              autoComplete="new-password"
+            ></input>
+
+            <button
+              type="button"
+              onClick={() => setPasswordVisible(!passwordVisible)}
+              className="input-icon cursor-pointer transition-colors hover:bg-black/10"
+            >
+              {passwordVisible ? <Eye className="text-primary" /> : <EyeOff className="text-neutral-dark" />}
+              <Ripples color="var(--ripple-dark)" />
+            </button>
+          </div>
+          {errors.password && <span>{errors.password.message}</span>}
+        </div>
+
+        <div className="field">
+          <label htmlFor="confirm-password">Confirmar Senha</label>
+          <div className="relative">
+            <input
+              {...register("confirm_password")}
+              aria-invalid={errors.confirm_password ? "true" : "false"}
+              type={passwordVisible ? "text" : "password"}
+              placeholder="Confirme sua senha"
+              id="confirm-password"
+              className="pe-13"
+              autoComplete="new-password"
+            ></input>
+
+            <button
+              type="button"
+              onClick={() => setPasswordVisible(!passwordVisible)}
+              className="input-icon cursor-pointer transition-colors hover:bg-black/10"
+            >
+              {passwordVisible ? <Eye className="text-primary" /> : <EyeOff className="text-neutral-dark" />}
+              <Ripples color="var(--ripple-dark)" />
+            </button>
+          </div>
+          {errors.confirm_password && <span>{errors.confirm_password.message}</span>}
+        </div>
+
+        <button type="submit" className="btn btn-lg mt-2.5 bg-primary">
+          Criar Conta
+          <Ripples color="var(--ripple-light)" />
+        </button>
+      </form>
+
+      <Link to={"/login"} className="btn btn-sm mt-3 text-neutral-dark">
+        Já tem uma conta? <span className="text-tertiary">Faça login</span>
+        <Ripples color="var(--ripple-dark)" />
+      </Link>
+    </div>
+  );
+}
