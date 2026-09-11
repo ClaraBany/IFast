@@ -20,37 +20,37 @@ export default function SideMenu({ open, setOpen }: SideMenuProps) {
               <h3>Usuário</h3>
             </Link>
 
-            <Link to={""} className="btn btn-lg justify-start bg-neutral-light text-slate-900">
+            <Link to={""} className="btn btn-lg btn-side-menu">
               <Car />
               Meus veículos
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-lg justify-start bg-neutral-light text-slate-900">
+            <Link to={""} className="btn btn-lg btn-side-menu">
               <RotateCcwClock />
               Histórico de Caronas
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-lg justify-start bg-neutral-light text-slate-900">
+            <Link to={""} className="btn btn-lg btn-side-menu">
               <RefreshCcw />
               Ofertas Recorrentes
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-lg justify-start bg-neutral-light text-slate-900">
+            <Link to={""} className="btn btn-lg btn-side-menu">
               <Plus />
               Criar Oferta
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-lg justify-start bg-neutral-light text-slate-900">
+            <Link to={""} className="btn btn-lg btn-side-menu">
               <Plus />
               Criar Pedido
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-lg justify-start bg-neutral-light text-slate-900">
+            <Link to={""} className="btn btn-lg btn-side-menu">
               <LayoutDashboard />
               Dashboard
               <Ripples color="var(--ripple-dark)" />

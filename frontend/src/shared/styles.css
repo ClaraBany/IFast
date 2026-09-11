@@ -76,7 +76,7 @@
     border-radius: 10px;
     padding-inline: 15px;
     background-color: var(--color-neutral-light);
-    @apply focus:outline-2 focus:outline-primary-selected aria-invalid:outline-2 aria-invalid:outline-danger focus:aria-invalid:outline-danger;
+    @apply focus:outline-2 focus:outline-primary-selected aria-invalid:ring-2 aria-invalid:ring-danger focus:aria-invalid:outline-4 focus:aria-invalid:outline-danger/40;
   }
 
   select option {
@@ -93,6 +93,10 @@
 @layer components {
   .field {
     @apply flex flex-col gap-1.5 has-aria-invalid:text-danger;
+
+    span {
+      @apply text-sm text-pretty;
+    }
   }
 
   .btn {
@@ -100,11 +104,15 @@
   }
 
   .btn-sm {
-    height: 38px;
+    min-height: 38px;
   }
 
   .btn-lg {
-    height: 54px;
+    min-height: 54px;
+  }
+
+  .btn-side-menu {
+    @apply justify-start bg-neutral-light text-slate-900;
   }
 
   .input-icon {
