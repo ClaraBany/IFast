@@ -1,5 +1,5 @@
 import { Bell, Menu } from "lucide-react";
-import Logo from "@assets/logo-white.png";
+import Logo from "@assets/logo-primary.png";
 import { Ripples } from "react-ripples-continued";
 
 interface HeaderProps {
