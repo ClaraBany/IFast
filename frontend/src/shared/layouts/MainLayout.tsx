@@ -8,7 +8,7 @@ export default function MainLayout() {
   const [open, setOpen] = useState(false);
 
   return (
-    <main className="relative min-h-screen py-26">
+    <main className="relative min-h-screen bg-neutral-light py-26">
       <Header open={open} setOpen={setOpen} />
 
       <SideMenu open={open} setOpen={setOpen} />

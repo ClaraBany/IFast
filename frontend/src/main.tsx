@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 
 import App from "./App.tsx";
 import "@shared/styles.css";
-import AuthLayout from "@auth/AuthLayout";
+import AuthLayout from "@shared/layouts/AuthLayout.tsx";
 import MainLayout from "@shared/layouts/MainLayout";
 import Login from "@auth/Login";
 import Register from "@auth/Register";

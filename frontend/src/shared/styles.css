@@ -28,7 +28,7 @@
 
 @layer base {
   body {
-    @apply min-h-screen bg-neutral-light text-slate-900 caret-primary-selected accent-primary-selected;
+    @apply min-h-screen bg-primary text-slate-900 caret-primary-selected accent-primary-selected;
     font-family: var(--font-inter);
   }
 
