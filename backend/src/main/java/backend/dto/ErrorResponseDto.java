@@ -1,4 +1,4 @@
-package backend.auth.dto;
+package backend.dto;
 
 import java.util.List;
 

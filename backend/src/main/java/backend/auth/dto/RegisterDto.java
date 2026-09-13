@@ -1,15 +1,19 @@
 package backend.auth.dto;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 public record RegisterDto (
-    @NotNull (message = "O nome é obrigatório") 
+    @NotBlank (message = "O nome é obrigatório")
+    @Size (min= 10, max = 100, message = "O nome deve conter entre 10 a 100 caracteres") 
     String name,
 
-    @NotNull (message = "O email é obrigatório")
+    @NotBlank (message = "O email é obrigatório")
+    @Email (message = "Deve ser um inválido")
     String email,
     
-    @NotNull(message = "A senha é obrigatória")
+    @NotBlank (message = "A senha é obrigatória")
+    @Size (min= 6, message = "A senha deve conter no minimo 6 caracteres") 
     String password
 ){}
-//tamanho mínimo dos campos? 

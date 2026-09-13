@@ -9,6 +9,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 
 import backend.auth.dto.AuthResponseDto;
 import backend.auth.dto.LoginDto;
+import backend.auth.dto.UserDto;
 import backend.auth.dto.LoginGoogleDto;
 import backend.auth.dto.RegisterDto;
 import backend.exceptions.EmailAlreadyRegisteredException;
@@ -48,8 +49,9 @@ public class AuthService {
             throw new InvalidPasswordException();
         }
 
-        String token = jwtService.gerarToken(user.getId());
-        return new AuthResponseDto(token);
+        String token = jwtService.generateToken(user.getId());
+        UserDto userDto = new UserDto(user);
+        return new AuthResponseDto(userDto, token);
     }
 
     public AuthResponseDto loginGoogle(LoginGoogleDto loginGoogleDto) {
@@ -68,9 +70,10 @@ public class AuthService {
         User user = userRepository.findByGoogleId(payload.getSubject())
             .orElseGet(() -> registerOrLinkGoogle(payload));
 
-        String token = jwtService.gerarToken(user.getId());
+        String token = jwtService.generateToken(user.getId());
         
-        return new AuthResponseDto(token);
+        UserDto userDto = new UserDto(user);
+        return new AuthResponseDto(userDto, token);
     }
     
     @Transactional 
@@ -88,9 +91,10 @@ public class AuthService {
         user.setPassword(hash);
         userRepository.save(user);
 
-        String token = jwtService.gerarToken(user.getId());
+        String token = jwtService.generateToken(user.getId());
 
-        return new AuthResponseDto(token);
+        UserDto userDto = new UserDto(user);
+        return new AuthResponseDto(userDto, token);
     }
 
     @Transactional 

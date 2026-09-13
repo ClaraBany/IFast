@@ -17,7 +17,7 @@ public class JwtService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    public String gerarToken(Long usuarioId) { //colocar em inglês
+    public String generateToken(Long usuarioId) {
         return Jwts.builder()
             .setSubject(String.valueOf(usuarioId))
             .setIssuedAt(new Date())
@@ -26,7 +26,7 @@ public class JwtService {
             .compact();
     }
 
-    public Long validarToken(String token) {
+    public Long validateToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
                 .build()
