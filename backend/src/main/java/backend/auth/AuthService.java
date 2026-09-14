@@ -64,7 +64,7 @@ public class AuthService {
     
         String email = payload.getEmail();
 
-        if (!email.endsWith(ValidationPatterns.INSTITUTIONAL_EMAIL)) {
+        if (!email.matches(ValidationPatterns.INSTITUTIONAL_EMAIL)) {
             throw new InvalidGoogleTokenException("Somente e-mails institucionais são permitidos");
         }
 
