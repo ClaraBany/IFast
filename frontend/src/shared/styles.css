@@ -103,6 +103,10 @@
     @apply relative flex-center w-full cursor-pointer gap-2.5 overflow-hidden rounded-[10px] px-3 text-button text-white transition-colors hover:brightness-110;
   }
 
+  .btn:disabled {
+    @apply opacity-50 cursor-not-allowed ;
+  }
+
   .btn-sm {
     min-height: 38px;
   }

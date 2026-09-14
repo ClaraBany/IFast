@@ -1,3 +1,4 @@
+import { useAuthStore } from "@auth/authStore";
 import { CircleUserRound, Car, RotateCcwClock, RefreshCcw, Plus, LayoutDashboard, LogOut } from "lucide-react";
 import { Ripples } from "react-ripples-continued";
 import { Link } from "react-router";
@@ -9,6 +10,8 @@ interface SideMenuProps {
 }
 
 export default function SideMenu({ open, setOpen }: SideMenuProps) {
+  const logout = useAuthStore((state) => state.logout);
+
   return (
     <Drawer.Root direction="left" open={open} onOpenChange={setOpen}>
       <Drawer.Portal>
@@ -56,11 +59,11 @@ export default function SideMenu({ open, setOpen }: SideMenuProps) {
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-lg mt-auto justify-start bg-danger/20 text-danger">
+            <button onClick={logout} className="btn btn-lg mt-auto justify-start bg-danger/20 text-danger">
               <LogOut />
               Sair
               <Ripples color="var(--ripple-dark)" />
-            </Link>
+            </button>
           </div>
         </Drawer.Content>
       </Drawer.Portal>
