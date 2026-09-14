@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { loginSchema } from "./authTypes";
 import { useAuthStore } from "./authStore";
-import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 
 export default function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -38,7 +38,7 @@ export default function Login() {
     setIsGoogleSubmitting(true);
     if (!credentialResponse.credential) {
       setIsGoogleSubmitting(false);
-      return
+      return;
     }
 
     try {
@@ -53,7 +53,7 @@ export default function Login() {
   };
 
   return (
-    <div className="w-full sm:w-100 flex-column items-center gap-3">
+    <div className="flex-column w-full items-center gap-3 sm:w-100">
       <title>Login</title>
 
       <form
@@ -107,8 +107,14 @@ export default function Login() {
       </form>
 
       <div className={isSubmitting || isGoogleSubmitting ? "pointer-events-none opacity-50" : ""}>
-        <GoogleLogin type="icon" auto_select={false} shape="circle" onSuccess={handleGoogleSuccess}
-          onError={() => {alert('Login Failed');}}
+        <GoogleLogin
+          type="icon"
+          auto_select={false}
+          shape="circle"
+          onSuccess={handleGoogleSuccess}
+          onError={() => {
+            alert("Login Failed");
+          }}
         />
       </div>
 

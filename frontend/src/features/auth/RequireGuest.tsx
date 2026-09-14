@@ -1,5 +1,5 @@
-import { useAuthStore } from './authStore'
-import { Navigate, Outlet, useLocation, type Location } from 'react-router';
+import { useAuthStore } from "./authStore";
+import { Navigate, Outlet, useLocation, type Location } from "react-router";
 
 export default function RequireGuest() {
   const user = useAuthStore((state) => state.user);
@@ -8,10 +8,8 @@ export default function RequireGuest() {
   if (user) {
     const { from } = (location.state as { from?: Location }) ?? {};
 
-    return <Navigate to={from ?? "/offer"} replace />
+    return <Navigate to={from ?? "/offer"} replace />;
   }
 
-  return (
-    <Outlet />
-  )
+  return <Outlet />;
 }

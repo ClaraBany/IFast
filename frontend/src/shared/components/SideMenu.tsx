@@ -11,6 +11,7 @@ interface SideMenuProps {
 
 export default function SideMenu({ open, setOpen }: SideMenuProps) {
   const logout = useAuthStore((state) => state.logout);
+  const user = useAuthStore((state) => state.user);
 
   return (
     <Drawer.Root direction="left" open={open} onOpenChange={setOpen}>
@@ -20,7 +21,7 @@ export default function SideMenu({ open, setOpen }: SideMenuProps) {
           <div className="flex-column w-full items-start gap-5 p-6">
             <Link to={""} className="flex-center gap-2.5">
               <CircleUserRound size={55} strokeWidth={1} />
-              <h3>Usuário</h3>
+              <h3>{user?.name ?? "Usuário"}</h3>
             </Link>
 
             <Link to={""} className="btn btn-lg btn-side-menu">

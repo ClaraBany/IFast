@@ -28,8 +28,8 @@ const router = createBrowserRouter([
           { path: "/login", element: <Login /> },
           { path: "/register", element: <Register /> },
         ],
-      }
-    ]
+      },
+    ],
   },
   {
     element: <RequireAuth />,
@@ -42,9 +42,9 @@ const router = createBrowserRouter([
           { path: "/myrides", element: <MyRides /> },
           { path: "/request", element: <Request /> },
         ],
-      }
-    ]
-  }
+      },
+    ],
+  },
 ]);
 
 export function AppInitializer() {
@@ -57,15 +57,15 @@ export function AppInitializer() {
 
   if (isLoading) {
     return (
-      <div className="bg-neutral-light flex-center flex-col min-h-dvh gap-5">
+      <div className="flex-center min-h-dvh flex-col gap-5 bg-neutral-light">
         <img src={Logo} alt="Logo" className="h-22.25" />
 
         <LoaderCircle color="var(--color-primary)" className="animate-spin" />
       </div>
-    )
+    );
   }
 
-  return <RouterProvider router={router} />
+  return <RouterProvider router={router} />;
 }
 
 createRoot(document.getElementById("root")!).render(
