@@ -84,9 +84,13 @@ public class GlobalExceptionHandler {
         return buildResponse(e, request, HttpStatus.BAD_REQUEST, "Body da requisição inválido ou ausente", null);
     }
 
-    @ExceptionHandler({BadCredentialsException.class, InvalidGoogleTokenException.class,
-            InvalidPasswordException.class, GoogleAccountException.class, TokenJwtInvalidException.class})
+    @ExceptionHandler({BadCredentialsException.class, InvalidPasswordException.class, GoogleAccountException.class})
     public ResponseEntity<ErrorResponseDto> handleAuth(Exception e, HttpServletRequest request) {
+        return buildResponse(e, request, HttpStatus.UNAUTHORIZED, "Credenciais inválidas", null);
+    }
+
+    @ExceptionHandler({InvalidGoogleTokenException.class, TokenJwtInvalidException.class})
+    public ResponseEntity<ErrorResponseDto> handleInvalidToken(Exception e, HttpServletRequest request) {
         return buildResponse(e, request, HttpStatus.UNAUTHORIZED, e.getMessage(), null);
     }
 

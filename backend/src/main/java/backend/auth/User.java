@@ -4,25 +4,33 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nimbusds.openid.connect.sdk.claims.Address;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter 
+@Setter
 @Entity
+@Table(name = "users")
+@EntityListeners(AuditingEntityListener.class)
 public class User {
+
     @Id
-    @GeneratedValue (strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique  = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = true)
     private String password;
 
@@ -33,7 +41,10 @@ public class User {
     private String pictureUrl;
 
     @Column(nullable = true)
-    private String adress; //como armazenar o adress?
+    private String phoneNumber;
+
+    @Embedded
+    private Address address;
 
     @CreatedDate
     @Column(updatable = false)

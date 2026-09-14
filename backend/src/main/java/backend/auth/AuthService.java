@@ -19,6 +19,7 @@ import backend.exceptions.InvalidPasswordException;
 import backend.exceptions.UserNotFoundException;
 import backend.security.GoogleIdTokenService;
 import backend.security.JwtService;
+import backend.validation.ValidationPatterns;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,7 +64,7 @@ public class AuthService {
     
         String email = payload.getEmail();
 
-        if (!email.endsWith("ifnmg.edu.br")) {
+        if (!email.endsWith(ValidationPatterns.INSTITUTIONAL_EMAIL)) {
             throw new InvalidGoogleTokenException("Somente e-mails institucionais são permitidos");
         }
 
