@@ -16,9 +16,9 @@ export const registerSchema = z
   .refine((data) => data.password === data.confirm_password, {
     error: "As senhas precisam ser iguais",
     path: ["confirm_password"],
-});
+  });
 
 export interface AuthResponse {
-    token: string;
-    user: User;
+  token: string;
+  user: User;
 }

@@ -38,7 +38,7 @@ export default function Register() {
     setIsGoogleSubmitting(true);
     if (!credentialResponse.credential) {
       setIsGoogleSubmitting(false);
-      return
+      return;
     }
 
     try {
@@ -53,7 +53,7 @@ export default function Register() {
   };
 
   return (
-    <div className="w-full sm:w-100 flex-column items-center gap-3">
+    <div className="flex-column w-full items-center gap-3 sm:w-100">
       <title>Cadastro</title>
 
       <form
@@ -146,8 +146,14 @@ export default function Register() {
       </form>
 
       <div className={isSubmitting || isGoogleSubmitting ? "pointer-events-none opacity-50" : ""}>
-        <GoogleLogin type="icon" auto_select={false} shape="circle" onSuccess={handleGoogleSuccess}
-          onError={() => {alert('Login Failed');}}
+        <GoogleLogin
+          type="icon"
+          auto_select={false}
+          shape="circle"
+          onSuccess={handleGoogleSuccess}
+          onError={() => {
+            alert("Login Failed");
+          }}
         />
       </div>
 
