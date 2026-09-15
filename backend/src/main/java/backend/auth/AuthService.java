@@ -15,8 +15,7 @@ import backend.auth.dto.RegisterDto;
 import backend.exceptions.EmailAlreadyRegisteredException;
 import backend.exceptions.GoogleAccountException;
 import backend.exceptions.InvalidGoogleTokenException;
-import backend.exceptions.InvalidPasswordException;
-import backend.exceptions.UserNotFoundException;
+import backend.exceptions.InvalidCredentialsException;
 import backend.security.GoogleIdTokenService;
 import backend.security.JwtService;
 import backend.validation.ValidationPatterns;
@@ -40,14 +39,14 @@ public class AuthService {
 
     public AuthResponseDto login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.email())
-            .orElseThrow(() -> new UserNotFoundException());
+            .orElseThrow(() -> new InvalidCredentialsException());
 
         if(user.getPassword() == null){
             throw new GoogleAccountException();
         }
 
         if(!passwordEncoder.matches(loginDto.password(), user.getPassword())){
-            throw new InvalidPasswordException();
+            throw new InvalidCredentialsException();
         }
 
         String token = jwtService.generateToken(user.getId());

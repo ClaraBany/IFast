@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
                 .stream()
                 .map(err -> err.getField() + ": " + err.getDefaultMessage())
                 .toList();
-        return buildResponse(e, request, HttpStatus.BAD_REQUEST, "Falha na validação", details);
+        return buildResponse(e, request, HttpStatus.UNPROCESSABLE_CONTENT, "Falha na validação", details);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -60,7 +60,7 @@ public class GlobalExceptionHandler {
                 .stream()
                 .map(v -> v.getPropertyPath() + ": " + v.getMessage())
                 .toList();
-        return buildResponse(e, request, HttpStatus.BAD_REQUEST, "Falha na validação", details);
+        return buildResponse(e, request, HttpStatus.UNPROCESSABLE_CONTENT, "Falha na validação", details);
     }
 
     @ExceptionHandler({MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
@@ -84,7 +84,7 @@ public class GlobalExceptionHandler {
         return buildResponse(e, request, HttpStatus.BAD_REQUEST, "Body da requisição inválido ou ausente", null);
     }
 
-    @ExceptionHandler({BadCredentialsException.class, InvalidPasswordException.class, GoogleAccountException.class})
+    @ExceptionHandler({BadCredentialsException.class, InvalidCredentialsException.class, GoogleAccountException.class})
     public ResponseEntity<ErrorResponseDto> handleAuth(Exception e, HttpServletRequest request) {
         return buildResponse(e, request, HttpStatus.UNAUTHORIZED, "Credenciais inválidas", null);
     }
@@ -97,11 +97,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponseDto> handleAccessDenied(AccessDeniedException e, HttpServletRequest request) {
         return buildResponse(e, request, HttpStatus.FORBIDDEN, "Acesso negado", null);
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorResponseDto> handleNotFound(UserNotFoundException e, HttpServletRequest request) {
-        return buildResponse(e, request, HttpStatus.NOT_FOUND, e.getMessage(), null);
     }
 
     @ExceptionHandler(EmailAlreadyRegisteredException.class)
