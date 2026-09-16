@@ -8,6 +8,7 @@ import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { loginSchema } from "./authTypes";
 import { useAuthStore } from "./authStore";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
+import { ApiError } from "@/shared/api";
 
 export default function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -16,6 +17,7 @@ export default function Login() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof loginSchema>>({ resolver: zodResolver(loginSchema), mode: "onTouched" });
 
@@ -26,9 +28,12 @@ export default function Login() {
     try {
       await login(data);
     } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
+      if (error instanceof ApiError && error.status === 401) {
+        setError("password", {message: error.message});
       } else {
+        if (error instanceof ApiError) {
+          console.log(error.status)
+        }
         alert("Erro inesperado");
       }
     }
