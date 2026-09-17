@@ -29,12 +29,8 @@ export default function Login() {
       await login(data);
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) {
-        setError("password", {message: error.message});
-      } else {
-        if (error instanceof ApiError) {
-          console.log(error.status)
-        }
-        alert("Erro inesperado");
+        setError("email", { type: "manual" });
+        setError("password", { message: error.message });
       }
     }
   };

@@ -8,6 +8,7 @@ import { Ripples } from "react-ripples-continued";
 import { registerSchema } from "./authTypes";
 import { useAuthStore } from "./authStore";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
+import { ApiError } from "@shared/api";
 
 export default function Register() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -16,6 +17,7 @@ export default function Register() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof registerSchema>>({ resolver: zodResolver(registerSchema), mode: "onTouched" });
 
@@ -26,10 +28,8 @@ export default function Register() {
     try {
       await handleRegister(data);
     } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
-      } else {
-        alert("Erro inesperado");
+      if (error instanceof ApiError && error.status === 409) {
+        setError("email", { message: error.message });
       }
     }
   };
