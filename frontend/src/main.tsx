@@ -11,6 +11,8 @@ import Register from "@auth/Register";
 import Offer from "@ride-offer/Offer";
 import MyRides from "@my-rides/MyRides";
 import Request from "@ride-request/Request";
+import Vehicle from "./features/vehicle/Vehicle.tsx";
+import VehicleForm from "./features/vehicle/VehicleForm.tsx";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +29,8 @@ const router = createBrowserRouter([
       { path: "/offer", element: <Offer /> },
       { path: "/myrides", element: <MyRides /> },
       { path: "/request", element: <Request /> },
+      { path: "/vehicle", element: <Vehicle />},
+      { path: "/vehicle/create", element: <VehicleForm />}
     ],
   },
 ]);
