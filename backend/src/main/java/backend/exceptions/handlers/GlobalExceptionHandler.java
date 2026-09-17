@@ -63,6 +63,11 @@ public class GlobalExceptionHandler {
         return buildResponse(e, request, HttpStatus.UNPROCESSABLE_CONTENT, "Falha na validação", details);
     }
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleEntityNotFound(EntityNotFoundException e, HttpServletRequest request) {
+        return buildResponse(e, request, HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage(), null);
+    }
+
     @ExceptionHandler({MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ErrorResponseDto> handleBadParameter(Exception e, HttpServletRequest request) {
         return buildResponse(e, request, HttpStatus.BAD_REQUEST, "Parâmetros inválidos", null);
