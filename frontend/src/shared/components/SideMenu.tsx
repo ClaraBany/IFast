@@ -18,49 +18,49 @@ export default function SideMenu({ open, setOpen }: SideMenuProps) {
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-[1.5px]" />
         <Drawer.Content className="fixed top-0 bottom-0 left-0 my-20 flex w-[320px] rounded-e-2xl bg-white">
-          <div className="flex-column w-full items-start gap-5 p-6">
+          <div className="flex-column w-full items-start gap-5 overflow-y-auto p-6">
             <Link to={""} className="flex-center gap-2.5">
               <CircleUserRound size={55} strokeWidth={1} />
               <h3>{user?.name ?? "Usuário"}</h3>
             </Link>
 
-            <Link to={""} className="btn btn-lg btn-side-menu">
+            <Link to={""} className="btn btn-side-menu">
               <Car />
               Meus veículos
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-lg btn-side-menu">
+            <Link to={""} className="btn btn-side-menu">
               <RotateCcwClock />
               Histórico de Caronas
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-lg btn-side-menu">
+            <Link to={""} className="btn btn-side-menu">
               <RefreshCcw />
               Ofertas Recorrentes
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-lg btn-side-menu">
+            <Link to={""} className="btn btn-side-menu">
               <Plus />
               Criar Oferta
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-lg btn-side-menu">
+            <Link to={""} className="btn btn-side-menu">
               <Plus />
               Criar Pedido
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-lg btn-side-menu">
+            <Link to={""} className="btn btn-side-menu">
               <LayoutDashboard />
               Dashboard
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <button onClick={logout} className="btn btn-lg mt-auto justify-start bg-danger/20 text-danger">
+            <button onClick={logout} className="btn btn-side-menu mt-auto bg-danger/20 text-danger">
               <LogOut />
               Sair
               <Ripples color="var(--ripple-dark)" />

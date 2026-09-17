@@ -116,7 +116,7 @@
   }
 
   .btn-side-menu {
-    @apply justify-start bg-neutral-light text-slate-900;
+    @apply min-h-12 justify-start bg-neutral-light text-slate-900;
   }
 
   .input-icon {
