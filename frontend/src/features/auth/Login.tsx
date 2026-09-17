@@ -4,32 +4,62 @@ import { Link } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
-
-const loginSchema = z.object({
-  email: z.email("Email inválido").endsWith("ifnmg.edu.br", "Email precisa ser do IFNMG"),
-  password: z.string().nonempty("Digite a senha "),
-});
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
+import { loginSchema } from "./authTypes";
+import { useAuthStore } from "./authStore";
+import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
+import { ApiError } from "@/shared/api";
 
 export default function Login() {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    setError,
+    formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof loginSchema>>({ resolver: zodResolver(loginSchema), mode: "onTouched" });
 
-  const onSubmit = (data: z.infer<typeof loginSchema>) => {
-    console.log("dados válidos: ", data);
+  const login = useAuthStore((state) => state.login);
+  const loginGoogle = useAuthStore((state) => state.loginGoogle);
+
+  const onSubmit = async (data: z.infer<typeof loginSchema>) => {
+    try {
+      await login(data);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 401) {
+        setError("email", { type: "manual" });
+        setError("password", { message: error.message });
+      }
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    setIsGoogleSubmitting(true);
+    if (!credentialResponse.credential) {
+      setIsGoogleSubmitting(false);
+      return;
+    }
+
+    try {
+      await loginGoogle(credentialResponse.credential);
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+    } finally {
+      setIsGoogleSubmitting(false);
+    }
   };
 
   return (
-    <div className="w-full sm:w-100">
+    <div className="flex-column w-full items-center gap-3 sm:w-100">
       <title>Login</title>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex-column gap-4 rounded-2xl border border-primary bg-white px-5 py-4"
+        className="flex-column w-full gap-4 rounded-2xl border border-primary bg-white px-5 py-4"
       >
         <h1 className="text-center">Login</h1>
 
@@ -70,13 +100,26 @@ export default function Login() {
           {errors.password && <span>{errors.password.message}</span>}
         </div>
 
-        <button type="submit" className="btn btn-lg mt-2.5 bg-primary">
+        <button type="submit" disabled={isSubmitting || isGoogleSubmitting} className="btn btn-lg mt-2.5 bg-primary">
+          {(isSubmitting || isGoogleSubmitting) && <LoaderCircle className="animate-spin" />}
           Entrar
           <Ripples color="var(--ripple-light)" />
         </button>
       </form>
 
-      <Link to={"/register"} className="btn btn-sm mt-3 text-neutral-dark">
+      <div className={isSubmitting || isGoogleSubmitting ? "pointer-events-none opacity-50" : ""}>
+        <GoogleLogin
+          type="icon"
+          auto_select={false}
+          shape="circle"
+          onSuccess={handleGoogleSuccess}
+          onError={() => {
+            alert("Login Failed");
+          }}
+        />
+      </div>
+
+      <Link to={"/register"} className="btn btn-sm text-neutral-dark">
         Não tem uma conta? <span className="text-tertiary">Crie agora</span>
         <Ripples color="var(--ripple-dark)" />
       </Link>
