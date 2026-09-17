@@ -1,7 +1,6 @@
 package backend.security;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,6 +8,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
+import backend.auth.User;
+import backend.auth.UserRepository;
+import backend.exceptions.InvalidCredentialsException;
 import backend.exceptions.TokenJwtInvalidException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,10 +22,12 @@ public class JwtAuthFilter extends OncePerRequestFilter{
     
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
-    public JwtAuthFilter(JwtService jwtService, HandlerExceptionResolver handlerExceptionResolver){
+    public JwtAuthFilter(JwtService jwtService, HandlerExceptionResolver handlerExceptionResolver, UserRepository userRepository){
         this.jwtService = jwtService;
         this.handlerExceptionResolver = handlerExceptionResolver;
+        this.userRepository = userRepository;
     }
 
     @Override 
@@ -47,7 +51,11 @@ public class JwtAuthFilter extends OncePerRequestFilter{
         try{
             Long userId = jwtService.validateToken(jwt);
 
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userId, null, Collections.emptyList());
+            User user = userRepository.findById(userId)
+                .orElseThrow(() -> new InvalidCredentialsException());
+
+            UsernamePasswordAuthenticationToken authentication =
+                new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
             SecurityContextHolder
                 .getContext().setAuthentication(authentication);
