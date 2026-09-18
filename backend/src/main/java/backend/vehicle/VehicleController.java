@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +42,18 @@ public class VehicleController {
     @GetMapping("/{vehicleId}") 
     public ResponseEntity<VehicleDto> get(@PathVariable Long vehicleId, @AuthenticationPrincipal User user) {
         VehicleDto response = vehicleService.get(vehicleId, user);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{vehicleId}")
+    public ResponseEntity delete(@PathVariable Long vehicleId, @AuthenticationPrincipal User user) {
+        vehicleService.delete(vehicleId, user);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    @PutMapping("/{vehicleId}")
+    public ResponseEntity<VehicleDto> update(@PathVariable Long vehicleId,@Valid @RequestBody VehicleDto vehicleDto, @AuthenticationPrincipal User user) {
+        VehicleDto response = vehicleService.update(vehicleId, vehicleDto, user);
         return ResponseEntity.ok(response);
     }
 }
