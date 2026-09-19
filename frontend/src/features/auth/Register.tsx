@@ -3,41 +3,64 @@ import { Link } from "react-router";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { Ripples } from "react-ripples-continued";
-
-const registerSchema = z
-  .object({
-    name: z.string().min(10, "Nome precisa conter pelo menos 10 caracteres"),
-    email: z.email("Email inválido").endsWith("ifnmg.edu.br", "Email precisa ser do IFNMG"),
-    password: z.string().min(6, "Senha precisa conter pelo menos 6 caracteres"),
-    confirm_password: z.string().nonempty("Digite uma senha"),
-  })
-  .refine((data) => data.password === data.confirm_password, {
-    error: "As senhas precisam ser iguais",
-    path: ["confirm_password"],
-  });
+import { registerSchema } from "./authTypes";
+import { useAuthStore } from "./authStore";
+import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
+import { ApiError } from "@shared/api";
+import { useErrorStore } from "@shared/errorStore";
 
 export default function Register() {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    setError,
+    formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof registerSchema>>({ resolver: zodResolver(registerSchema), mode: "onTouched" });
 
-  const onSubmit = (data: z.infer<typeof registerSchema>) => {
-    console.log("dados válidos: ", data);
+  const handleRegister = useAuthStore((state) => state.register);
+  const loginGoogle = useAuthStore((state) => state.loginGoogle);
+  const setGlobalError = useErrorStore((state) => state.setGlobalError);
+
+  const onSubmit = async (data: z.infer<typeof registerSchema>) => {
+    try {
+      await handleRegister(data);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 409) {
+        setError("email", { message: error.message });
+      }
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    setIsGoogleSubmitting(true);
+    if (!credentialResponse.credential) {
+      setIsGoogleSubmitting(false);
+      return;
+    }
+
+    try {
+      await loginGoogle(credentialResponse.credential);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        setGlobalError(error.message);
+      }
+    } finally {
+      setIsGoogleSubmitting(false);
+    }
   };
 
   return (
-    <div className="w-full sm:w-100">
+    <div className="flex-column w-full items-center gap-3 sm:w-100">
       <title>Cadastro</title>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex-column gap-4 rounded-2xl border border-primary bg-white px-5 py-4"
+        className="flex-column w-full gap-4 rounded-2xl border border-primary bg-white px-5 py-4"
       >
         <h1 className="text-center">Cadastro</h1>
 
@@ -117,13 +140,24 @@ export default function Register() {
           {errors.confirm_password && <span>{errors.confirm_password.message}</span>}
         </div>
 
-        <button type="submit" className="btn btn-lg mt-2.5 bg-primary">
+        <button type="submit" disabled={isSubmitting || isGoogleSubmitting} className="btn btn-lg mt-2.5 bg-primary">
+          {(isSubmitting || isGoogleSubmitting) && <LoaderCircle className="animate-spin" />}
           Criar Conta
           <Ripples color="var(--ripple-light)" />
         </button>
       </form>
 
-      <Link to={"/login"} className="btn btn-sm mt-3 text-neutral-dark">
+      <div className={isSubmitting || isGoogleSubmitting ? "pointer-events-none opacity-50" : ""}>
+        <GoogleLogin
+          auto_select={false}
+          shape="rectangular"
+          text="signin"
+          onSuccess={handleGoogleSuccess}
+          onError={() => setGlobalError("Não foi possível conectar com o Google. Tente novamente.")}
+        />
+      </div>
+
+      <Link to={"/login"} className="btn btn-sm text-neutral-dark">
         Já tem uma conta? <span className="text-tertiary">Faça login</span>
         <Ripples color="var(--ripple-dark)" />
       </Link>

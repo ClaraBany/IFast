@@ -3,12 +3,15 @@ import NavBar from "@shared/components/NavBar";
 import SideMenu from "@shared/components/SideMenu";
 import { useState } from "react";
 import { Outlet } from "react-router";
+import { GlobalErrorAlert } from "@shared/components/GlobalErrorAlert";
 
 export default function MainLayout() {
   const [open, setOpen] = useState(false);
 
   return (
     <main className="relative min-h-screen bg-neutral-light py-26">
+      <GlobalErrorAlert />
+
       <Header open={open} setOpen={setOpen} />
 
       <SideMenu open={open} setOpen={setOpen} />
