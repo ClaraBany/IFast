@@ -9,6 +9,7 @@ import { registerSchema } from "./authTypes";
 import { useAuthStore } from "./authStore";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { ApiError } from "@shared/api";
+import { useErrorStore } from "@shared/errorStore";
 
 export default function Register() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -23,6 +24,7 @@ export default function Register() {
 
   const handleRegister = useAuthStore((state) => state.register);
   const loginGoogle = useAuthStore((state) => state.loginGoogle);
+  const setGlobalError = useErrorStore((state) => state.setGlobalError);
 
   const onSubmit = async (data: z.infer<typeof registerSchema>) => {
     try {
@@ -44,8 +46,8 @@ export default function Register() {
     try {
       await loginGoogle(credentialResponse.credential);
     } catch (error) {
-      if (error instanceof Error) {
-        alert(error.message);
+      if (error instanceof ApiError) {
+        setGlobalError(error.message);
       }
     } finally {
       setIsGoogleSubmitting(false);
@@ -147,13 +149,11 @@ export default function Register() {
 
       <div className={isSubmitting || isGoogleSubmitting ? "pointer-events-none opacity-50" : ""}>
         <GoogleLogin
-          type="icon"
           auto_select={false}
-          shape="circle"
+          shape="rectangular"
+          text="signin"
           onSuccess={handleGoogleSuccess}
-          onError={() => {
-            alert("Login Failed");
-          }}
+          onError={() => setGlobalError("Não foi possível conectar com o Google. Tente novamente.")}
         />
       </div>
 

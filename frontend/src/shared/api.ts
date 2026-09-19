@@ -12,10 +12,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+const LOCALLY_HANDLED_STATUSES = [401, 409];
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (!axios.isAxiosError(error)) {
+      if (import.meta.env.DEV) {
+        console.error("Erro no código", error);
+      }
       return Promise.reject(error);
     }
 
@@ -32,20 +37,19 @@ api.interceptors.response.use(
 
     const status = error.response?.status;
 
-    if (!error.response || (status && status >= 500)) {
-      useErrorStore
-        .getState()
-        .setGlobalError("Ocorreu um erro ao conectar aos nossos servidores. Por favor, tente novamente mais tarde");
-      return Promise.reject(error);
-    }
-
     if (status === 401) {
       const { useAuthStore } = await import("@auth/authStore");
       useAuthStore.getState().logout();
     }
 
     const data = error.response?.data;
-    const message = data?.message ?? "Ocorreu um erro";
+    const message = !error.response
+      ? "Ocorreu um erro ao conectar aos nossos servidores. Por favor, tente novamente mais tarde"
+      : (data?.message ?? "Ocorreu um erro");
+
+    if (status === undefined || !LOCALLY_HANDLED_STATUSES.includes(status)) {
+      useErrorStore.getState().setGlobalError(message);
+    }
 
     return Promise.reject(new ApiError(message, status));
   },
