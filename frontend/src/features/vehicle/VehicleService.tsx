@@ -1,6 +1,28 @@
+import { vehicleSchema } from "./VehicleTypes";
 import { api } from "@shared/api";
+import type z from "zod";
+import type { Vehicle } from "@shared/types";
 
-export async function create(vehicle: vehicleSchema): Promise<vehicleResponse> {
-    const response = await api.post<vehicleResponse>("/vehicles");
-    return response.data;
+export async function create(vehicle: z.infer<typeof vehicleSchema>): Promise<Vehicle> {
+  const response = await api.post<Vehicle>("/vehicles", vehicle);
+  return response.data;
+}
+
+export async function getAll(): Promise<Vehicle[]> {
+  const response = await api.get<Vehicle[]>("/vehicles");
+  return response.data;
+}
+
+export async function get(vehicleId: number): Promise<Vehicle> {
+  const response = await api.get<Vehicle>(`/vehicles/${vehicleId}`);
+  return response.data;
+}
+
+export async function del(vehicleId: number): Promise<void> {
+  await api.delete<Vehicle>(`/vehicles/${vehicleId}`);
+}
+
+export async function update(vehicleId: number, vehicle: z.infer<typeof vehicleSchema>): Promise<Vehicle> {
+  const response = await api.put<Vehicle>(`/vehicles/${vehicleId}`, vehicle);
+  return response.data;
 }

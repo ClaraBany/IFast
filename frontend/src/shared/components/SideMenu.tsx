@@ -24,7 +24,7 @@ export default function SideMenu({ open, setOpen }: SideMenuProps) {
               <h3>{user?.name ?? "Usuário"}</h3>
             </Link>
 
-            <Link to={""} className="btn btn-side-menu">
+            <Link to={"/vehicles"} className="btn btn-side-menu">
               <Car />
               Meus veículos
               <Ripples color="var(--ripple-dark)" />
