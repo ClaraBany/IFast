@@ -10,7 +10,8 @@ public record UpdateProfileDto(
     @Size(min= 10, max = 100, message = "O nome deve conter entre 10 a 100 caracteres")
     String name,
 
-    Address address,
+    @Size(min= 10, message = "O endereço deve ter pelo menos 10 caracteres")
+    String address,
 
     @Pattern(regexp = "^\\(\\d{2}\\) \\d{5}-\\d{4}$", message = "Telefone inválido")
     String phoneNumber

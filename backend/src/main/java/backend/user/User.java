@@ -46,8 +46,8 @@ public class User implements UserDetails{
     @Column(nullable = true)
     private String phoneNumber;
 
-    @Embedded
-    private Address address;
+    @Column(nullable = true)
+    private String address;
 
     @CreatedDate
     @Column(updatable = false)
