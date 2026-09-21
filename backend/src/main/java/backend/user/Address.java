@@ -1,4 +1,4 @@
-package backend.auth;
+package backend.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

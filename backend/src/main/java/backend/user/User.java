@@ -1,4 +1,4 @@
-package backend.auth;
+package backend.user;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -11,7 +11,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nimbusds.openid.connect.sdk.claims.Address;
 
 import jakarta.persistence.*;
 import lombok.Getter;

@@ -2,6 +2,8 @@ package backend.auth;
 
 import java.util.Optional;
 
+import backend.user.User;
+import backend.user.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +11,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 
 import backend.auth.dto.AuthResponseDto;
 import backend.auth.dto.LoginDto;
-import backend.auth.dto.UserDto;
+import backend.user.dto.UserDto;
 import backend.auth.dto.LoginGoogleDto;
 import backend.auth.dto.RegisterDto;
 import backend.exceptions.EmailAlreadyRegisteredException;
