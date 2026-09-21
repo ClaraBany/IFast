@@ -1,4 +1,4 @@
-import type { User } from "@shared/types";
+import type { User } from "@profile/types";
 import { create } from "zustand";
 import { loginSchema, registerSchema } from "./authTypes";
 import * as authService from "./authService";
