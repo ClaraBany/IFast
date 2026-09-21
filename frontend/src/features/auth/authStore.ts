@@ -5,6 +5,7 @@ import * as authService from "./authService";
 import type { AuthResponse } from "./authTypes";
 import type z from "zod";
 import { clearAccessToken, getAccessToken, setAccessToken } from "./authStorage";
+import { getMe } from "@profile/profileService";
 
 interface AuthState {
   user: User | null;
@@ -54,7 +55,7 @@ export const useAuthStore = create<AuthState>()((set) => {
       }
 
       try {
-        const user = await authService.getMe();
+        const user = await getMe();
         set({ user, isLoading: false });
       } catch {
         clearAccessToken();

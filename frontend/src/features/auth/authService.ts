@@ -1,7 +1,6 @@
 import { loginSchema, registerSchema } from "./authTypes";
 import { api } from "@shared/api";
 import type z from "zod";
-import type { User } from "@profile/types";
 import type { AuthResponse } from "./authTypes";
 
 export async function login(credentials: z.infer<typeof loginSchema>): Promise<AuthResponse> {
@@ -19,10 +18,5 @@ export async function register(data: z.infer<typeof registerSchema>): Promise<Au
   const { confirm_password, ...payload } = data;
 
   const response = await api.post<AuthResponse>("/register", payload);
-  return response.data;
-}
-
-export async function getMe(): Promise<User> {
-  const response = await api.get<User>("/user/me");
   return response.data;
 }
