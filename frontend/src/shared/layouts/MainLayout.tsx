@@ -9,14 +9,14 @@ export default function MainLayout() {
   const [open, setOpen] = useState(false);
 
   return (
-    <main className="relative min-h-screen bg-neutral-light py-26">
+    <main className="relative flex min-h-screen bg-neutral-light py-26">
       <GlobalErrorModal />
 
       <Header open={open} setOpen={setOpen} />
 
       <SideMenu open={open} setOpen={setOpen} />
 
-      <div className="container mx-auto px-5 2xl:px-30">
+      <div className="container mx-auto flex px-5 2xl:px-30">
         <Outlet />
       </div>
 
