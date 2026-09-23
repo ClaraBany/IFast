@@ -1,13 +1,11 @@
 import { Check, CirclePlus } from "lucide-react";
 import { Ripples } from "react-ripples-continued";
 import { Link } from "react-router";
-import VehicleForm from "./features/vehicle/VehicleForm";
 
 export default function App() {
   return (
     <>
       <div className="mx-auto flex min-h-screen flex-col gap-8">
-        <VehicleForm />
         {/* Seção de Tipografia e Cabeçalhos */}
         <header className="space-y-3">
           <h1>Título H1 (Poppins 32px / 600)</h1>
