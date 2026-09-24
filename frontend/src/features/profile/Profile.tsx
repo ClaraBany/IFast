@@ -1,13 +1,39 @@
 import BackButton from "@shared/components/BackButton";
 import { useAuthStore } from "@auth/authStore";
 import { Link, useParams } from "react-router";
-import { CircleUserRound, SquarePen } from "lucide-react";
+import { CircleUserRound, LoaderCircle, SquarePen } from "lucide-react";
 import { Ripples } from "react-ripples-continued";
+import { getProfile } from "./profileService";
+import { useQuery } from "@tanstack/react-query";
+import RetryError from "@/shared/components/RetryError";
 
 export default function Profile() {
-  const user = useAuthStore((state) => state.user);
-
+  const authUser = useAuthStore((state) => state.user);
   const { userId } = useParams();
+
+  const {
+    data: profile,
+    isLoading,
+    isFetching,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["profile", userId],
+    queryFn: () => getProfile(Number(userId)),
+    retry: false,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex-center flex-1">
+        <LoaderCircle className="animate-spin text-primary" size={40} />
+      </div>
+    );
+  }
+
+  if (isError || !profile) {
+    return <RetryError onRetry={refetch} isFetching={isFetching} />;
+  }
 
   return (
     <main className="flex-column flex-1 gap-7.5">
@@ -18,7 +44,7 @@ export default function Profile() {
           <h2>Perfil</h2>
         </div>
 
-        {user?.id == userId && (
+        {authUser?.id == userId && (
           <Link to={"/user/updateProfile"} className="icon-btn">
             <SquarePen className="text-secondary" size={24} />
             <Ripples color="var(--ripple-dark)" />
@@ -27,8 +53,12 @@ export default function Profile() {
       </section>
 
       <div className="flex-column items-center gap-1.5">
-        <CircleUserRound size={120} strokeWidth={1} />
-        <h3>{user?.name ?? "Usuário"}</h3>
+        {profile.user.pictureUrl ? (
+          <img src={profile.user.pictureUrl} className="size-30 rounded-full" />
+        ) : (
+          <CircleUserRound size={120} strokeWidth={1} />
+        )}
+        <h3>{profile.user.name}</h3>
       </div>
 
       <section className="flex-column w-full gap-2.5">
@@ -37,7 +67,7 @@ export default function Profile() {
         <div className="flex-center gap-4 text-center text-button text-white">
           <div className="flex-center rounded-lg bg-secondary p-2">
             <span>
-              15
+              {profile.ridesAsDriverCount ?? 0}
               <br />
               Motorista
             </span>
@@ -45,7 +75,7 @@ export default function Profile() {
 
           <div className="flex-center rounded-lg bg-secondary p-2">
             <span>
-              15
+              {profile.ridesAsPassengerCount ?? 0}
               <br />
               Passageiro
             </span>
@@ -59,11 +89,18 @@ export default function Profile() {
         <div className="flex-column w-full gap-2.5 rounded-2xl bg-white px-6 py-4">
           <p>
             <span className="text-label">Email: </span>
-            {user?.email}
+            {profile.user.email}
           </p>
           <p>
-            <span className="text-label">Contato: </span>(33) 99081-1611
+            <span className="text-label">Contato: </span>
+            {profile.user.phoneNumber ?? "(não definido)"}
           </p>
+          {authUser?.id == userId && (
+            <p>
+              <span className="text-label">Endereço: </span>
+              {profile.user.address ?? "(não definido)"}
+            </p>
+          )}
         </div>
       </section>
     </main>

@@ -20,7 +20,11 @@ export default function SideMenu({ open, setOpen }: SideMenuProps) {
         <Drawer.Content className="fixed top-0 bottom-0 left-0 my-20 flex w-[320px] rounded-e-2xl bg-white">
           <div className="flex-column w-full items-start gap-5 overflow-y-auto p-6">
             <Link to={`/user/${user!.id}`} onClick={() => setOpen(false)} className="flex-center gap-2.5">
-              <CircleUserRound size={55} strokeWidth={1} />
+              {user?.pictureUrl ? (
+                <img src={user.pictureUrl} className="size-13.75 rounded-full" />
+              ) : (
+                <CircleUserRound size={55} strokeWidth={1} />
+              )}
               <h3>{user?.name ?? "Usuário"}</h3>
             </Link>
 
