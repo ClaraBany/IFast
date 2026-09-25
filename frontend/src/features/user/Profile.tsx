@@ -3,9 +3,9 @@ import { useAuthStore } from "@auth/authStore";
 import { Link, useParams } from "react-router";
 import { CircleUserRound, LoaderCircle, SquarePen } from "lucide-react";
 import { Ripples } from "react-ripples-continued";
-import { getProfile } from "./profileService";
+import { getProfile } from "./userService";
 import { useQuery } from "@tanstack/react-query";
-import RetryError from "@/shared/components/RetryError";
+import RetryError from "@shared/components/RetryError";
 
 export default function Profile() {
   const authUser = useAuthStore((state) => state.user);
@@ -37,6 +37,7 @@ export default function Profile() {
 
   return (
     <>
+      <title>Perfil</title>
       <header className="flex-center w-full justify-between">
         <div className="flex-center gap-2.5">
           <BackButton />
@@ -45,7 +46,7 @@ export default function Profile() {
         </div>
 
         {authUser?.id == userId && (
-          <Link to={"/user/updateProfile"} className="icon-btn">
+          <Link to={"/users/updateProfile"} className="icon-btn">
             <SquarePen className="text-secondary" size={24} />
             <Ripples color="var(--ripple-dark)" />
           </Link>

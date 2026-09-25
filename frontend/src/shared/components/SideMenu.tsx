@@ -19,7 +19,7 @@ export default function SideMenu({ open, setOpen }: SideMenuProps) {
         <Drawer.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-[1.5px]" />
         <Drawer.Content className="fixed top-0 bottom-0 left-0 my-20 flex w-[320px] rounded-e-2xl bg-white">
           <div className="flex-column w-full items-start gap-5 overflow-y-auto p-6">
-            <Link to={`/user/${user!.id}`} onClick={() => setOpen(false)} className="flex-center gap-2.5">
+            <Link to={`/users/${user!.id}`} onClick={() => setOpen(false)} className="flex-center gap-2.5">
               {user?.pictureUrl ? (
                 <img src={user.pictureUrl} className="size-13.75 rounded-full" />
               ) : (

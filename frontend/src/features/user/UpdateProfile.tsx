@@ -2,8 +2,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import BackButton from "@shared/components/BackButton";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { updateProfileSchema } from "./types";
-import { updateProfile } from "./profileService";
+import { updateProfileSchema } from "./userTypes";
+import { updateProfile } from "./userService";
 import { LoaderCircle } from "lucide-react";
 import { useAuthStore } from "@auth/authStore";
 import { useNavigate } from "react-router";
@@ -44,6 +44,7 @@ export default function UpdateProfile() {
 
   return (
     <>
+      <title>Editar Perfil</title>
       <header className="flex-center w-full justify-between">
         <div className="flex-center gap-2.5">
           <BackButton />

@@ -1,11 +1,11 @@
-import type { User } from "@profile/types";
+import type { User } from "@user/userTypes";
 import { create } from "zustand";
 import { loginSchema, registerSchema } from "./authTypes";
 import * as authService from "./authService";
 import type { AuthResponse } from "./authTypes";
 import type z from "zod";
 import { clearAccessToken, getAccessToken, setAccessToken } from "./authStorage";
-import { getMe } from "@profile/profileService";
+import { getMe } from "@user/userService";
 
 interface AuthState {
   user: User | null;

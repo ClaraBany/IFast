@@ -1,14 +1,14 @@
 import { api } from "@shared/api";
-import type { updateProfileSchema, User, ProfileResponse } from "./types";
+import type { updateProfileSchema, User, ProfileResponse } from "./userTypes";
 import type z from "zod";
 
 export async function getMe(): Promise<User> {
-  const response = await api.get<User>("/user/me");
+  const response = await api.get<User>("/users/me");
   return response.data;
 }
 
 export async function getProfile(id: number): Promise<ProfileResponse> {
-  const response = await api.get<ProfileResponse>(`/user/${id}`);
+  const response = await api.get<ProfileResponse>(`/users/${id}`);
   return response.data;
 }
 
@@ -19,6 +19,6 @@ export async function updateProfile(data: z.infer<typeof updateProfileSchema>): 
     address: data.address?.trim() === "" ? undefined : data.address,
   };
 
-  const response = await api.put<User>("/user", payload);
+  const response = await api.put<User>("/users", payload);
   return response.data;
 }

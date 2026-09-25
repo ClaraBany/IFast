@@ -1,4 +1,4 @@
-import type { User } from "@profile/types";
+import type { User } from "@user/userTypes";
 import z from "zod";
 
 export const loginSchema = z.object({
