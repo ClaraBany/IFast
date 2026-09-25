@@ -11,7 +11,7 @@ export function GlobalErrorAlert() {
     <Dialog.Root open={!!globalError} onOpenChange={(open) => !open && clearGlobalError()}>
       <Dialog.Portal>
         <Dialog.Overlay className="modal-overlay" />
-        <Dialog.Content className="modal-base">
+        <Dialog.Content className="modal-content">
           <div className="text-danger">
             <CircleX size={45} strokeWidth={1.5} />
             <h3>Erro</h3>
