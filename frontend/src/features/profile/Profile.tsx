@@ -36,8 +36,8 @@ export default function Profile() {
   }
 
   return (
-    <main className="flex-column flex-1 gap-7.5">
-      <section className="flex-center w-full justify-between">
+    <>
+      <header className="flex-center w-full justify-between">
         <div className="flex-center gap-2.5">
           <BackButton />
 
@@ -50,16 +50,16 @@ export default function Profile() {
             <Ripples color="var(--ripple-dark)" />
           </Link>
         )}
-      </section>
+      </header>
 
-      <div className="flex-column items-center gap-1.5">
+      <section className="flex-column items-center gap-1.5">
         {profile.user.pictureUrl ? (
           <img src={profile.user.pictureUrl} className="size-30 rounded-full" />
         ) : (
           <CircleUserRound size={120} strokeWidth={1} />
         )}
         <h3>{profile.user.name}</h3>
-      </div>
+      </section>
 
       <section className="flex-column w-full gap-2.5">
         <h3>Caronas</h3>
@@ -103,6 +103,6 @@ export default function Profile() {
           )}
         </div>
       </section>
-    </main>
+    </>
   );
 }

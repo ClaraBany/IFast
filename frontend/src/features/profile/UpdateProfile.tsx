@@ -43,14 +43,14 @@ export default function UpdateProfile() {
   const { onChange, ...rest } = register("phoneNumber");
 
   return (
-    <main className="flex-column flex-1 gap-7.5">
-      <section className="flex-center w-full justify-between">
+    <>
+      <header className="flex-center w-full justify-between">
         <div className="flex-center gap-2.5">
           <BackButton />
 
           <h2>Editar Perfil</h2>
         </div>
-      </section>
+      </header>
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex-column flex-1 gap-7.5">
         <section className="flex-column gap-7.5 rounded-[20px] bg-white p-4">
@@ -102,6 +102,6 @@ export default function UpdateProfile() {
           Salvar Mudanças
         </button>
       </form>
-    </main>
+    </>
   );
 }
