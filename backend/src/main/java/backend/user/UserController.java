@@ -21,8 +21,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProfileResponseDto> getProfile(@PathVariable Long id) {
-        ProfileResponseDto response = userService.getProfile(id);
+    public ResponseEntity<ProfileResponseDto> getProfile(@PathVariable Long id,
+                                                         @AuthenticationPrincipal User user) {
+        ProfileResponseDto response = userService.getProfile(id, user.getId());
         return ResponseEntity.ok(response);
     }
 
