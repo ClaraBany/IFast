@@ -1,11 +1,12 @@
-import BackButton from "@shared/components/BackButton";
 import { useAuthStore } from "@auth/authStore";
 import { Link, useParams } from "react-router";
-import { CircleUserRound, LoaderCircle, SquarePen } from "lucide-react";
+import { LoaderCircle, SquarePen } from "lucide-react";
 import { Ripples } from "react-ripples-continued";
 import { getProfile } from "./userService";
 import { useQuery } from "@tanstack/react-query";
 import RetryError from "@shared/components/RetryError";
+import { PageHeader } from "@shared/components/PageHeader";
+import ProfilePicture from "@shared/components/ProfilePicture";
 
 export default function Profile() {
   const authUser = useAuthStore((state) => state.user);
@@ -38,27 +39,17 @@ export default function Profile() {
   return (
     <>
       <title>Perfil</title>
-      <header className="flex-center w-full justify-between">
-        <div className="flex-center gap-2.5">
-          <BackButton />
-
-          <h2>Perfil</h2>
-        </div>
-
+      <PageHeader title="Perfil">
         {authUser?.id == userId && (
           <Link to={"/users/updateProfile"} className="icon-btn">
             <SquarePen className="text-secondary" size={24} />
             <Ripples color="var(--ripple-dark)" />
           </Link>
         )}
-      </header>
+      </PageHeader>
 
       <section className="flex-column items-center gap-1.5">
-        {profile.user.pictureUrl ? (
-          <img src={profile.user.pictureUrl} className="size-30 rounded-full" />
-        ) : (
-          <CircleUserRound size={120} strokeWidth={1} />
-        )}
+        <ProfilePicture url={profile.user.pictureUrl} size="xl" />
         <h3>{profile.user.name}</h3>
       </section>
 

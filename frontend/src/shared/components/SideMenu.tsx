@@ -1,8 +1,9 @@
 import { useAuthStore } from "@auth/authStore";
-import { CircleUserRound, Car, RotateCcwClock, RefreshCcw, Plus, LayoutDashboard, LogOut } from "lucide-react";
+import { Car, RotateCcwClock, RefreshCcw, Plus, LayoutDashboard, LogOut } from "lucide-react";
 import { Ripples } from "react-ripples-continued";
 import { Link } from "react-router";
 import { Drawer } from "vaul";
+import ProfilePicture from "./ProfilePicture";
 
 interface SideMenuProps {
   open: boolean;
@@ -20,11 +21,7 @@ export default function SideMenu({ open, setOpen }: SideMenuProps) {
         <Drawer.Content className="fixed top-0 bottom-0 left-0 my-20 flex w-[320px] rounded-e-2xl bg-white">
           <div className="flex-column w-full items-start gap-5 overflow-y-auto p-6">
             <Link to={`/users/${user!.id}`} onClick={() => setOpen(false)} className="flex-center gap-2.5">
-              {user?.pictureUrl ? (
-                <img src={user.pictureUrl} className="size-13.75 rounded-full" />
-              ) : (
-                <CircleUserRound size={55} strokeWidth={1} />
-              )}
+              <ProfilePicture url={user?.pictureUrl} size="lg" />
               <h3>{user?.name ?? "Usuário"}</h3>
             </Link>
 

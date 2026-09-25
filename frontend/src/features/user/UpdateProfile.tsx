@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import BackButton from "@shared/components/BackButton";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { updateProfileSchema } from "./userTypes";
@@ -7,6 +6,7 @@ import { updateProfile } from "./userService";
 import { LoaderCircle } from "lucide-react";
 import { useAuthStore } from "@auth/authStore";
 import { useNavigate } from "react-router";
+import { PageHeader } from "@shared/components/PageHeader";
 
 export default function UpdateProfile() {
   const user = useAuthStore((state) => state.user);
@@ -45,13 +45,7 @@ export default function UpdateProfile() {
   return (
     <>
       <title>Editar Perfil</title>
-      <header className="flex-center w-full justify-between">
-        <div className="flex-center gap-2.5">
-          <BackButton />
-
-          <h2>Editar Perfil</h2>
-        </div>
-      </header>
+      <PageHeader title="Editar Pefil" />
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex-column flex-1 gap-7.5">
         <section className="flex-column gap-7.5 rounded-[20px] bg-white p-4">
