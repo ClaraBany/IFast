@@ -6,3 +6,11 @@ export const vehicleSchema = z.object({
   plate: z.string().length(7, "O campo deve conter 7 caracteres").nullable().or(z.literal("")),
   capacity: z.coerce.number().int().positive().nullable().or(z.literal("")),
 });
+
+export interface Vehicle {
+  id: number;
+  model: string;
+  color: string;
+  plate: string | null;
+  capacity: number | null;
+}
