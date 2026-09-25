@@ -2,7 +2,9 @@ package backend.vehicle;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import backend.validation.ValidationPatterns;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +26,10 @@ public class VehicleDto {
 
     private Integer capacity;
 
+    @Pattern(
+        regexp = "(" + ValidationPatterns.PLATE + ")|(" + ValidationPatterns.PLATE_MERCOSUL + ")",
+        message = "A placa deve seguir o padrão antigo (ABC1234) ou Mercosul (ABC1D23)"
+    )
     private String plate;
 
     public VehicleDto(Vehicle vehicle) {
