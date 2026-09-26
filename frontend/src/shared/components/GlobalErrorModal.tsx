@@ -2,7 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { useErrorStore } from "@shared/errorStore";
 import { CircleX } from "lucide-react";
 
-export function GlobalErrorAlert() {
+export function GlobalErrorModal() {
   const { globalError, clearGlobalError } = useErrorStore();
 
   if (!globalError) return null;
