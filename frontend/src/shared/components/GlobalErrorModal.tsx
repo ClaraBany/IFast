@@ -2,7 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { useErrorStore } from "@shared/errorStore";
 import { CircleX } from "lucide-react";
 
-export function GlobalErrorAlert() {
+export function GlobalErrorModal() {
   const { globalError, clearGlobalError } = useErrorStore();
 
   if (!globalError) return null;
@@ -10,8 +10,8 @@ export function GlobalErrorAlert() {
   return (
     <Dialog.Root open={!!globalError} onOpenChange={(open) => !open && clearGlobalError()}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-[1.5px]" />
-        <Dialog.Content className="fixed inset-0 m-auto flex-center h-fit w-[calc(100%-40px)] max-w-sm flex-col gap-4 rounded-xl bg-white p-5 sm:max-w-md">
+        <Dialog.Overlay className="modal-overlay" />
+        <Dialog.Content className="modal-content">
           <div className="text-danger">
             <CircleX size={45} strokeWidth={1.5} />
             <h3>Erro</h3>

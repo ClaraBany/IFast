@@ -12,6 +12,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -63,7 +64,12 @@ public class GlobalExceptionHandler {
         return buildResponse(e, request, HttpStatus.UNPROCESSABLE_CONTENT, "Falha na validação", details);
     }
 
-    @ExceptionHandler({MissingServletRequestParameterException.class, MethodArgumentTypeMismatchException.class})
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleEntityNotFound(EntityNotFoundException e, HttpServletRequest request) {
+        return buildResponse(e, request, HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage(), null);
+    }
+
+    @ExceptionHandler({MissingServletRequestParameterException.class, MissingPathVariableException.class, MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ErrorResponseDto> handleBadParameter(Exception e, HttpServletRequest request) {
         return buildResponse(e, request, HttpStatus.BAD_REQUEST, "Parâmetros inválidos", null);
     }
