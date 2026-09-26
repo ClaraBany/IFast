@@ -1,4 +1,4 @@
-package backend.auth;
+package backend.user;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -11,7 +11,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nimbusds.openid.connect.sdk.claims.Address;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -47,8 +46,8 @@ public class User implements UserDetails{
     @Column(nullable = true)
     private String phoneNumber;
 
-    @Embedded
-    private Address address;
+    @Column(nullable = true)
+    private String address;
 
     @CreatedDate
     @Column(updatable = false)

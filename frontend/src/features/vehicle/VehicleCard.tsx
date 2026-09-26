@@ -3,7 +3,7 @@ import { SquarePen, Trash2, Car, LoaderCircle } from "lucide-react";
 import { del } from "./VehicleService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router";
-import { ConfirmModal } from "@/shared/components/DeleteConfirmation";
+import { ConfirmModal } from "@shared/components/DeleteConfirmation";
 import { useState } from "react";
 
 type VehicleCardProps = {
