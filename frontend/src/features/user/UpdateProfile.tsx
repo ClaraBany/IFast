@@ -3,15 +3,20 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 import { updateProfileSchema } from "./userTypes";
 import { updateProfile } from "./userService";
-import { LoaderCircle } from "lucide-react";
 import { useAuthStore } from "@auth/authStore";
 import { useNavigate } from "react-router";
 import { PageHeader } from "@shared/components/PageHeader";
+import { useQueryClient } from "@tanstack/react-query";
+import SubmitButton from "@shared/components/SubmitButton";
+import { SuccessModal } from "@shared/components/SucessModal";
+import { useState } from "react";
 
 export default function UpdateProfile() {
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [successOpen, setSuccessOpen] = useState(false);
 
   const {
     register,
@@ -29,7 +34,8 @@ export default function UpdateProfile() {
 
   const onSubmit = async (data: z.infer<typeof updateProfileSchema>) => {
     setUser(await updateProfile(data));
-    navigate(-1);
+    queryClient.invalidateQueries({ queryKey: ["profile"] });
+    setSuccessOpen(true);
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -47,8 +53,8 @@ export default function UpdateProfile() {
       <title>Editar Perfil</title>
       <PageHeader title="Editar Pefil" />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex-column flex-1 gap-7.5">
-        <section className="flex-column gap-7.5 rounded-[20px] bg-white p-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex-column flex-1">
+        <section className="form-fields">
           <div className="field">
             <label htmlFor="name">Nome</label>
             <input
@@ -92,11 +98,16 @@ export default function UpdateProfile() {
           </div>
         </section>
 
-        <button disabled={isSubmitting} type="submit" className="btn btn-lg mt-auto bg-primary">
-          {isSubmitting && <LoaderCircle className="animate-spin" />}
-          Salvar Mudanças
-        </button>
+        <SubmitButton isSubmitting={isSubmitting} text="Salvar Mudanças" />
       </form>
+      <SuccessModal
+        message="Perfil atualizado com sucesso!"
+        open={successOpen}
+        onClose={() => {
+          setSuccessOpen(false);
+          navigate(-1);
+        }}
+      />
     </>
   );
 }

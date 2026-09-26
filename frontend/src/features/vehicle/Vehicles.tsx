@@ -1,11 +1,19 @@
 import VehicleCard from "./VehicleCard";
 import { getAll } from "./VehicleService";
-import { ArrowLeft, LoaderCircle, Plus } from "lucide-react";
+import { LoaderCircle, Plus } from "lucide-react";
 import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
+import { PageHeader } from "@shared/components/PageHeader";
+import RetryError from "@shared/components/RetryError";
 
 export default function Vehicles() {
-  const { data: vehicles = [], isLoading } = useQuery({
+  const {
+    data: vehicles = [],
+    isLoading,
+    isFetching,
+    refetch,
+    isError,
+  } = useQuery({
     queryKey: ["vehicles"],
     queryFn: getAll,
   });
@@ -18,17 +26,16 @@ export default function Vehicles() {
     );
   }
 
-  return (
-    <div className="relative flex flex-col gap-7.5 mb-16">
-      <title>Veículos</title>
-      <div className="flex-center gap-2.5 self-start">
-        <Link to={"/offer"}>
-          <ArrowLeft />
-        </Link>
+  if (isError) {
+    return <RetryError onRetry={refetch} isFetching={isFetching} />;
+  }
 
-        <h2>Meus veículos</h2>
-      </div>
-      <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
+  return (
+    <>
+      <title>Veículos</title>
+      <PageHeader title="Meus veículos" />
+
+      <div className="mb-16 grid grid-cols-1 gap-7.5 md:grid-cols-2">
         {vehicles.length === 0 ? (
           <p className="text-neutral-dark">Você ainda não tem nenhum veículo cadastrado.</p>
         ) : (
@@ -36,13 +43,10 @@ export default function Vehicles() {
         )}
       </div>
 
-      <Link
-        to={"/vehicles/create"}
-      className="btn btn-lg fixed right-5 bottom-25 w-fit bg-primary"
-      >
+      <Link to={"/vehicles/create"} className="btn btn-lg fixed right-5 bottom-25 w-fit bg-primary">
         <Plus size={24} />
         Cadastrar Veículo
       </Link>
-    </div>
+    </>
   );
 }
