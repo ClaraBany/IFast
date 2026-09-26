@@ -12,14 +12,15 @@ export default function Vehicles() {
 
   if (isLoading) {
     return (
-      <div className="flex-center min-h-dvh">
-        <LoaderCircle className="animate-spin" />
+      <div className="flex-center flex-1">
+        <LoaderCircle className="animate-spin text-primary" size={40} />
       </div>
     );
   }
 
   return (
-    <div className="relative flex flex-col gap-7.5">
+    <div className="relative flex flex-col gap-7.5 mb-16">
+      <title>Veículos</title>
       <div className="flex-center gap-2.5 self-start">
         <Link to={"/offer"}>
           <ArrowLeft />
@@ -35,9 +36,12 @@ export default function Vehicles() {
         )}
       </div>
 
-      <Link to={"/vehicles/create"} className="btn btn-lg fixed right-5 bottom-25 w-fit bg-primary">
-          <Plus size={24} />
-          Cadastrar Veículo
+      <Link
+        to={"/vehicles/create"}
+      className="btn btn-lg fixed right-5 bottom-25 w-fit bg-primary"
+      >
+        <Plus size={24} />
+        Cadastrar Veículo
       </Link>
     </div>
   );
