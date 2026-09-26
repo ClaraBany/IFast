@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import backend.auth.User;
+import backend.user.User;
 import backend.exceptions.EntityNotFoundException;
 
 @Service 

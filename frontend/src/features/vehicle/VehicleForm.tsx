@@ -4,7 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { Ripples } from "react-ripples-continued";
 import { useState, useEffect } from "react";
-import { SuccessModal } from "@/shared/components/SucessModal";
+import { SuccessModal } from "@shared/components/SucessModal";
 import { ArrowLeft, LoaderCircle, Plus, Minus } from "lucide-react";
 import { Link, useParams } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
