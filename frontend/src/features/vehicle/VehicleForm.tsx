@@ -1,5 +1,5 @@
-import { vehicleSchema } from "./VehicleTypes";
-import { create, get, update } from "./VehicleService";
+import { vehicleSchema } from "./vehicletypes";
+import { create, get, update } from "./vehicleService";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { Ripples } from "react-ripples-continued";

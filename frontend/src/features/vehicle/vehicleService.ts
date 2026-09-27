@@ -1,7 +1,7 @@
-import { vehicleSchema } from "./VehicleTypes";
+import { vehicleSchema } from "./vehicletypes";
 import { api } from "@shared/api";
 import type z from "zod";
-import type { Vehicle } from "./VehicleTypes";
+import type { Vehicle } from "./vehicletypes";
 
 export async function create(vehicle: z.infer<typeof vehicleSchema>): Promise<Vehicle> {
   const payload = {

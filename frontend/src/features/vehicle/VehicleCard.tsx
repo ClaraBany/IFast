@@ -1,6 +1,6 @@
-import type { Vehicle } from "./VehicleTypes";
+import type { Vehicle } from "./vehicletypes";
 import { SquarePen, Trash2, Car, LoaderCircle } from "lucide-react";
-import { del } from "./VehicleService";
+import { del } from "./vehicleService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router";
 import { ConfirmModal } from "@shared/components/DeleteConfirmation";
@@ -23,7 +23,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   });
 
   return (
-    <div className="box-shadow relative flex max-w-150 justify-between overflow-hidden rounded-2xl border border-neutral-dark bg-white px-5 py-2.5">
+    <div className="relative flex max-w-150 justify-between overflow-hidden rounded-2xl border border-neutral-dark bg-white px-5 py-2.5 box-shadow">
       <div className="absolute top-0 right-0 flex-center h-9 w-9 rounded-bl-2xl bg-neutral-dark text-white">
         <Car className="h-6 w-6" />
       </div>

@@ -1,5 +1,5 @@
 import VehicleCard from "./VehicleCard";
-import { getAll } from "./VehicleService";
+import { getAll } from "./vehicleService";
 import { LoaderCircle, Plus } from "lucide-react";
 import { Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
