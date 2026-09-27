@@ -3,7 +3,7 @@ import { SquarePen, Trash2, Car, LoaderCircle } from "lucide-react";
 import { del } from "./vehicleService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router";
-import { ConfirmModal } from "@shared/components/DeleteConfirmation";
+import { DeleteModal } from "@shared/components/DeleteModal";
 import { useState } from "react";
 
 type VehicleCardProps = {
@@ -55,7 +55,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
           {isPending ? <LoaderCircle className="animate-spin" /> : <Trash2 />}
         </button>
       </div>
-      <ConfirmModal
+      <DeleteModal
         open={confirmOpen}
         title="Excluir veículo"
         message={`Tem certeza que deseja excluir esse veículo?`}
