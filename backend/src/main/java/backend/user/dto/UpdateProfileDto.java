@@ -1,6 +1,6 @@
 package backend.user.dto;
 
-import backend.user.Address;
+import backend.validation.ValidationPatterns;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -13,6 +13,6 @@ public record UpdateProfileDto(
     @Size(min= 10, message = "O endereço deve ter pelo menos 10 caracteres")
     String address,
 
-    @Pattern(regexp = "^\\(\\d{2}\\) \\d{5}-\\d{4}$", message = "Telefone inválido")
+    @Pattern(regexp = ValidationPatterns.PHONE, message = "Telefone inválido")
     String phoneNumber
 ) {}
