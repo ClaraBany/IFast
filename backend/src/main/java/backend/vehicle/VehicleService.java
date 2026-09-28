@@ -32,7 +32,7 @@ public class VehicleService {
 
     public VehicleDto get(Long vehicleId, User user){
         Vehicle vehicle = vehicleRepository.findByIdAndUser(vehicleId, user)
-            .orElseThrow(() -> new EntityNotFoundException());
+            .orElseThrow(EntityNotFoundException::new);
         
         return new VehicleDto(vehicle);
     }
