@@ -11,7 +11,7 @@ import SubmitButton from "@shared/components/SubmitButton";
 import { SuccessModal } from "@shared/components/SucessModal";
 import { useState } from "react";
 
-export default function UpdateProfile() {
+export default function ProfileForm() {
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
   const navigate = useNavigate();

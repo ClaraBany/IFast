@@ -19,6 +19,6 @@ export async function updateProfile(data: z.infer<typeof updateProfileSchema>): 
     address: data.address?.trim() === "" ? undefined : data.address,
   };
 
-  const response = await api.put<User>("/users", payload);
+  const response = await api.put<User>("/users/me", payload);
   return response.data;
 }

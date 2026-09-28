@@ -10,7 +10,7 @@ import ProfilePicture from "@shared/components/ProfilePicture";
 
 export default function Profile() {
   const authUser = useAuthStore((state) => state.user);
-  const { userId } = useParams();
+  const { id } = useParams();
 
   const {
     data: profile,
@@ -19,9 +19,8 @@ export default function Profile() {
     isError,
     refetch,
   } = useQuery({
-    queryKey: ["profile", userId],
-    queryFn: () => getProfile(Number(userId)),
-    retry: false,
+    queryKey: ["profile", id],
+    queryFn: () => getProfile(Number(id)),
   });
 
   if (isLoading) {
@@ -40,8 +39,8 @@ export default function Profile() {
     <>
       <title>Perfil</title>
       <PageHeader title="Perfil">
-        {authUser?.id == userId && (
-          <Link to={"/users/updateProfile"} className="icon-btn">
+        {authUser?.id == id && (
+          <Link to={"/profile/edit"} className="icon-btn">
             <SquarePen className="text-secondary" size={24} />
             <Ripples color="var(--ripple-dark)" />
           </Link>
@@ -87,7 +86,7 @@ export default function Profile() {
             <span className="text-label">Contato: </span>
             {profile.user.phoneNumber ?? "(não definido)"}
           </p>
-          {authUser?.id == userId && (
+          {authUser?.id == id && (
             <p>
               <span className="text-label">Endereço: </span>
               {profile.user.address ?? "(não definido)"}

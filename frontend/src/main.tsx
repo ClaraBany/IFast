@@ -18,7 +18,7 @@ import { LoaderCircle } from "lucide-react";
 import RequireAuth from "@auth/RequireAuth";
 import RequireGuest from "@auth/RequireGuest";
 import Profile from "@user/Profile";
-import UpdateProfile from "@user/UpdateProfile";
+import ProfileForm from "@user/ProfileForm.tsx";
 import Vehicles from "@vehicle/Vehicles";
 import VehicleForm from "@vehicle/VehicleForm.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -54,8 +54,8 @@ const router = createBrowserRouter([
           { path: "/offer", element: <Offer /> },
           { path: "/myrides", element: <MyRides /> },
           { path: "/request", element: <Request /> },
-          { path: "/users/:userId", element: <Profile /> },
-          { path: "/users/updateProfile", element: <UpdateProfile /> },
+          { path: "/users/:id", element: <Profile /> },
+          { path: "/profile/edit", element: <ProfileForm /> },
           { path: "/vehicles", element: <Vehicles /> },
           { path: "/vehicles/create", element: <VehicleForm /> },
           { path: "/vehicles/:id/edit", element: <VehicleForm /> },
