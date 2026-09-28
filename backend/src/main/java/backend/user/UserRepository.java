@@ -1,4 +1,4 @@
-package backend.auth;
+package backend.user;
 
 import java.util.Optional;
 

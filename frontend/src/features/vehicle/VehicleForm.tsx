@@ -1,15 +1,17 @@
-import { vehicleSchema } from "./VehicleTypes";
-import { create, get, update } from "./VehicleService";
+import { vehicleSchema } from "./vehicleTypes";
+import { create, get, update } from "./vehicleService";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { Ripples } from "react-ripples-continued";
 import { useState, useEffect } from "react";
-import { SuccessModal } from "@/shared/components/SucessModal";
-import { ArrowLeft, LoaderCircle, Plus, Minus } from "lucide-react";
-import { Link, useParams } from "react-router";
+import { SuccessModal } from "@shared/components/SucessModal";
+import { LoaderCircle, Plus, Minus } from "lucide-react";
+import { useParams } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { PageHeader } from "@shared/components/PageHeader";
+import SubmitButton from "@shared/components/SubmitButton";
 
 export default function VehicleForm() {
   const { id } = useParams();
@@ -61,18 +63,12 @@ export default function VehicleForm() {
   }
 
   return (
-    <div className="flex-column w-full items-center justify-center gap-3">
+    <>
       <title>Veículos</title>
-      <div className="flex-center flex gap-2.5 self-start">
-        <Link to={"/vehicles"}>
-          <ArrowLeft />
-        </Link>
+      <PageHeader title={isEditMode ? "Editar veículo" : "Cadastrar veículo"} />
 
-        <h2>{isEditMode ? "Editar veículo" : "Cadastrar veículo"}</h2>
-      </div>
-
-      <form className="flex-center w-full flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
-        <div className="grid w-full grid-cols-1 gap-4 rounded-2xl bg-white px-5 py-4 md:grid-cols-2">
+      <form className="flex-column flex-1" onSubmit={handleSubmit(onSubmit)}>
+        <div className="form-fields">
           <div className="field">
             <label htmlFor="model">Modelo</label>
             <input
@@ -153,15 +149,8 @@ export default function VehicleForm() {
             {errors.capacity && <span>{errors.capacity.message}</span>}
           </div>
         </div>
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="btn btn-lg mt-auto bg-primary md:max-w-92.5 md:self-end"
-        >
-          {isSubmitting && <LoaderCircle className="animate-spin" />}
-          {isEditMode ? "Salvar Veículo" : "Cadastrar Veículo"}
-          <Ripples color="var(--ripple-light)" />
-        </button>
+
+        <SubmitButton isSubmitting={isSubmitting} text={isEditMode ? "Salvar Veículo" : "Cadastrar Veículo"} />
       </form>
       <SuccessModal
         message={isEditMode ? "Veículo atualizado com sucesso!" : "Veículo cadastrado com sucesso!"}
@@ -171,6 +160,6 @@ export default function VehicleForm() {
           navigate("/vehicles");
         }}
       />
-    </div>
+    </>
   );
 }

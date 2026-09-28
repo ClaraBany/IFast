@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
-import backend.auth.User;
-import backend.auth.UserRepository;
+import backend.user.User;
+import backend.user.UserRepository;
 import backend.exceptions.InvalidCredentialsException;
 import backend.exceptions.TokenJwtInvalidException;
 import jakarta.servlet.FilterChain;

@@ -8,7 +8,7 @@ import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { loginSchema } from "./authTypes";
 import { useAuthStore } from "./authStore";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
-import { ApiError } from "@/shared/api";
+import { ApiError } from "@shared/api";
 import { useErrorStore } from "@shared/errorStore";
 
 export default function Login() {

@@ -1,7 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { OctagonAlert, LoaderCircle } from "lucide-react";
 
-type ConfirmModalProps = {
+type DeleteModalProps = {
   title: string;
   message: string;
   open: boolean;
@@ -10,7 +10,7 @@ type ConfirmModalProps = {
   onCancel: () => void;
 };
 
-export function ConfirmModal({ title, message, open, isLoading = false, onConfirm, onCancel }: ConfirmModalProps) {
+export function DeleteModal({ title, message, open, isLoading = false, onConfirm, onCancel }: DeleteModalProps) {
   return (
     <Dialog.Root open={open} onOpenChange={(open) => !open && !isLoading && onCancel()}>
       <Dialog.Portal>

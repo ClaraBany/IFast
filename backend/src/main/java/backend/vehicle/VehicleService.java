@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import backend.auth.User;
+import backend.user.User;
 import backend.exceptions.EntityNotFoundException;
 
 @Service 
@@ -32,7 +32,7 @@ public class VehicleService {
 
     public VehicleDto get(Long vehicleId, User user){
         Vehicle vehicle = vehicleRepository.findByIdAndUser(vehicleId, user)
-            .orElseThrow(() -> new EntityNotFoundException());
+            .orElseThrow(EntityNotFoundException::new);
         
         return new VehicleDto(vehicle);
     }
@@ -46,14 +46,14 @@ public class VehicleService {
 
     public void delete(Long vehicleId, User user){
         Vehicle vehicle = vehicleRepository.findByIdAndUser(vehicleId, user)
-            .orElseThrow(() -> new EntityNotFoundException());
+            .orElseThrow(EntityNotFoundException::new);
         
         vehicleRepository.delete(vehicle);
     }
 
     public VehicleDto update(Long vehicleId, VehicleDto vehicleDto, User user){
         Vehicle vehicle = vehicleRepository.findByIdAndUser(vehicleId, user)
-            .orElseThrow(() -> new EntityNotFoundException());
+            .orElseThrow(EntityNotFoundException::new);
 
         vehicle.setModel(vehicleDto.getModel());
         vehicle.setColor(vehicleDto.getColor());

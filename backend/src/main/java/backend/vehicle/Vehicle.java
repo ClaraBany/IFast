@@ -2,7 +2,7 @@ package backend.vehicle;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import backend.auth.User;
+import backend.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

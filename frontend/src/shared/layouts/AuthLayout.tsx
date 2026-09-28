@@ -1,7 +1,7 @@
 import { Outlet } from "react-router";
 import Logo from "@assets/logo-primary.png";
 import { useLayoutEffect } from "react";
-import { GlobalErrorModal } from "@/shared/components/GlobalErrorModal";
+import { GlobalErrorModal } from "@shared/components/GlobalErrorModal";
 
 export default function AuthLayout() {
   useLayoutEffect(() => {

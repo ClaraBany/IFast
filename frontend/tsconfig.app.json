@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"],
       "@shared/*": ["./src/shared/*"],
       "@assets/*": ["./src/shared/assets/*"],
       "@auth/*": ["./src/features/auth/*"],
       "@dashboard/*": ["./src/features/dashboard/*"],
       "@my-rides/*": ["./src/features/my-rides/*"],
       "@notification/*": ["./src/features/notification/*"],
-      "@profile/*": ["./src/features/profile/*"],
+      "@user/*": ["./src/features/user/*"],
       "@ride-offer/*": ["./src/features/ride-offer/*"],
       "@ride-request/*": ["./src/features/ride-request/*"],
       "@vehicle/*": ["./src/features/vehicle/*"]

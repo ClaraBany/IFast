@@ -1,10 +1,11 @@
-import type { User } from "@shared/types";
+import type { User } from "@user/userTypes";
 import { create } from "zustand";
 import { loginSchema, registerSchema } from "./authTypes";
 import * as authService from "./authService";
 import type { AuthResponse } from "./authTypes";
 import type z from "zod";
 import { clearAccessToken, getAccessToken, setAccessToken } from "./authStorage";
+import { getMe } from "@user/userService";
 
 interface AuthState {
   user: User | null;
@@ -54,7 +55,7 @@ export const useAuthStore = create<AuthState>()((set) => {
       }
 
       try {
-        const user = await authService.getMe();
+        const user = await getMe();
         set({ user, isLoading: false });
       } catch {
         clearAccessToken();
