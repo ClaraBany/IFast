@@ -8,7 +8,7 @@ export default function NavBar() {
   return (
     <nav className="fixed bottom-0 left-0 z-10 h-20 w-full bg-primary text-label text-white">
       <div className="flex h-full w-full items-center justify-between px-5 md:mx-auto md:w-100">
-        <NavLink to={"/offer"} className="navlink group">
+        <NavLink to={"/offers"} className="navlink group">
           <img src={RideOffer} alt="Ofertas" />
           <span>Ofertas</span>
           <div className="active-bar" />

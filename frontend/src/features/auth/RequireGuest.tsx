@@ -8,7 +8,7 @@ export default function RequireGuest() {
   if (user) {
     const { from } = (location.state as { from?: Location }) ?? {};
 
-    return <Navigate to={from ?? "/offer"} replace />;
+    return <Navigate to={from ?? "/offers"} replace />;
   }
 
   return <Outlet />;

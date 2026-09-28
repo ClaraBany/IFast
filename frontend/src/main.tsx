@@ -11,7 +11,7 @@ import AuthLayout from "@shared/layouts/AuthLayout.tsx";
 import MainLayout from "@shared/layouts/MainLayout";
 import Login from "@auth/Login";
 import Register from "@auth/Register";
-import Offer from "@ride-offer/Offer";
+import Offers from "@ride-offer/Offers.tsx";
 import MyRides from "@my-rides/MyRides";
 import Request from "@ride-request/Request";
 import { LoaderCircle } from "lucide-react";
@@ -22,6 +22,8 @@ import ProfileForm from "@user/ProfileForm.tsx";
 import Vehicles from "@vehicle/Vehicles";
 import VehicleForm from "@vehicle/VehicleForm.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import OfferDetails from "@ride-offer/OfferDetails";
+import OfferForm from "@ride-offer/OfferForm";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,7 +53,10 @@ const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
           { path: "/", element: <App /> },
-          { path: "/offer", element: <Offer /> },
+          { path: "/offers", element: <Offers /> },
+          { path: "/offers/:id", element: <OfferDetails /> },
+          { path: "/offers/create", element: <OfferForm /> },
+          { path: "/offers/:id/edit", element: <OfferForm /> },
           { path: "/myrides", element: <MyRides /> },
           { path: "/request", element: <Request /> },
           { path: "/users/:id", element: <Profile /> },
