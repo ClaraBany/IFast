@@ -1,6 +1,6 @@
 package backend.user.dto;
 
-import backend.user.Address;
+import backend.user.Neighborhoods;
 import backend.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,7 @@ public class UserDto {
     private String email;
     private String pictureUrl;
     private String phoneNumber;
-    private String address;
+    private Neighborhoods address;
 
     public UserDto(User user) {
         this.id = user.getId();

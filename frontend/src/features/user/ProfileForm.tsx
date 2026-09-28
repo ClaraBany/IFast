@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { updateProfileSchema } from "./userTypes";
+import { Neighborhoods, updateProfileSchema } from "./userTypes";
 import { updateProfile } from "./userService";
 import { useAuthStore } from "@auth/authStore";
 import { useNavigate } from "react-router";
@@ -69,14 +69,23 @@ export default function ProfileForm() {
           </div>
 
           <div className="field">
-            <label htmlFor="address">Endereço</label>
+            <label htmlFor="address">Bairro</label>
             <input
               {...register("address")}
               aria-invalid={errors.address ? "true" : "false"}
               type="text"
-              placeholder="Digite seu endereço"
+              list="neighborhood-list"
+              autoComplete="off"
+              placeholder="Selecione seu bairro"
               id="address"
-            ></input>
+            />
+            <datalist id="neighborhood-list">
+              {Object.values(Neighborhoods)
+                .filter((name) => name !== "IFNMG")
+                .map((name) => (
+                  <option key={name} value={name} />
+                ))}
+            </datalist>
             {errors.address && <span>{errors.address.message}</span>}
           </div>
 

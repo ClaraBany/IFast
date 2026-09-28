@@ -46,8 +46,8 @@ public class User implements UserDetails{
     @Column(nullable = true)
     private String phoneNumber;
 
-    @Column(nullable = true)
-    private String address;
+    @Enumerated(EnumType.STRING)
+    private Neighborhoods address;
 
     @CreatedDate
     @Column(updatable = false)
