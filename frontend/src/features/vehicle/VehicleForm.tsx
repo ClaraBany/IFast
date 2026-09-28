@@ -1,4 +1,4 @@
-import { vehicleSchema } from "./vehicletypes";
+import { vehicleSchema } from "./vehicleTypes";
 import { create, get, update } from "./vehicleService";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";

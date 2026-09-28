@@ -1,4 +1,4 @@
-import type { Vehicle } from "./vehicletypes";
+import type { Vehicle } from "./vehicleTypes";
 import { SquarePen, Trash2, Car, LoaderCircle } from "lucide-react";
 import { del } from "./vehicleService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
