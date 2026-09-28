@@ -46,14 +46,14 @@ public class VehicleService {
 
     public void delete(Long vehicleId, User user){
         Vehicle vehicle = vehicleRepository.findByIdAndUser(vehicleId, user)
-            .orElseThrow(() -> new EntityNotFoundException());
+            .orElseThrow(EntityNotFoundException::new);
         
         vehicleRepository.delete(vehicle);
     }
 
     public VehicleDto update(Long vehicleId, VehicleDto vehicleDto, User user){
         Vehicle vehicle = vehicleRepository.findByIdAndUser(vehicleId, user)
-            .orElseThrow(() -> new EntityNotFoundException());
+            .orElseThrow(EntityNotFoundException::new);
 
         vehicle.setModel(vehicleDto.getModel());
         vehicle.setColor(vehicleDto.getColor());

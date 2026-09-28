@@ -13,7 +13,8 @@ public class UserService {
     private final UserRepository userRepository;
 
     public ProfileResponseDto getProfile(Long id, Long currentUserId) {
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        User user = userRepository.findById(id)
+            .orElseThrow(EntityNotFoundException::new);
 
         Long ridesAsDriverCount = 0L; //TODO: Adicionar logica de contagem quando feat carona estiver pronta
         Long ridesAsPassengerCount = 0L;
@@ -26,7 +27,8 @@ public class UserService {
     }
 
     public UserDto updateProfile(UpdateProfileDto updateProfileDto, Long id) {
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        User user = userRepository.findById(id)
+            .orElseThrow(EntityNotFoundException::new);
 
         user.setName(updateProfileDto.name());
         user.setAddress(updateProfileDto.address());

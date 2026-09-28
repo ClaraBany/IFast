@@ -41,7 +41,7 @@ public class AuthService {
 
     public AuthResponseDto login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.email())
-            .orElseThrow(() -> new InvalidCredentialsException());
+            .orElseThrow(InvalidCredentialsException::new);
 
         if(user.getPassword() == null){
             throw new GoogleAccountException();
