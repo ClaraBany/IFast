@@ -49,7 +49,7 @@ export default function Profile() {
 
       <section className="flex-column items-center gap-1.5">
         <ProfilePicture url={profile.user.pictureUrl} size="xl" />
-        <h3>{profile.user.name}</h3>
+        <h3 className="text-center">{profile.user.name}</h3>
       </section>
 
       <section className="flex-column w-full gap-2.5">
