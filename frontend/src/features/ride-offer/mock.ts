@@ -21,7 +21,7 @@ const users: User[] = [
   },
   {
     id: 3,
-    name: "Carlos Silva",
+    name: "Beatriz Lima",
     email: "carlos@email.com",
     pictureUrl: "https://i.pravatar.cc/150?u=carlos",
     phoneNumber: "(33) 99999-0003",
@@ -45,7 +45,7 @@ const users: User[] = [
   },
   {
     id: 6,
-    name: "Beatriz Lima",
+    name: "Carlos Silva",
     email: "beatriz@email.com",
     pictureUrl: "https://i.pravatar.cc/150?u=beatriz",
     phoneNumber: "(33) 99999-0006",

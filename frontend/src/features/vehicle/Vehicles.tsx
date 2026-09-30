@@ -43,7 +43,7 @@ export default function Vehicles() {
         )}
       </div>
 
-      <Link to={"/vehicles/create"} className="btn btn-lg fixed right-5 bottom-25 w-fit bg-primary">
+      <Link to={"/vehicles/create"} className="btn btn-lg fixed right-5 bottom-21 w-fit bg-primary">
         <Plus size={24} />
         Cadastrar Veículo
       </Link>

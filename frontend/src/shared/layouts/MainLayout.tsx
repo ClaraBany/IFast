@@ -9,7 +9,7 @@ export default function MainLayout() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="relative flex min-h-screen bg-neutral-light py-26">
+    <div className="relative flex min-h-screen bg-neutral-light py-22">
       <GlobalErrorModal />
 
       <Header open={open} setOpen={setOpen} />
