@@ -258,7 +258,9 @@ export default function OfferForm() {
           </div>
 
           <div className="field md:col-span-2">
-            <label htmlFor="description">Descrição</label>
+            <label htmlFor="description">
+              Descrição <span className="text-neutral-dark">(Opcional)</span>
+            </label>
             <textarea
               {...register("description")}
               aria-invalid={errors.description ? "true" : "false"}
