@@ -5,14 +5,18 @@ import { Link, useParams } from "react-router";
 import { ArrowRight, LoaderCircle, SquarePen, Trash2 } from "lucide-react";
 import { Ripples } from "react-ripples-continued";
 import ProfilePicture from "@shared/components/ProfilePicture";
-import { useQuery } from "@tanstack/react-query";
-import { get } from "./offerService";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { del, get } from "./offerService";
 import RetryError from "@shared/components/RetryError";
 import { mockOffers } from "./mock";
+import { useState } from "react";
+import { DeleteModal } from "@shared/components/DeleteModal";
 
 export default function OfferDetails() {
   const { id } = useParams();
   const user = useAuthStore((state) => state.user);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const {
     data: offer = mockOffers.find((o) => o.id === Number(id)),
@@ -24,6 +28,13 @@ export default function OfferDetails() {
     queryKey: ["offers", id],
     queryFn: () => get(Number(id)),
     enabled: false,
+  });
+
+  const { mutate: deleteOffer, isPending } = useMutation({
+    mutationFn: (id: number) => del(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["offers"] });
+    },
   });
 
   if (isLoadingOffer) {
@@ -65,10 +76,9 @@ export default function OfferDetails() {
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={`/offers/${offer.id}`} className="icon-btn">
-              <Trash2 className="text-danger" size={24} />
-              <Ripples color="var(--ripple-dark)" />
-            </Link>
+            <button className="icon-btn text-danger" onClick={() => setDeleteOpen(true)} disabled={isPending}>
+              {isPending ? <LoaderCircle className="animate-spin" /> : <Trash2 />}
+            </button>
           </>
         )}
       </PageHeader>
@@ -168,6 +178,14 @@ export default function OfferDetails() {
           <Ripples color="var(--ripple-light)" />
         </button>
       )}
+      <DeleteModal
+        open={deleteOpen}
+        title="Excluir Oferta"
+        message={`Tem certeza que deseja excluir essa oferta?`}
+        isLoading={isPending}
+        onConfirm={() => deleteOffer(offer.id)}
+        onCancel={() => setDeleteOpen(false)}
+      />
     </>
   );
 }
