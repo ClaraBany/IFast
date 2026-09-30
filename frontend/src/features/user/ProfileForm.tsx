@@ -53,7 +53,7 @@ export default function ProfileForm() {
       <title>Editar Perfil</title>
       <PageHeader title="Editar Pefil" />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex-column flex-1">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex-column flex-1 gap-4">
         <section className="form-fields">
           <div className="field">
             <label htmlFor="name">Nome</label>

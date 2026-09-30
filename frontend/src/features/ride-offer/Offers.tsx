@@ -164,7 +164,7 @@ export default function Offers() {
     <>
       <title>Ofertas</title>
       <div className="flex-center w-full justify-between">
-        <h2>Ofertas</h2>
+        <h2>Caronas Ofertadas</h2>
 
         <button className="icon-btn bg-white" onClick={() => setOpen(!open)}>
           <SlidersHorizontal size={30} />

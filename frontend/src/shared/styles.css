@@ -92,7 +92,7 @@
 
 @layer components {
   .form-fields {
-    @apply grid w-full grid-cols-1 gap-4 rounded-2xl bg-white px-5 py-4 md:grid-cols-2;
+    @apply grid w-full grid-cols-1 gap-5 rounded-2xl bg-white px-5 py-4 md:grid-cols-2;
   }
 
   .field {
@@ -161,6 +161,14 @@
 
   .modal-overlay {
     @apply fixed inset-0 bg-black/40 backdrop-blur-[1.5px];
+  }
+
+  .switch-root {
+    @apply h-4.5 w-9.25 shrink-0 cursor-pointer rounded-full bg-neutral-dark transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 data-[state=checked]:bg-primary;
+  }
+
+  .switch-thumb {
+    @apply block size-5 -translate-y-px rounded-full bg-neutral-light transition-transform data-[state=checked]:translate-x-4.75 data-[state=unchecked]:-translate-x-1;
   }
 }
 
