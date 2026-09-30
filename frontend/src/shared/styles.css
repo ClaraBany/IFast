@@ -140,10 +140,10 @@
   }
 
   .navlink {
-    @apply relative flex-center flex-col overflow-hidden rounded p-1 transition-colors hover:bg-black/10;
+    @apply relative flex-center flex-col overflow-hidden rounded p-0.5 transition-colors hover:bg-black/10;
 
     img {
-      @apply h-7;
+      @apply h-6;
     }
 
     .active-bar {
