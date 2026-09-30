@@ -4,7 +4,7 @@ import z from "zod";
 
 export interface Offer {
   id: number;
-  status: "Available" | "Completed";
+  status: "Available" | "Completed" | "Full";
 
   owner: User;
   passengers: User[];

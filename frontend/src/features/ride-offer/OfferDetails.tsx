@@ -1,89 +1,59 @@
 import { PageHeader } from "@shared/components/PageHeader";
-import { displayStatusMap, type Offer } from "./offerTypes";
+import { displayStatusMap } from "./offerTypes";
 import { useAuthStore } from "@auth/authStore";
-import { Link } from "react-router";
-import { SquarePen, Trash2 } from "lucide-react";
+import { Link, useParams } from "react-router";
+import { ArrowRight, LoaderCircle, SquarePen, Trash2 } from "lucide-react";
 import { Ripples } from "react-ripples-continued";
 import ProfilePicture from "@shared/components/ProfilePicture";
-
-const offer: Offer = {
-  id: 1,
-  status: "Available",
-  owner: {
-    id: 101,
-    name: "Carlos Silva",
-    email: "carlos.silva@email.com",
-    pictureUrl: "https://i.pravatar.cc/150?u=carlos",
-    phoneNumber: "+55 11 99999-1111",
-    address: "Rua das Flores, 123, São Paulo - SP",
-  },
-  passengers: [
-    {
-      id: 201,
-      name: "Ana Souza",
-      email: "ana.souza@email.com",
-      pictureUrl: "https://i.pravatar.cc/150?u=ana",
-      phoneNumber: "+55 11 98888-2222",
-      address: "Av. Paulista, 1000, São Paulo - SP",
-    },
-    {
-      id: 201,
-      name: "Ana Souza",
-      email: "ana.souza@email.com",
-      pictureUrl: "https://i.pravatar.cc/150?u=ana",
-      phoneNumber: "+55 11 98888-2222",
-      address: "Av. Paulista, 1000, São Paulo - SP",
-    },
-    {
-      id: 201,
-      name: "Ana Souza",
-      email: "ana.souza@email.com",
-      pictureUrl: "https://i.pravatar.cc/150?u=ana",
-      phoneNumber: "+55 11 98888-2222",
-      address: "Av. Paulista, 1000, São Paulo - SP",
-    },
-    {
-      id: 201,
-      name: "Ana Souza",
-      email: "ana.souza@email.com",
-      pictureUrl: "https://i.pravatar.cc/150?u=ana",
-      phoneNumber: "+55 11 98888-2222",
-      address: "Av. Paulista, 1000, São Paulo - SP",
-    },
-    {
-      id: 201,
-      name: "Ana Souza",
-      email: "ana.souza@email.com",
-      pictureUrl: "https://i.pravatar.cc/150?u=ana",
-      phoneNumber: "+55 11 98888-2222",
-      address: "Av. Paulista, 1000, São Paulo - SP",
-    },
-  ],
-  vehicle: {
-    id: 301,
-    model: "Chevrolet Onix",
-    color: "Prata",
-    plate: "ABC-1234",
-    capacity: 5,
-  },
-  capacity: 3,
-  origin: "São Paulo, SP",
-  destination: "IFNMG",
-  date: "10/12",
-  departureTime: "08:30",
-  description: "Vou a trabalho para Campinas. Posso parar no trevo de Jundiaí se necessário. Ar condicionado ligado.",
-};
+import { useQuery } from "@tanstack/react-query";
+import { get } from "./offerService";
+import RetryError from "@shared/components/RetryError";
+import { mockOffers } from "./mock";
 
 export default function OfferDetails() {
+  const { id } = useParams();
   const user = useAuthStore((state) => state.user);
 
+  const {
+    data: offer = mockOffers.find((o) => o.id === Number(id)),
+    isLoading: isLoadingOffer,
+    isError,
+    refetch,
+    isFetching,
+  } = useQuery({
+    queryKey: ["offers", id],
+    queryFn: () => get(Number(id)),
+    enabled: false,
+  });
+
+  if (isLoadingOffer) {
+    return (
+      <div className="flex-center flex-1">
+        <LoaderCircle className="animate-spin text-primary" size={40} />
+      </div>
+    );
+  }
+
+  if (isError || !offer) {
+    return <RetryError onRetry={refetch} isFetching={isFetching} />;
+  }
+
+  if (!offer) {
+    return <p className="text-center text-neutral-dark">Carona não encontrada</p>;
+  }
+
   const isOwner = offer.owner.id === user?.id;
+  const status = displayStatusMap[offer.status];
 
-  const isFull = offer.passengers.length >= offer.capacity;
+  let buttonLabel: string | null = null;
+  if (offer.status !== "Completed") {
+    if (isOwner) {
+      buttonLabel = "Concluir carona";
+    } else if (offer.status === "Available") {
+      buttonLabel = "Solicitar vaga";
+    }
+  }
 
-  const statusMessage = offer.status === "Completed" ? "Concluída" : isFull ? "Lotada" : "Disponível";
-
-  const style = displayStatusMap[offer.status === "Completed" ? "Completed" : isFull ? "Full" : "Available"];
   return (
     <>
       <title>Detalhes Carona</title>
@@ -104,10 +74,10 @@ export default function OfferDetails() {
       </PageHeader>
 
       <h3 className="text-center">
-        {offer.origin} -{">"} {offer.destination}
+        {offer.origin} <ArrowRight className="mb-1 inline" /> {offer.destination}
       </h3>
 
-      <section className="card-container border-0">
+      <section className="card-container border-0 px-6">
         <div className="flex flex-1 flex-col items-start gap-2.5">
           <p>Segunda | {offer.date}</p> {/* TODO: Converter data que recebe em dia da semana */}
           <p>
@@ -116,8 +86,8 @@ export default function OfferDetails() {
           <p>
             Vagas: {offer.passengers.length}/{offer.capacity}
           </p>
-          <div className={`flex-center rounded-[20px] px-4 text-white ${style.bg}`}>
-            <p>{statusMessage}</p>
+          <div className={`flex-center rounded-[20px] px-4 text-white ${status.bg}`}>
+            <p>{status.label}</p>
           </div>
         </div>
 
@@ -131,7 +101,7 @@ export default function OfferDetails() {
         <h3>Veículo</h3>
 
         <div className="flex-column w-full gap-2.5 rounded-2xl bg-white px-6 py-4">
-          <div className="flex-center justify-between">
+          <div className="flex-center justify-between gap-2.5 md:flex-col md:items-start">
             <span>
               <span className="text-label">Modelo: </span>
               {offer.vehicle.model}
@@ -155,7 +125,7 @@ export default function OfferDetails() {
         <h3>Descrição</h3>
 
         <div className="flex-column w-full gap-2.5 rounded-2xl bg-white px-6 py-4">
-          <p>{offer.description}</p>
+          <p className="text-pretty">{offer.description}</p>
         </div>
       </section>
 
@@ -164,16 +134,20 @@ export default function OfferDetails() {
 
         <div className="w-full overflow-x-auto rounded-2xl bg-white">
           <div className="flex-center w-max min-w-full gap-5 px-6 py-4">
-            {offer.passengers.map((passenger) => (
-              <Link
-                key={passenger.id}
-                to={`/users/${passenger.id}`}
-                className="flex-center w-25 shrink-0 flex-col gap-1.25"
-              >
-                <ProfilePicture url={passenger.pictureUrl} size="lg" />
-                <p className="text-center">{passenger.name}</p>
-              </Link>
-            ))}
+            {offer.passengers.length === 0 ? (
+              <p className="text-neutral-dark">Nenhum passageiro até o momento</p>
+            ) : (
+              offer.passengers.map((passenger) => (
+                <Link
+                  key={passenger.id}
+                  to={`/users/${passenger.id}`}
+                  className="flex-center w-25 shrink-0 flex-col gap-1.25"
+                >
+                  <ProfilePicture url={passenger.pictureUrl} size="lg" />
+                  <p className="text-center">{passenger.name}</p>
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -188,9 +162,9 @@ export default function OfferDetails() {
         </section>
       )}
 
-      {offer.status !== "Completed" && (
+      {buttonLabel && (
         <button className="btn btn-lg mt-auto bg-primary">
-          {isOwner ? "Concluir Viagem" : "Solicitar vaga"}
+          {buttonLabel}
           <Ripples color="var(--ripple-light)" />
         </button>
       )}
