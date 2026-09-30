@@ -28,7 +28,7 @@
 
 @layer base {
   body {
-    @apply min-h-screen bg-primary text-slate-900 caret-primary-selected accent-primary-selected;
+    @apply min-h-screen bg-neutral-light text-slate-900 caret-primary-selected accent-primary-selected;
     font-family: var(--font-inter);
   }
 
@@ -101,6 +101,14 @@
     span {
       @apply text-sm text-pretty;
     }
+  }
+
+  .card-container {
+    @apply relative flex cursor-pointer justify-between overflow-hidden rounded-2xl border bg-white px-5 py-2.5 transition-all hover:box-shadow;
+  }
+
+  .card-badge {
+    @apply absolute top-0 right-0 flex-center size-9 rounded-bl-2xl text-white;
   }
 
   .btn {

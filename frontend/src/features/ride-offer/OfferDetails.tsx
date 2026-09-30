@@ -78,6 +78,7 @@ export default function OfferDetails() {
 
             <button className="icon-btn text-danger" onClick={() => setDeleteOpen(true)} disabled={isPending}>
               {isPending ? <LoaderCircle className="animate-spin" /> : <Trash2 />}
+              <Ripples color="var(--ripple-dark)" />
             </button>
           </>
         )}
@@ -87,7 +88,7 @@ export default function OfferDetails() {
         {offer.origin} <ArrowRight className="mb-1 inline" /> {offer.destination}
       </h3>
 
-      <section className="card-container border-0 px-6">
+      <section className="card-container pointer-events-none border-0 px-6">
         <div className="flex flex-1 flex-col items-start gap-2.5">
           <p>Segunda | {offer.date}</p> {/* TODO: Converter data que recebe em dia da semana */}
           <p>

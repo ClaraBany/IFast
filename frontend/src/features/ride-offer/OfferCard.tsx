@@ -12,7 +12,7 @@ export default function OfferCard({ offer }: OfferCardProps) {
   const status = displayStatusMap[offer.status];
 
   return (
-    <div className={`card-container ${status.border} cursor-pointer transition-all hover:box-shadow`}>
+    <div className={`card-container ${status.border}`}>
       <div className={`card-badge ${status.bg}`}>
         <img src={OfferIcon} className="size-6" alt="icone oferta" />
       </div>

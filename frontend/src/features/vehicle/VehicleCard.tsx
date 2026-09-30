@@ -1,5 +1,5 @@
 import type { Vehicle } from "./vehicleTypes";
-import { SquarePen, Trash2, Car, LoaderCircle } from "lucide-react";
+import { Trash2, Car, LoaderCircle } from "lucide-react";
 import { del } from "./vehicleService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router";
@@ -11,7 +11,7 @@ type VehicleCardProps = {
 };
 
 export default function VehicleCard({ vehicle }: VehicleCardProps) {
-  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -23,12 +23,15 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
   });
 
   return (
-    <div className="relative flex max-w-150 justify-between overflow-hidden rounded-2xl border border-neutral-dark bg-white px-5 py-2.5 box-shadow">
+    <div className="card-container border-neutral-dark">
       <div className="absolute top-0 right-0 flex-center h-9 w-9 rounded-bl-2xl bg-neutral-dark text-white">
         <Car className="h-6 w-6" />
       </div>
 
-      <div className="flex flex-1 flex-col items-start gap-2.5">
+      <Link
+        to={`/vehicles/${vehicle.id}/edit`}
+        className="flex flex-1 flex-col items-start gap-2.5 after:absolute after:inset-0 after:content-['']"
+      >
         <p>
           <strong>Modelo:</strong> {vehicle.model}
         </p>
@@ -45,23 +48,23 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
             <strong>Capacidade:</strong> {vehicle.capacity}
           </p>
         )}
-      </div>
-      <div className="flex-center gap-1.5">
-        <Link to={`/vehicles/${vehicle.id}/edit`} className="icon-btn text-secondary">
-          <SquarePen />
-        </Link>
+      </Link>
 
-        <button className="icon-btn text-danger" onClick={() => setConfirmOpen(true)} disabled={isPending}>
-          {isPending ? <LoaderCircle className="animate-spin" /> : <Trash2 />}
-        </button>
-      </div>
+      <button
+        className="icon-btn h-fit self-center text-danger"
+        onClick={() => setDeleteOpen(true)}
+        disabled={isPending}
+      >
+        {isPending ? <LoaderCircle className="animate-spin" /> : <Trash2 />}
+      </button>
+
       <DeleteModal
-        open={confirmOpen}
-        title="Excluir veículo"
+        open={deleteOpen}
+        title="Excluir Veículo"
         message={`Tem certeza que deseja excluir esse veículo?`}
         isLoading={isPending}
         onConfirm={() => deleteVehicle(vehicle.id)}
-        onCancel={() => setConfirmOpen(false)}
+        onCancel={() => setDeleteOpen(false)}
       />
     </div>
   );
