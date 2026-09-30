@@ -18,7 +18,7 @@ export const vehicleSchema = z.object({
     ])
     .optional(),
 
-  capacity: z.number().int().min(1, "Capacidade mínima é 1"),
+  capacity: z.number().int().min(1, "Capacidade mínima é 1").max(4, "Capacidade máxima é 4"),
 });
 
 export interface Vehicle {
