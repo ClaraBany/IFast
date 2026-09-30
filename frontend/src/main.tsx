@@ -25,6 +25,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import OfferDetails from "@ride-offer/OfferDetails";
 import OfferForm from "@ride-offer/OfferForm";
 import NotFoundPage from "./NotFoundPage";
+import History from "@ride-offer/History";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,6 +59,7 @@ const router = createBrowserRouter([
           { path: "/offers/:id", element: <OfferDetails /> },
           { path: "/offers/create", element: <OfferForm /> },
           { path: "/offers/:id/edit", element: <OfferForm /> },
+          { path: "/history", element: <History /> },
           { path: "/myrides", element: <MyRides /> },
           { path: "/request", element: <Request /> },
           { path: "/users/:id", element: <Profile /> },
