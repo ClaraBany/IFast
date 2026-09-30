@@ -1,6 +1,5 @@
 import { PageHeader } from "@shared/components/PageHeader";
 import SubmitButton from "@shared/components/SubmitButton";
-import type { Vehicle } from "@vehicle/vehicleTypes";
 import { CirclePlus, LoaderCircle, Minus, Plus } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router";
 import * as Switch from "@radix-ui/react-switch";
@@ -14,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { create, get, update } from "./offerService";
 import type z from "zod";
 import { Ripples } from "react-ripples-continued";
+import { getAll as getVehicles } from "@vehicle/vehicleService";
 
 export default function OfferForm() {
   const { id } = useParams();
@@ -22,13 +22,17 @@ export default function OfferForm() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const vehicles: Vehicle[] = [];
+  const { data: vehicles = [], isLoading: isLoadingVehicles } = useQuery({
+    queryKey: ["vehicles"],
+    queryFn: getVehicles,
+  });
 
   const {
     register,
     handleSubmit,
     reset,
     control,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(offerSchema),
@@ -42,6 +46,17 @@ export default function OfferForm() {
     name: "isRoundTrip",
     defaultValue: false,
   });
+
+  const vehicleId = useWatch({ control, name: "vehicleId" });
+  const selectedVehicle = vehicles.find((v) => String(v.id) === String(vehicleId));
+
+  useEffect(() => {
+    if (selectedVehicle) {
+      setValue("model", selectedVehicle.model, { shouldValidate: true });
+      setValue("color", selectedVehicle.color, { shouldValidate: true });
+      setValue("capacity", selectedVehicle.capacity, { shouldValidate: true });
+    }
+  }, [selectedVehicle, setValue]);
 
   const { data: offer, isLoading: isLoadingOffer } = useQuery({
     queryKey: ["offers", id],
@@ -65,7 +80,7 @@ export default function OfferForm() {
 
   const onSubmit = (data: z.infer<typeof offerSchema>) => saveOffer(data);
 
-  if (isEdit && isLoadingOffer) {
+  if ((isEdit && isLoadingOffer) || isLoadingVehicles) {
     return (
       <div className="flex-center flex-1">
         <LoaderCircle className="animate-spin text-primary" size={40} />
@@ -173,12 +188,12 @@ export default function OfferForm() {
               ) : (
                 <>
                   <select {...register("vehicleId")} aria-invalid={errors.vehicleId ? "true" : "false"} id="vehicleId">
-                    <option value="" selected hidden disabled>
+                    <option value="" selected>
                       Escolha um veículo
                     </option>
                     {vehicles.map((v) => (
                       <option key={v.id} value={v.id}>
-                        {v.model}
+                        {v.model}, {v.color}
                       </option>
                     ))}
                   </select>
@@ -198,9 +213,11 @@ export default function OfferForm() {
                 <label htmlFor="model">Modelo</label>
                 <input
                   {...register("model")}
+                  readOnly={!!selectedVehicle}
+                  className="read-only:cursor-not-allowed read-only:opacity-60"
                   aria-invalid={errors.model ? "true" : "false"}
                   type="text"
-                  placeholder="Digite o modelo do carro"
+                  placeholder="Digite o modelo do veículo"
                   id="model"
                 ></input>
                 {errors.model && <span>{errors.model.message}</span>}
@@ -210,6 +227,8 @@ export default function OfferForm() {
                 <label htmlFor="color">Cor</label>
                 <input
                   {...register("color")}
+                  readOnly={!!selectedVehicle}
+                  className="read-only:cursor-not-allowed read-only:opacity-60"
                   aria-invalid={errors.color ? "true" : "false"}
                   type="text"
                   placeholder="Digite a cor do veículo"
