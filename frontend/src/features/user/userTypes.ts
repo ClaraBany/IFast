@@ -31,6 +31,14 @@ export function getNeighborhoodLabel(key: string | null): string | null {
   return Neighborhoods[key] ?? null;
 }
 
+export function getCounterpart(label: string, userAddress?: string | null): string | null {
+  if (!Object.values(Neighborhoods).includes(label)) return null;
+
+  if (label !== Neighborhoods.IFNMG) return Neighborhoods.IFNMG;
+
+  return userAddress ?? "";
+}
+
 export const updateProfileSchema = z.object({
   name: z
     .string()

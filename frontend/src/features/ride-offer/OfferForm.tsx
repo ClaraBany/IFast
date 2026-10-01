@@ -4,11 +4,11 @@ import { CirclePlus, LoaderCircle, Minus, Plus } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router";
 import * as Switch from "@radix-ui/react-switch";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { Neighborhoods } from "@user/userTypes";
+import { getCounterpart, Neighborhoods } from "@user/userTypes";
 import { SuccessModal } from "@shared/components/SucessModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { offerSchema } from "./offerTypes";
+import { getMaxDate, getMinDate, offerSchema } from "./offerTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { create, get, update } from "./offerService";
 import type z from "zod";
@@ -23,7 +23,7 @@ export default function OfferForm() {
   const hasAutoSelectedVehicle = useRef(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const user = useAuthStore((state) => state.user);
+  const userAddress = useAuthStore((s) => s.user?.address);
 
   const {
     register,
@@ -35,8 +35,14 @@ export default function OfferForm() {
   } = useForm({
     resolver: zodResolver(offerSchema),
     mode: "onTouched",
-    defaultValues: { origin: user?.address ?? "", isRoundTrip: false, capacity: 1 },
     shouldUnregister: true,
+    defaultValues: {
+      origin: userAddress ?? "",
+      destination: Neighborhoods.IFNMG,
+      isRoundTrip: false,
+      date: getMinDate(),
+      capacity: 1,
+    },
   });
 
   const { data: vehicles = [], isLoading: isLoadingVehicles } = useQuery({
@@ -90,6 +96,13 @@ export default function OfferForm() {
 
   const onSubmit = (data: z.infer<typeof offerSchema>) => saveOffer(data);
 
+  const syncCounterpart = (other: "origin" | "destination") => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const counterpart = getCounterpart(e.target.value, userAddress);
+    if (counterpart === null) return;
+
+    setValue(other, counterpart, { shouldValidate: !!errors[other] });
+  };
+
   if ((isEdit && isLoadingOffer) || isLoadingVehicles) {
     return (
       <div className="flex-center flex-1">
@@ -108,7 +121,7 @@ export default function OfferForm() {
           <div className="field">
             <label htmlFor="origin">Origem</label>
             <input
-              {...register("origin")}
+              {...register("origin", { onChange: syncCounterpart("destination") })}
               aria-invalid={errors.origin ? "true" : "false"}
               id="origin"
               type="text"
@@ -127,7 +140,7 @@ export default function OfferForm() {
           <div className="field">
             <label htmlFor="destination">Destino</label>
             <input
-              {...register("destination")}
+              {...register("destination", { onChange: syncCounterpart("origin") })}
               aria-invalid={errors.destination ? "true" : "false"}
               id="destination"
               type="text"
@@ -138,27 +151,36 @@ export default function OfferForm() {
             {errors.destination && <span>{errors.destination.message}</span>}
           </div>
 
-          <Controller
-            name="isRoundTrip"
-            control={control}
-            render={({ field }) => (
-              <div className="flex items-center gap-2.5 md:col-span-2">
-                <Switch.Root
-                  id="roundTrip"
-                  className="switch-root"
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                >
-                  <Switch.Thumb className="switch-thumb" />
-                </Switch.Root>
-                <label htmlFor="roundTrip">Viagem de Ida e Volta</label>
-              </div>
-            )}
-          />
+          {!isEdit && (
+            <Controller
+              name="isRoundTrip"
+              control={control}
+              render={({ field }) => (
+                <div className="flex items-center gap-2.5 md:col-span-2">
+                  <Switch.Root
+                    id="roundTrip"
+                    className="switch-root"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  >
+                    <Switch.Thumb className="switch-thumb" />
+                  </Switch.Root>
+                  <label htmlFor="roundTrip">Viagem de Ida e Volta</label>
+                </div>
+              )}
+            />
+          )}
 
           <div className="field">
             <label htmlFor="date">Data</label>
-            <input {...register("date")} aria-invalid={errors.date ? "true" : "false"} type="date" id="date"></input>
+            <input
+              {...register("date")}
+              aria-invalid={errors.date ? "true" : "false"}
+              type="date"
+              id="date"
+              min={getMinDate()}
+              max={getMaxDate()}
+            ></input>
             {errors.date && <span>{errors.date.message}</span>}
           </div>
 
@@ -189,7 +211,7 @@ export default function OfferForm() {
 
           <div className="flex-column gap-2.5 md:col-span-2">
             <div className="field">
-              <label htmlFor="vehicle">Veículo</label>
+              <label htmlFor="vehicleId">Veículo</label>
               {vehicles.length === 0 ? (
                 <Link to={"/vehicles/create"} className="btn btn-lg bg-neutral-light text-slate-900">
                   <CirclePlus />
@@ -198,9 +220,7 @@ export default function OfferForm() {
               ) : (
                 <>
                   <select {...register("vehicleId")} aria-invalid={errors.vehicleId ? "true" : "false"} id="vehicleId">
-                    <option value="" selected>
-                      Escolha um veículo
-                    </option>
+                    <option value="">Escolha um veículo</option>
                     {vehicles.map((v) => (
                       <option key={v.id} value={v.id}>
                         {v.model}, {v.color}
@@ -260,6 +280,7 @@ export default function OfferForm() {
                   <button
                     type="button"
                     onClick={() => field.onChange(Math.max((field.value ?? 1) - 1, 1))}
+                    aria-label="Diminuir capacidade"
                     className="btn h-full rounded-e-none text-danger"
                   >
                     <Minus size={18} />
@@ -275,6 +296,7 @@ export default function OfferForm() {
                   <button
                     type="button"
                     onClick={() => field.onChange(Math.min((field.value ?? 1) + 1, 4))}
+                    aria-label="Aumentar capacidade"
                     className="btn h-full rounded-s-none text-primary"
                   >
                     <Plus size={18} />

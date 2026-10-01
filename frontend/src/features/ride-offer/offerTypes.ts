@@ -39,6 +39,16 @@ export const displayStatusMap = {
   },
 };
 
+export function getMinDate(): string {
+  return new Date().toLocaleDateString("sv-SE");
+}
+
+export function getMaxDate(): string {
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 7);
+  return maxDate.toLocaleDateString("sv-SE");
+}
+
 export const offerSchema = z
   .object({
     origin: z.enum(Neighborhoods, "Escolha uma origem válida"),
@@ -71,13 +81,20 @@ export const offerSchema = z
       });
     }
 
-    const today = new Date().toLocaleDateString("sv-SE");
-    if (data.date && data.date < today) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["date"],
-        message: "A data não pode estar no passado",
-      });
+    if (data.date) {
+      if (data.date < getMinDate()) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["date"],
+          message: "A data não pode ser anterior a hoje",
+        });
+      } else if (data.date > getMaxDate()) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["date"],
+          message: `A data não pode ultrapassar 1 semana (${getMaxDate().split("-").reverse().join("/")})`,
+        });
+      }
     }
 
     if (data.isRoundTrip) {
