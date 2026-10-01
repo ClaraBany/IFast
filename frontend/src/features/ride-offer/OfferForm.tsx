@@ -7,7 +7,7 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { Neighborhoods } from "@user/userTypes";
 import { SuccessModal } from "@shared/components/SucessModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { offerSchema } from "./offerTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { create, get, update } from "./offerService";
@@ -19,13 +19,9 @@ export default function OfferForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const [successOpen, setSuccessOpen] = useState(false);
+  const hasAutoSelectedVehicle = useRef(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-
-  const { data: vehicles = [], isLoading: isLoadingVehicles } = useQuery({
-    queryKey: ["vehicles"],
-    queryFn: getVehicles,
-  });
 
   const {
     register,
@@ -41,14 +37,20 @@ export default function OfferForm() {
     shouldUnregister: true,
   });
 
-  const isRoundTrip = useWatch({
-    control,
-    name: "isRoundTrip",
-    defaultValue: false,
+  const { data: vehicles = [], isLoading: isLoadingVehicles } = useQuery({
+    queryKey: ["vehicles"],
+    queryFn: getVehicles,
   });
 
   const vehicleId = useWatch({ control, name: "vehicleId" });
   const selectedVehicle = vehicles.find((v) => String(v.id) === String(vehicleId));
+
+  useEffect(() => {
+    if (!isEdit && vehicles.length === 1 && !vehicleId && !hasAutoSelectedVehicle.current) {
+      setValue("vehicleId", String(vehicles[0].id));
+      hasAutoSelectedVehicle.current = true;
+    }
+  }, [isEdit, setValue, vehicleId, vehicles]);
 
   useEffect(() => {
     if (selectedVehicle) {
@@ -57,6 +59,12 @@ export default function OfferForm() {
       setValue("capacity", selectedVehicle.capacity, { shouldValidate: true });
     }
   }, [selectedVehicle, setValue]);
+
+  const isRoundTrip = useWatch({
+    control,
+    name: "isRoundTrip",
+    defaultValue: false,
+  });
 
   const { data: offer, isLoading: isLoadingOffer } = useQuery({
     queryKey: ["offers", id],
