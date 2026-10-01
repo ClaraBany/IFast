@@ -68,7 +68,7 @@ export default function OfferDetails() {
   return (
     <>
       <title>Detalhes Carona</title>
-      <PageHeader title="Detalhes da Carona">
+      <PageHeader title="Detalhes">
         {isOwner && (
           <>
             <Link to={`/offers/${offer.id}/edit`} className="icon-btn">
@@ -140,28 +140,30 @@ export default function OfferDetails() {
         </div>
       </section>
 
-      <section className="flex-column w-full gap-2.5">
-        <h3>Passageiros</h3>
+      {isOwner && (
+        <section className="flex-column w-full gap-2.5">
+          <h3>Passageiros</h3>
 
-        <div className="w-full overflow-x-auto rounded-2xl bg-white">
-          <div className="flex-center w-max min-w-full gap-5 px-6 py-4">
-            {offer.passengers.length === 0 ? (
-              <p className="text-neutral-dark">Nenhum passageiro até o momento</p>
-            ) : (
-              offer.passengers.map((passenger) => (
-                <Link
-                  key={passenger.id}
-                  to={`/users/${passenger.id}`}
-                  className="flex-center w-25 shrink-0 flex-col gap-1.25"
-                >
-                  <ProfilePicture url={passenger.pictureUrl} size="lg" />
-                  <p className="text-center">{passenger.name}</p>
-                </Link>
-              ))
-            )}
+          <div className="w-full overflow-x-auto rounded-2xl bg-white">
+            <div className="flex-center w-max min-w-full gap-5 px-6 py-4">
+              {offer.passengers.length === 0 ? (
+                <p className="text-neutral-dark">Nenhum passageiro até o momento</p>
+              ) : (
+                offer.passengers.map((passenger) => (
+                  <Link
+                    key={passenger.id}
+                    to={`/users/${passenger.id}`}
+                    className="flex-center w-25 shrink-0 flex-col gap-1.25"
+                  >
+                    <ProfilePicture url={passenger.pictureUrl} size="lg" />
+                    <p className="text-center">{passenger.name}</p>
+                  </Link>
+                ))
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {isOwner && (
         <section className="flex-column w-full gap-2.5">
