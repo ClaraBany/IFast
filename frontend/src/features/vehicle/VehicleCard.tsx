@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router";
 import { DeleteModal } from "@shared/components/DeleteModal";
 import { useState } from "react";
+import { Ripples } from "react-ripples-continued";
 
 type VehicleCardProps = {
   vehicle: Vehicle;
@@ -24,7 +25,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
 
   return (
     <div className="card-container border-neutral-dark">
-      <div className="absolute top-0 right-0 flex-center h-9 w-9 rounded-bl-2xl bg-neutral-dark text-white">
+      <div className="card-badge bg-neutral-dark">
         <Car className="h-6 w-6" />
       </div>
 
@@ -56,6 +57,7 @@ export default function VehicleCard({ vehicle }: VehicleCardProps) {
         disabled={isPending}
       >
         {isPending ? <LoaderCircle className="animate-spin" /> : <Trash2 />}
+        <Ripples color="var(--ripple-dark)" />
       </button>
 
       <DeleteModal

@@ -104,11 +104,11 @@
   }
 
   .card-container {
-    @apply relative flex cursor-pointer justify-between overflow-hidden rounded-2xl border bg-white px-5 py-2.5 transition-all hover:box-shadow;
+    @apply relative flex cursor-pointer justify-between rounded-2xl border bg-white px-5 py-2.5 transition-all hover:box-shadow;
   }
 
   .card-badge {
-    @apply absolute top-0 right-0 flex-center size-9 rounded-bl-2xl text-white;
+    @apply absolute -top-px -right-px flex-center size-9 rounded-tr-2xl rounded-bl-2xl text-white;
   }
 
   .btn {
