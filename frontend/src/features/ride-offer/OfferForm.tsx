@@ -14,6 +14,7 @@ import { create, get, update } from "./offerService";
 import type z from "zod";
 import { Ripples } from "react-ripples-continued";
 import { getAll as getVehicles } from "@vehicle/vehicleService";
+import { useAuthStore } from "@auth/authStore";
 
 export default function OfferForm() {
   const { id } = useParams();
@@ -22,6 +23,7 @@ export default function OfferForm() {
   const hasAutoSelectedVehicle = useRef(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
 
   const {
     register,
@@ -33,7 +35,7 @@ export default function OfferForm() {
   } = useForm({
     resolver: zodResolver(offerSchema),
     mode: "onTouched",
-    defaultValues: { isRoundTrip: false, capacity: 1 },
+    defaultValues: { origin: user?.address ?? "", isRoundTrip: false, capacity: 1 },
     shouldUnregister: true,
   });
 
