@@ -1,9 +1,8 @@
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useAuthStore } from "@auth/authStore";
-import Logo from "@assets/logo-primary.png";
+import Logo from "@assets/logo-primary.svg";
 
 import App from "./App.tsx";
 import "@shared/styles.css";
@@ -98,9 +97,7 @@ export function AppInitializer() {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-        <AppInitializer />
-      </GoogleOAuthProvider>
+      <AppInitializer />
     </QueryClientProvider>
   </StrictMode>,
 );
