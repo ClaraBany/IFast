@@ -66,6 +66,12 @@ export interface User {
   address: string | null;
 }
 
+export interface UserSummary {
+  id: number;
+  name: string;
+  pictureUrl: string;
+}
+
 export interface ProfileResponse {
   user: User;
 

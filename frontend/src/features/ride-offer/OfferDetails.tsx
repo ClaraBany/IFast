@@ -11,6 +11,7 @@ import RetryError from "@shared/components/RetryError";
 import { mockOffers } from "./mock";
 import { useState } from "react";
 import { DeleteModal } from "@shared/components/DeleteModal";
+import { formatDepartureDateTime } from "@shared/utils/formatDateTime";
 
 export default function OfferDetails() {
   const { id } = useParams();
@@ -55,12 +56,13 @@ export default function OfferDetails() {
 
   const isOwner = offer.owner.id === user?.id;
   const status = displayStatusMap[offer.status];
+  const { weekday, date, time } = formatDepartureDateTime(offer.departureDateTime);
 
   let buttonLabel: string | null = null;
-  if (offer.status !== "Completed") {
+  if (offer.status !== "COMPLETED") {
     if (isOwner) {
       buttonLabel = "Concluir carona";
-    } else if (offer.status === "Available") {
+    } else if (offer.status === "AVAILABLE") {
       buttonLabel = "Solicitar vaga";
     }
   }
@@ -88,12 +90,12 @@ export default function OfferDetails() {
         {offer.origin} <ArrowRight className="mb-1 inline" /> {offer.destination}
       </h3>
 
-      <section className="card-container pointer-events-none border-0 px-6">
+      <section className="card-container pointer-events-none border-0 px-6 shadow-none">
         <div className="flex flex-1 flex-col items-start gap-2.5">
-          <p>Segunda | {offer.date}</p> {/* TODO: Converter data que recebe em dia da semana */}
           <p>
-            {offer.date} - Saída: {offer.departureTime}
+            {weekday} | {date}
           </p>
+          <p>Saída às {time}</p>
           <p>
             Vagas: {offer.passengers.length}/{offer.capacity}
           </p>
@@ -102,7 +104,7 @@ export default function OfferDetails() {
           </div>
         </div>
 
-        <Link to={`/users/${offer.owner.id}`} className="flex-center w-25 flex-col gap-1.25">
+        <Link to={`/users/${offer.owner.id}`} className="pointer-events-auto flex-center w-25 flex-col gap-1.25">
           <ProfilePicture url={offer.owner.pictureUrl} size="lg" />
           <p className="text-center">{offer.owner.name}</p>
         </Link>
@@ -132,13 +134,15 @@ export default function OfferDetails() {
         </div>
       </section>
 
-      <section className="flex-column w-full gap-2.5">
-        <h3>Descrição</h3>
+      {offer.description && (
+        <section className="flex-column w-full gap-2.5">
+          <h3>Descrição</h3>
 
-        <div className="flex-column w-full gap-2.5 rounded-2xl bg-white px-6 py-4">
-          <p className="text-pretty">{offer.description}</p>
-        </div>
-      </section>
+          <div className="flex-column w-full gap-2.5 rounded-2xl bg-white px-6 py-4">
+            <p className="text-pretty">{offer.description}</p>
+          </div>
+        </section>
+      )}
 
       {isOwner && (
         <section className="flex-column w-full gap-2.5">

@@ -1,15 +1,17 @@
 import OfferIcon from "@assets/card-icons/offer.png";
-import { displayStatusMap, type Offer } from "./offerTypes";
+import { displayStatusMap, type RideOffer } from "./offerTypes";
 import ProfilePicture from "@shared/components/ProfilePicture";
 import { Link } from "react-router";
 import { ArrowRight } from "lucide-react";
+import { formatDepartureDateTime } from "@shared/utils/formatDateTime";
 
 type OfferCardProps = {
-  offer: Offer;
+  offer: RideOffer;
 };
 
 export default function OfferCard({ offer }: OfferCardProps) {
   const status = displayStatusMap[offer.status];
+  const { date, time } = formatDepartureDateTime(offer.departureDateTime);
 
   return (
     <div className={`card-container ${status.border}`}>
@@ -26,12 +28,12 @@ export default function OfferCard({ offer }: OfferCardProps) {
         </p>
 
         <p>
-          {offer.date} - Saída: {offer.departureTime}
+          {date} - Saída: {time}
         </p>
 
-        {offer.status !== "Completed" && (
+        {offer.status !== "COMPLETED" && (
           <p>
-            Vagas: {offer.passengers.length}/{offer.capacity}
+            Vagas: {offer.seatsTaken}/{offer.capacity}
           </p>
         )}
 

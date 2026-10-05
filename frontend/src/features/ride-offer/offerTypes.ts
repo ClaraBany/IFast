@@ -1,38 +1,61 @@
-import { Neighborhoods, type User } from "@user/userTypes";
+import { Neighborhoods, type User, type UserSummary } from "@user/userTypes";
 import type { Vehicle } from "@vehicle/vehicleTypes";
 import z from "zod";
 
-export interface Offer {
+export interface VehicleNullableId extends Omit<Vehicle, "id"> {
+  id: number | null;
+}
+
+export interface RideOffer {
   id: number;
-  status: "Available" | "Completed" | "Full";
+  status: "AVAILABLE" | "FULL" | "CANCELLED" | "COMPLETED";
 
   owner: User;
-  passengers: User[];
-
-  vehicle: Vehicle;
-  capacity: number;
+  passengers: UserSummary[];
 
   origin: string;
   destination: string;
 
-  date: string;
-  departureTime: string;
+  departureDateTime: string;
 
-  description: string;
+  vehicle: Vehicle;
+  capacity: number;
+  seatsTaken: number;
+
+  description: string | null;
+}
+
+export interface CreateRideOffer {
+  origin: string;
+  destination: string;
+  isRoundTrip: boolean;
+
+  departureDateTime: string;
+  returnDateTime: string | null;
+
+  vehicle: VehicleNullableId;
+  capacity: number;
+
+  description: string | null;
 }
 
 export const displayStatusMap = {
-  Available: {
+  AVAILABLE: {
     border: "border-primary",
     bg: "bg-primary",
     label: "Disponível",
   },
-  Full: {
+  FULL: {
     border: "border-danger",
     bg: "bg-danger",
     label: "Lotada",
   },
-  Completed: {
+  CANCELLED: {
+    border: "border-danger",
+    bg: "bg-danger",
+    label: "Cancelada",
+  },
+  COMPLETED: {
     border: "border-secondary",
     bg: "bg-secondary",
     label: "Concluída",
@@ -49,7 +72,7 @@ export function getMaxDate(): string {
   return maxDate.toLocaleDateString("sv-SE");
 }
 
-export const offerSchema = z
+export const rideOfferSchema = z
   .object({
     origin: z.enum(Neighborhoods, "Escolha uma origem válida"),
     destination: z.enum(Neighborhoods, "Escolha um destino válido"),
@@ -61,8 +84,9 @@ export const offerSchema = z
     returnTime: z.iso.time({ precision: -1, error: "Informe um horário válido" }).or(z.literal("")).optional(),
 
     vehicleId: z.string().optional(),
-    model: z.string().trim().optional(),
-    color: z.string().trim().optional(),
+    plate: z.string().optional(),
+    model: z.string().trim().min(1, "O modelo é obrigatório").max(50, "O modelo deve ter no máximo 50 caracteres"),
+    color: z.string().trim().min(1, "A cor é obrigatória").max(30, "A cor deve ter no máximo 30 caracteres"),
 
     capacity: z
       .number("Informe o número de vagas")
@@ -110,15 +134,6 @@ export const offerSchema = z
           path: ["returnTime"],
           message: "A volta deve ser depois da saída",
         });
-      }
-    }
-
-    if (!data.vehicleId) {
-      if (!data.model) {
-        ctx.addIssue({ code: "custom", path: ["model"], message: "Informe o modelo" });
-      }
-      if (!data.color) {
-        ctx.addIssue({ code: "custom", path: ["color"], message: "Informe a cor" });
       }
     }
   });
