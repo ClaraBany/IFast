@@ -54,7 +54,7 @@ public class RideOffer {
     @Column(nullable = true, length = 500)
     private String description;
 
-    //data e hora
+    //TODO: adicionar ride_offer_template
     // @Column(nullable = true)
     // private String ride_offer_template;
 }

@@ -13,6 +13,7 @@ import backend.exceptions.InvalidSeatsCapacityException;
 import backend.ride_offer.dto.CreateRideOfferDto;
 import backend.ride_offer.dto.FilterRideOfferDto;
 import backend.ride_offer.dto.RideOfferDto;
+import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.user.User;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -49,11 +50,11 @@ public class RideOfferService {
         return new RideOfferDto(rideOffer);
     }
 
-    public List<RideOfferDto> getAll(FilterRideOfferDto filter) {
+    public List<RideOfferSummaryDto> getAll(FilterRideOfferDto filter) {
         return rideOfferRepository
             .findAll(RideOfferSpecs.withFilter(filter), Sort.by("departureDateTime").ascending())
             .stream()
-            .map(RideOfferDto::new)
+            .map(RideOfferSummaryDto::new)
             .toList();
     }
 
