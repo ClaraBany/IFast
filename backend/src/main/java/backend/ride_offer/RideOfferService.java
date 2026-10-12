@@ -1,57 +1,45 @@
 package backend.ride_offer;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import backend.exceptions.EntityNotFoundException;
+import backend.exceptions.InvalidDepartureException;
+import backend.exceptions.InvalidRideOfferStateException;
+import backend.exceptions.InvalidSeatsCapacityException;
 import backend.ride_offer.dto.CreateRideOfferDto;
 import backend.ride_offer.dto.FilterRideOfferDto;
 import backend.ride_offer.dto.RideOfferDto;
 import backend.user.User;
+import jakarta.persistence.EntityNotFoundException;
 
-@Service 
+@Service
 public class RideOfferService {
+    private static final int MAX_DAYS_AHEAD = 7;
+
     private final RideOfferRepository rideOfferRepository;
 
     public RideOfferService(RideOfferRepository rideOfferRepository) {
         this.rideOfferRepository = rideOfferRepository;
     }
 
+    @Transactional
     public void create(CreateRideOfferDto rideOfferDto, User user) {
-        RideOffer rideOffer = new RideOffer();
+        validateOffer(rideOfferDto);
 
-        //verificar antes de criar a de retorno
-        if(rideOfferDto.roundTrip()) {
-            this.createReturn(rideOfferDto, user);
+        save(
+            new RideOffer(),
+            rideOfferDto,
+            user,
+            false
+        );
+
+        if (rideOfferDto.roundTrip()) {
+            save(new RideOffer(), rideOfferDto, user, true);
         }
-
-        rideOffer.setUser(user);
-        rideOffer.setSeats_capacity(rideOfferDto.seatsCapacity()); //tem que ser menor ou igual que a capacidade do veiculo vinculado
-        rideOffer.setDepartureDateTime(rideOfferDto.departureDateTime());
-        rideOffer.setDescription(rideOfferDto.description());
-        rideOffer.setDestination(rideOfferDto.destination());
-        rideOffer.setOrigin(rideOfferDto.origin());
-        rideOffer.setVehicle(rideOfferDto.vehicle());
-        rideOffer.setStatus(StatusOffer.AVAILABLE);
-
-        rideOfferRepository.save(rideOffer);
-    }
-
-    public void createReturn(CreateRideOfferDto rideOfferDto, User user) {
-        RideOffer rideOffer = new RideOffer();
-
-        rideOffer.setUser(user);
-        rideOffer.setSeats_capacity(rideOfferDto.seatsCapacity());
-        rideOffer.setDepartureDateTime(rideOfferDto.returnDateTime()); //troca
-        rideOffer.setDescription(rideOfferDto.description());
-        rideOffer.setDestination(rideOfferDto.origin()); //troca
-        rideOffer.setOrigin(rideOfferDto.destination()); //troca
-        rideOffer.setVehicle(rideOfferDto.vehicle());
-        rideOffer.setStatus(StatusOffer.AVAILABLE);
-
-        rideOfferRepository.save(rideOffer);
     }
 
     public RideOfferDto get(Long rideOfferId) {
@@ -69,15 +57,73 @@ public class RideOfferService {
             .toList();
     }
 
-    //regras quando o usuário não pode cancelar? 
-    public void cancel(Long rideOfferId, User user){
+    @Transactional
+    public void cancel(Long rideOfferId, User user) {
+        transitionStatus(rideOfferId, user, StatusOffer.CANCELLED);
+    }
+
+    @Transactional
+    public void complete(Long rideOfferId, User user) {
+        transitionStatus(rideOfferId, user, StatusOffer.COMPLETED);
+    }
+
+    @Transactional
+    public void update(Long rideOfferId, CreateRideOfferDto rideOfferDto, User user) {
+        validateOffer(rideOfferDto);
+
         RideOffer rideOffer = rideOfferRepository.findByIdAndUser(rideOfferId, user)
             .orElseThrow(EntityNotFoundException::new);
 
-        rideOffer.setStatus(StatusOffer.CANCELLED);
+        if (rideOffer.getStatus() != StatusOffer.AVAILABLE) {
+            throw new InvalidRideOfferStateException();
+        }
+
+        save(rideOffer, rideOfferDto, user, false);
+    }
+
+    private void validateOffer(CreateRideOfferDto dto) {
+        Integer vehicleCapacity = dto.vehicle().getCapacity();
+        if (vehicleCapacity == null || dto.seatsCapacity() > vehicleCapacity) {
+            throw new InvalidSeatsCapacityException();
+        }
+
+        LocalDateTime latestDeparture = LocalDateTime.now().plusDays(MAX_DAYS_AHEAD);
+        if (dto.departureDateTime().isAfter(latestDeparture)
+            || (dto.roundTrip() && dto.returnDateTime().isAfter(latestDeparture))) {
+            throw new InvalidDepartureException();
+        }
+    }
+
+    private void transitionStatus(Long rideOfferId, User user, StatusOffer targetStatus) {
+        RideOffer rideOffer = rideOfferRepository.findByIdAndUser(rideOfferId, user)
+            .orElseThrow(EntityNotFoundException::new);
+
+        StatusOffer currentStatus = rideOffer.getStatus();
+        if (currentStatus != StatusOffer.AVAILABLE && currentStatus != StatusOffer.FULL) {
+            throw new InvalidRideOfferStateException();
+        }
+
+        rideOffer.setStatus(targetStatus);
         rideOfferRepository.save(rideOffer);
-    } //será que precisaremos de observers ? Suponho que precisaremos notificar os passageiros
+    }
 
-    //regras sobre caronas no mesmo dia ou mesmo horário ou limite de tempo tipo só pode criar uma carona para daqui no máximo 2 semanas. Se tiver um vinculado as vagas não pode passar da capacidade do veículo
+    private void save(RideOffer offer, CreateRideOfferDto dto, User user, boolean returnTrip) {
+        offer.setSeats_capacity(dto.seatsCapacity());
+        offer.setDescription(dto.description());
+        offer.setVehicle(dto.vehicle());
+        offer.setStatus(StatusOffer.AVAILABLE);
+        offer.setUser(user);
 
+        if (returnTrip) {
+            offer.setOrigin(dto.destination());
+            offer.setDestination(dto.origin());
+            offer.setDepartureDateTime(dto.returnDateTime());
+        } else {
+            offer.setOrigin(dto.origin());
+            offer.setDestination(dto.destination());
+            offer.setDepartureDateTime(dto.departureDateTime());
+        }
+
+        rideOfferRepository.save(offer);
+    }
 }
