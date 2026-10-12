@@ -8,7 +8,7 @@ import backend.user.Neighborhoods;
 import backend.vehicle.VehicleDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -21,22 +21,23 @@ public record CreateRideOfferDto(
     @Min(value = 1, message = "A oferta deve ter no mínimo uma vaga")
     Integer seatsCapacity,
 
-    @NotNull
+    @NotNull(message = "Escolha uma origem válida")
     Neighborhoods origin,
 
-    @NotNull
+    @NotNull(message = "Escolha um destino válido")
     Neighborhoods destination,
 
-    @NotNull @Future
+    @NotNull 
+    @FutureOrPresent(message = "A data não pode ser anterior a hoje")
     LocalDateTime departureDateTime,
 
-    @Size(max = 500)
+    @Size(max = 500, message = "Máximo de 500 caracteres")
     String description,
 
     @NotNull
     Boolean roundTrip,
 
-    @Future
+    @FutureOrPresent(message = "A data não pode ser anterior a hoje")
     LocalDateTime returnDateTime
 ) {
 
