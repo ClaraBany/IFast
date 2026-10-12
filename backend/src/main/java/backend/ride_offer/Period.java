@@ -1,6 +1,6 @@
 package backend.ride_offer;
 
-public enum Shift {
+public enum Period {
     MORNING,
     AFTERNOON,
     EVENING

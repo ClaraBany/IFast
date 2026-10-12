@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import backend.user.User;
-import backend.exceptions.EntityNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service 
 public class VehicleService {

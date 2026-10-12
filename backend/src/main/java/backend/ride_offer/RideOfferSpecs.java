@@ -18,6 +18,8 @@ public class RideOfferSpecs {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            predicates.add(cb.equal(root.get("status"), StatusOffer.AVAILABLE));
+
             if (filter.origin() != null) {
                 predicates.add(cb.equal(root.get("origin"), filter.origin()));
             }
@@ -34,8 +36,8 @@ public class RideOfferSpecs {
                     root.get("departureDateTime"), day.plusDays(1).atStartOfDay()));
             }
 
-            if (filter.shift() != null) {
-                int[] range = shiftRange(filter.shift());
+            if (filter.period() != null) {
+                int[] range = periodRange(filter.period());
                 Expression<Integer> hour = cb.function(
                     "hour", Integer.class, root.get("departureDateTime"));
                 predicates.add(cb.greaterThanOrEqualTo(hour, range[0]));
@@ -46,8 +48,8 @@ public class RideOfferSpecs {
         };
     }
 
-    private static int[] shiftRange(Shift shift) {
-        return switch (shift) {
+    private static int[] periodRange(Period period) {
+        return switch (period) {
             case MORNING -> new int[] {5, 12};
             case AFTERNOON -> new int[] {12, 18};
             case EVENING -> new int[] {18, 24};
