@@ -19,30 +19,16 @@ import backend.ride_offer.dto.RideOfferDto;
 import backend.ride_offer.dto.FilterRideOfferDto;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.user.User;
+import backend.dto.IdResponseDto;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/ride-offer")
+@RequestMapping("/ride-offers")
 public class RideOfferController {
     private final RideOfferService rideOfferService;
 
     public RideOfferController(RideOfferService rideOfferService) {
         this.rideOfferService = rideOfferService;
-    }
-
-    @PostMapping 
-    public ResponseEntity<Void> create(@Valid @RequestBody CreateRideOfferDto rideOfferDto, @AuthenticationPrincipal User user) {
-        rideOfferService.create(rideOfferDto, user);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
-    }
-
-    @PutMapping("/{rideOfferId}")
-    public ResponseEntity<RideOfferDto> update(@PathVariable Long rideOfferId, 
-                                        @Valid @RequestBody CreateRideOfferDto rideOfferDto,
-                                        @AuthenticationPrincipal User user
-                                    ) {
-        rideOfferService.update(rideOfferId, rideOfferDto, user);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
     @GetMapping
@@ -57,15 +43,30 @@ public class RideOfferController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("{rideOfferId}/cancel")
-    public ResponseEntity<RideOfferDto> cancel(@PathVariable Long rideOfferId, @AuthenticationPrincipal User user) {
-        rideOfferService.cancel(rideOfferId, user);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    @PostMapping 
+    public ResponseEntity<IdResponseDto> create(@Valid @RequestBody CreateRideOfferDto rideOfferDto, @AuthenticationPrincipal User user) {
+        IdResponseDto response = rideOfferService.create(rideOfferDto, user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PatchMapping("{rideOfferId}/complete")
-    public ResponseEntity<RideOfferDto> complete(@PathVariable Long rideOfferId, @AuthenticationPrincipal User user) {
+    @PutMapping("/{rideOfferId}")
+    public ResponseEntity<IdResponseDto> update(@PathVariable Long rideOfferId, 
+                                        @Valid @RequestBody CreateRideOfferDto rideOfferDto,
+                                        @AuthenticationPrincipal User user
+                                    ) {
+        IdResponseDto response = rideOfferService.update(rideOfferId, rideOfferDto, user);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{rideOfferId}/cancel")
+    public ResponseEntity<Void> cancel(@PathVariable Long rideOfferId, @AuthenticationPrincipal User user) {
+        rideOfferService.cancel(rideOfferId, user);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{rideOfferId}/complete")
+    public ResponseEntity<Void> complete(@PathVariable Long rideOfferId, @AuthenticationPrincipal User user) {
         rideOfferService.complete(rideOfferId, user);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        return ResponseEntity.noContent().build();
     }
 }
