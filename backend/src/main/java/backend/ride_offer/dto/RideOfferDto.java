@@ -3,7 +3,7 @@ package backend.ride_offer.dto;
 import java.time.LocalDateTime;
 
 import backend.ride_offer.RideOffer;
-import backend.ride_offer.StatusOffer;
+import backend.ride_offer.enums.StatusOffer;
 import backend.user.Neighborhoods;
 import backend.user.dto.UserSummaryDto;
 import backend.vehicle.VehicleDto;
@@ -17,7 +17,7 @@ import lombok.Setter;
 public class RideOfferDto {    
     
     private Long id;
-    private UserSummaryDto user;
+    private UserSummaryDto driver;
     private VehicleDto vehicle;
     private int seatsCapacity;
     private int seatsTaken;
@@ -29,10 +29,10 @@ public class RideOfferDto {
 
     public RideOfferDto(RideOffer rideOffer) {
         this.id = rideOffer.getId();
-        this.user = new UserSummaryDto(rideOffer.getUser());
+        this.driver = new UserSummaryDto(rideOffer.getDriver());
         this.vehicle = rideOffer.getVehicle();
-        this.seatsCapacity = rideOffer.getSeats_capacity();
-        this.seatsTaken = rideOffer.getSeats_taken();
+        this.seatsCapacity = rideOffer.getSeatsCapacity();
+        this.seatsTaken = rideOffer.getSeatsTaken();
         this.origin = rideOffer.getOrigin();
         this.destination = rideOffer.getDestination();
         this.status = rideOffer.getStatus();

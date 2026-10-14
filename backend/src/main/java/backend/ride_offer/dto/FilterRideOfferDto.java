@@ -2,7 +2,7 @@ package backend.ride_offer.dto;
 
 import java.time.LocalDate;
 
-import backend.ride_offer.Period;
+import backend.ride_offer.enums.Period;
 import backend.user.Neighborhoods;
 import jakarta.validation.constraints.FutureOrPresent;
 

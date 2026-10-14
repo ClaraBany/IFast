@@ -2,12 +2,15 @@ package backend.ride_offer;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import backend.user.Neighborhoods;
 import backend.user.User;
 import backend.vehicle.VehicleDto;
 import backend.vehicle.VehicleDtoConverter;
+import backend.ride_offer.enums.StatusOffer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,17 +27,17 @@ public class RideOffer {
     private Long id;
 
     @ManyToOne 
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "driver_id")
+    private User driver;
 
     @Convert(converter = VehicleDtoConverter.class)
     @Column(columnDefinition = "json")
     private VehicleDto vehicle;
 
     @Column(nullable = false)
-    private int seats_capacity;
+    private int seatsCapacity;
 
-    private int seats_taken = 0;
+    private int seatsTaken = 0;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -53,6 +56,14 @@ public class RideOffer {
 
     @Column(nullable = true, length = 500)
     private String description;
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
     //TODO: adicionar ride_offer_template
     // @Column(nullable = true)

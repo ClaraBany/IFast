@@ -9,5 +9,5 @@ import backend.user.User;
 
 public interface RideOfferRepository extends JpaRepository<RideOffer, Long>, JpaSpecificationExecutor<RideOffer>{
 
-    Optional<RideOffer> findByIdAndUser(Long Id, User user);                                   
+    Optional<RideOffer> findByIdAndDriver(Long Id, User driver);                                   
 } 
