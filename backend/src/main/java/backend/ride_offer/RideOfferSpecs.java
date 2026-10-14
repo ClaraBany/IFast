@@ -1,6 +1,7 @@
 package backend.ride_offer;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class RideOfferSpecs {
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(cb.equal(root.get("status"), StatusOffer.AVAILABLE));
+            predicates.add(cb.greaterThanOrEqualTo(
+                root.get("departureDateTime"), LocalDateTime.now()));
 
             if (filter.origin() != null) {
                 predicates.add(cb.equal(root.get("origin"), filter.origin()));
