@@ -1,4 +1,4 @@
-package backend.exceptions;
+package backend.ride_offer.exceptions;
 
 public class InvalidDepartureException extends RuntimeException{
     public InvalidDepartureException() {

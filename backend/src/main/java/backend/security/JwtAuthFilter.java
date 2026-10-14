@@ -10,8 +10,8 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import backend.user.User;
 import backend.user.UserRepository;
-import backend.exceptions.InvalidCredentialsException;
-import backend.exceptions.TokenJwtInvalidException;
+import backend.auth.exceptions.InvalidCredentialsException;
+import backend.security.exceptions.TokenJwtInvalidException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
