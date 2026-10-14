@@ -1,4 +1,4 @@
-package backend.ride_offer;
+package backend.ride_offer.enums;
 
 public enum StatusOffer {
     AVAILABLE,
