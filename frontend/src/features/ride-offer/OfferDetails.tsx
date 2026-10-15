@@ -6,21 +6,28 @@ import { ArrowRight, LoaderCircle, SquarePen, Trash2 } from "lucide-react";
 import { Ripples } from "react-ripples-continued";
 import ProfilePicture from "@shared/components/ProfilePicture";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { del, get } from "./offerService";
+import { cancel, complete, get } from "./offerService";
 import RetryError from "@shared/components/RetryError";
-import { mockOffers } from "./mock";
 import { useState } from "react";
 import { DeleteModal } from "@shared/components/DeleteModal";
 import { formatDepartureDateTime } from "@shared/utils/formatDateTime";
+import { SuccessModal } from "@shared/components/SucessModal";
+
+type OfferAction = {
+  label: string;
+  onClick?: () => void;
+  isPending?: boolean;
+};
 
 export default function OfferDetails() {
   const { id } = useParams();
   const user = useAuthStore((state) => state.user);
+  const [successOpen, setSuccessOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const {
-    data: offer = mockOffers.find((o) => o.id === Number(id)),
+    data: offer,
     isLoading: isLoadingOffer,
     isError,
     refetch,
@@ -28,13 +35,21 @@ export default function OfferDetails() {
   } = useQuery({
     queryKey: ["offers", id],
     queryFn: () => get(Number(id)),
-    enabled: false,
   });
 
-  const { mutate: deleteOffer, isPending } = useMutation({
-    mutationFn: (id: number) => del(id),
+  const { mutate: cancelOffer, isPending: isPendingCancel } = useMutation({
+    mutationFn: (id: number) => cancel(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["offers"] });
+      setDeleteOpen(false);
+    },
+  });
+
+  const { mutate: completeOffer, isPending: isPendingComplete } = useMutation({
+    mutationFn: (id: number) => complete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["offers"] });
+      setSuccessOpen(true);
     },
   });
 
@@ -50,36 +65,36 @@ export default function OfferDetails() {
     return <RetryError onRetry={refetch} isFetching={isFetching} />;
   }
 
-  if (!offer) {
-    return <p className="text-center text-neutral-dark">Carona não encontrada</p>;
-  }
-
-  const isOwner = offer.owner.id === user?.id;
+  const isDriver = offer.driver.id === user?.id;
   const status = displayStatusMap[offer.status];
   const { weekday, date, time } = formatDepartureDateTime(offer.departureDateTime);
 
-  let buttonLabel: string | null = null;
-  if (offer.status !== "COMPLETED") {
-    if (isOwner) {
-      buttonLabel = "Concluir carona";
-    } else if (offer.status === "AVAILABLE") {
-      buttonLabel = "Solicitar vaga";
+  let action: OfferAction | null = null;
+  if (isDriver) {
+    if (offer.status === "AVAILABLE" || offer.status === "FULL") {
+      action = {
+        label: "Concluir carona",
+        onClick: () => completeOffer(offer.id),
+        isPending: isPendingComplete,
+      };
     }
+  } else if (offer.status === "AVAILABLE") {
+    action = { label: "Solicitar vaga" };
   }
 
   return (
     <>
       <title>Detalhes Carona</title>
       <PageHeader title="Detalhes">
-        {isOwner && (
+        {isDriver && (offer.status == "AVAILABLE" || offer.status == "FULL") && (
           <>
             <Link to={`/offers/${offer.id}/edit`} className="icon-btn">
               <SquarePen className="text-secondary" size={24} />
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <button className="icon-btn text-danger" onClick={() => setDeleteOpen(true)} disabled={isPending}>
-              {isPending ? <LoaderCircle className="animate-spin" /> : <Trash2 />}
+            <button className="icon-btn text-danger" onClick={() => setDeleteOpen(true)} disabled={isPendingCancel}>
+              {isPendingCancel ? <LoaderCircle className="animate-spin" /> : <Trash2 />}
               <Ripples color="var(--ripple-dark)" />
             </button>
           </>
@@ -97,16 +112,16 @@ export default function OfferDetails() {
           </p>
           <p>Saída às {time}</p>
           <p>
-            Vagas: {offer.passengers.length}/{offer.capacity}
+            Vagas: {offer.seatsTaken}/{offer.seatsCapacity}
           </p>
           <div className={`flex-center rounded-[20px] px-4 text-white ${status.bg}`}>
             <p>{status.label}</p>
           </div>
         </div>
 
-        <Link to={`/users/${offer.owner.id}`} className="pointer-events-auto flex-center w-25 flex-col gap-1.25">
-          <ProfilePicture url={offer.owner.pictureUrl} size="lg" />
-          <p className="text-center">{offer.owner.name}</p>
+        <Link to={`/users/${offer.driver.id}`} className="pointer-events-auto flex-center w-25 flex-col gap-1.25">
+          <ProfilePicture url={offer.driver.pictureUrl} size="lg" />
+          <p className="text-center">{offer.driver.name}</p>
         </Link>
       </section>
 
@@ -143,8 +158,8 @@ export default function OfferDetails() {
           </div>
         </section>
       )}
-
-      {isOwner && (
+      {/* TODO: implementar na feat booking-request */}
+      {/* {isDriver && (
         <section className="flex-column w-full gap-2.5">
           <h3>Passageiros</h3>
 
@@ -167,9 +182,9 @@ export default function OfferDetails() {
             </div>
           </div>
         </section>
-      )}
+      )} */}
 
-      {isOwner && (
+      {isDriver && (
         <section className="flex-column w-full gap-2.5">
           <h3>Solicitações</h3>
 
@@ -179,18 +194,21 @@ export default function OfferDetails() {
         </section>
       )}
 
-      {buttonLabel && (
-        <button className="btn btn-lg mt-auto bg-primary">
-          {buttonLabel}
+      {action && (
+        <button className="btn btn-lg mt-auto bg-primary" onClick={action.onClick} disabled={action.isPending}>
+          {action.isPending ? <LoaderCircle className="animate-spin" /> : action.label}
           <Ripples color="var(--ripple-light)" />
         </button>
       )}
+
+      <SuccessModal open={successOpen} message="Oferta concluída com sucesso!" onClose={() => setSuccessOpen(false)} />
+
       <DeleteModal
         open={deleteOpen}
         title="Excluir Oferta"
-        message={`Tem certeza que deseja excluir essa oferta?`}
-        isLoading={isPending}
-        onConfirm={() => deleteOffer(offer.id)}
+        message={`Tem certeza que deseja excluir essa oferta?${offer.seatsTaken ? "\nOs passageiros serão notificados" : ""}`}
+        isLoading={isPendingCancel}
+        onConfirm={() => cancelOffer(offer.id)}
         onCancel={() => setDeleteOpen(false)}
       />
     </>

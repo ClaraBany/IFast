@@ -87,7 +87,11 @@ export default function OfferForm() {
     }
   }, [offer, reset]);
 
-  const { mutate: saveOffer, isPending: isSubmitting, data: responseId } = useMutation({
+  const {
+    mutate: saveOffer,
+    isPending: isSubmitting,
+    data: responseId,
+  } = useMutation({
     mutationFn: (data: z.infer<typeof rideOfferSchema>) => (isEdit ? update(Number(id), data) : create(data)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["offers"] });

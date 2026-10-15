@@ -1,4 +1,4 @@
-import { getNeighborhoodLabel, Neighborhoods, type UserSummary } from "@user/userTypes";
+import { Neighborhoods, type UserSummary } from "@user/userTypes";
 import type { VehicleOptionalId } from "@vehicle/vehicleTypes";
 import z from "zod";
 
@@ -36,7 +36,6 @@ export interface RideOfferSummary {
   seatsCapacity: number;
   seatsTaken: number;
 }
-
 
 export interface CreateRideOffer {
   origin: string;
@@ -161,8 +160,8 @@ export function offerToForm(offer: RideOffer): z.input<typeof rideOfferSchema> {
   const [date, time] = offer.departureDateTime.split("T");
 
   return {
-    origin: getNeighborhoodLabel(offer.origin)!,
-    destination: getNeighborhoodLabel(offer.destination)!,
+    origin: offer.origin,
+    destination: offer.destination,
     isRoundTrip: false,
 
     date: date,

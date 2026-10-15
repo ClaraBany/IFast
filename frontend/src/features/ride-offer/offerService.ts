@@ -1,5 +1,5 @@
 import { api } from "@shared/api";
-import { getNeighborhoodKey } from "@user/userTypes";
+import { getNeighborhoodKey, getNeighborhoodLabel } from "@user/userTypes";
 import type z from "zod";
 import type { CreateRideOffer, RideOffer, rideOfferSchema, RideOfferSummary } from "./offerTypes";
 import type { IdResponse } from "@shared/types";
@@ -26,14 +26,22 @@ function toCreateRideOffer(form: z.infer<typeof rideOfferSchema>): CreateRideOff
   };
 }
 
+function withNeighborhoodLabel(offer: RideOffer): RideOffer {
+  return {
+    ...offer,
+    origin: getNeighborhoodLabel(offer.origin)!,
+    destination: getNeighborhoodLabel(offer.destination)!,
+  };
+}
+
 export async function getAll(): Promise<RideOfferSummary[]> {
   const response = await api.get<RideOffer[]>("/ride-offers");
-  return response.data;
+  return response.data.map(withNeighborhoodLabel);
 }
 
 export async function get(offerId: number): Promise<RideOffer> {
   const response = await api.get<RideOffer>(`/ride-offers/${offerId}`);
-  return response.data;
+  return withNeighborhoodLabel(response.data);
 }
 
 export async function create(form: z.infer<typeof rideOfferSchema>): Promise<IdResponse> {
@@ -43,7 +51,7 @@ export async function create(form: z.infer<typeof rideOfferSchema>): Promise<IdR
 
 export async function update(offerId: number, form: z.infer<typeof rideOfferSchema>): Promise<IdResponse> {
   const response = await api.put<IdResponse>(`/ride-offers/${offerId}`, toCreateRideOffer(form));
-  return response.data
+  return response.data;
 }
 
 export async function cancel(offerId: number): Promise<void> {
