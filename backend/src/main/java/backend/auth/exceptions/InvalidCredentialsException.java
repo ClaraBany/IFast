@@ -1,4 +1,4 @@
-package backend.exceptions;
+package backend.auth.exceptions;
 
 public class InvalidCredentialsException extends RuntimeException {
     public InvalidCredentialsException() {

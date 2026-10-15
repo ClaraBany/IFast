@@ -1,4 +1,4 @@
-package backend.exceptions;
+package backend.security.exceptions;
 
 public class InvalidGoogleTokenException extends RuntimeException {
     public InvalidGoogleTokenException() {

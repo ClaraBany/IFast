@@ -1,4 +1,4 @@
-package backend.exceptions.handlers;
+package backend.handlers;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +20,16 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import backend.dto.ErrorResponseDto;
-import backend.exceptions.*;
+import backend.auth.exceptions.EmailAlreadyRegisteredException;
+import backend.auth.exceptions.GoogleAccountException;
+import backend.auth.exceptions.InvalidCredentialsException;
+import backend.ride_offer.exceptions.InvalidDepartureException;
+import backend.ride_offer.exceptions.InvalidRideOfferStateException;
+import backend.ride_offer.exceptions.InvalidSeatsCapacityException;
+import backend.ride_offer.exceptions.RideOfferNotDepartedException;
+import backend.security.exceptions.InvalidGoogleTokenException;
+import backend.security.exceptions.TokenJwtInvalidException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 
@@ -66,6 +75,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleEntityNotFound(EntityNotFoundException e, HttpServletRequest request) {
+        return buildResponse(e, request, HttpStatus.UNPROCESSABLE_CONTENT, "Entidade não encontrada", null);
+    }
+    
+    @ExceptionHandler({
+        InvalidDepartureException.class,
+        InvalidSeatsCapacityException.class,
+        RideOfferNotDepartedException.class
+    })
+    public ResponseEntity<ErrorResponseDto> handleBusinessValidation(Exception e, HttpServletRequest request) {
         return buildResponse(e, request, HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage(), null);
     }
 
@@ -110,8 +128,8 @@ public class GlobalExceptionHandler {
         return buildResponse(e, request, HttpStatus.FORBIDDEN, "Acesso negado", null);
     }
 
-    @ExceptionHandler(EmailAlreadyRegisteredException.class)
-    public ResponseEntity<ErrorResponseDto> handleConflict(EmailAlreadyRegisteredException e, HttpServletRequest request) {
+    @ExceptionHandler({EmailAlreadyRegisteredException.class, InvalidRideOfferStateException.class})
+    public ResponseEntity<ErrorResponseDto> handleConflict(Exception e, HttpServletRequest request) {
         return buildResponse(e, request, HttpStatus.CONFLICT, e.getMessage(), null);
     }
 

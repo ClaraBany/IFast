@@ -12,7 +12,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 
-import backend.exceptions.InvalidGoogleTokenException;
+import backend.security.exceptions.InvalidGoogleTokenException;
 
 @Service 
 public class GoogleIdTokenService {
