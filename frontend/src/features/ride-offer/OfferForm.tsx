@@ -8,7 +8,7 @@ import { getCounterpart, Neighborhoods } from "@user/userTypes";
 import { SuccessModal } from "@shared/components/SucessModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { getMaxDate, getMinDate, offerSchema } from "./offerTypes";
+import { getMaxDate, getMinDate, offerToForm, rideOfferSchema } from "./offerTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { create, get, update } from "./offerService";
 import type z from "zod";
@@ -33,7 +33,7 @@ export default function OfferForm() {
     setValue,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(offerSchema),
+    resolver: zodResolver(rideOfferSchema),
     mode: "onTouched",
     shouldUnregister: true,
     defaultValues: {
@@ -41,7 +41,7 @@ export default function OfferForm() {
       destination: Neighborhoods.IFNMG,
       isRoundTrip: false,
       date: getMinDate(),
-      capacity: 1,
+      seatsCapacity: 1,
     },
   });
 
@@ -64,7 +64,8 @@ export default function OfferForm() {
     if (selectedVehicle) {
       setValue("model", selectedVehicle.model, { shouldValidate: true });
       setValue("color", selectedVehicle.color, { shouldValidate: true });
-      setValue("capacity", selectedVehicle.capacity, { shouldValidate: true });
+      setValue("plate", selectedVehicle.plate || undefined, { shouldValidate: true });
+      setValue("seatsCapacity", selectedVehicle.capacity, { shouldValidate: true });
     }
   }, [selectedVehicle, setValue]);
 
@@ -82,19 +83,19 @@ export default function OfferForm() {
 
   useEffect(() => {
     if (offer) {
-      reset(offer);
+      reset(offerToForm(offer));
     }
   }, [offer, reset]);
 
-  const { mutate: saveOffer, isPending: isSubmitting } = useMutation({
-    mutationFn: (data: z.infer<typeof offerSchema>) => (isEdit ? update(Number(id), data) : create(data)),
+  const { mutate: saveOffer, isPending: isSubmitting, data: responseId } = useMutation({
+    mutationFn: (data: z.infer<typeof rideOfferSchema>) => (isEdit ? update(Number(id), data) : create(data)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["offers"] });
       setSuccessOpen(true);
     },
   });
 
-  const onSubmit = (data: z.infer<typeof offerSchema>) => saveOffer(data);
+  const onSubmit = (data: z.infer<typeof rideOfferSchema>) => saveOffer(data);
 
   const syncCounterpart = (other: "origin" | "destination") => (e: React.ChangeEvent<HTMLInputElement>) => {
     const counterpart = getCounterpart(e.target.value, userAddress);
@@ -269,11 +270,13 @@ export default function OfferForm() {
             </div>
           </div>
 
+          <input type="hidden" {...register("plate")} />
+
           <div className="field">
-            <label htmlFor="capacity">Capacidade</label>
+            <label htmlFor="seatsCapacity">Capacidade</label>
 
             <Controller
-              name="capacity"
+              name="seatsCapacity"
               control={control}
               render={({ field }) => (
                 <div className="flex-center min-h-12.5 w-full rounded-[10px] bg-neutral-light">
@@ -305,7 +308,7 @@ export default function OfferForm() {
                 </div>
               )}
             />
-            {errors.capacity && <span>{errors.capacity.message}</span>}
+            {errors.seatsCapacity && <span>{errors.seatsCapacity.message}</span>}
           </div>
 
           <div className="field md:col-span-2">
@@ -329,7 +332,7 @@ export default function OfferForm() {
         open={successOpen}
         onClose={() => {
           setSuccessOpen(false);
-          navigate("/offers");
+          navigate(`/offers/${responseId?.id}`);
         }}
       />
     </>

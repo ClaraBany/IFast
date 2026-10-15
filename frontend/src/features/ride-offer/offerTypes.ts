@@ -1,40 +1,53 @@
-import { Neighborhoods, type User, type UserSummary } from "@user/userTypes";
-import type { Vehicle } from "@vehicle/vehicleTypes";
+import { getNeighborhoodLabel, Neighborhoods, type UserSummary } from "@user/userTypes";
+import type { VehicleOptionalId } from "@vehicle/vehicleTypes";
 import z from "zod";
 
-export interface VehicleNullableId extends Omit<Vehicle, "id"> {
-  id: number | null;
-}
+type status = "AVAILABLE" | "FULL" | "CANCELLED" | "COMPLETED";
 
 export interface RideOffer {
   id: number;
-  status: "AVAILABLE" | "FULL" | "CANCELLED" | "COMPLETED";
+  status: status;
 
-  owner: User;
-  passengers: UserSummary[];
+  driver: UserSummary;
 
   origin: string;
   destination: string;
 
   departureDateTime: string;
 
-  vehicle: Vehicle;
-  capacity: number;
+  vehicle: VehicleOptionalId;
+  seatsCapacity: number;
   seatsTaken: number;
 
   description: string | null;
 }
 
+export interface RideOfferSummary {
+  id: number;
+  status: status;
+
+  driver: UserSummary;
+
+  origin: string;
+  destination: string;
+
+  departureDateTime: string;
+
+  seatsCapacity: number;
+  seatsTaken: number;
+}
+
+
 export interface CreateRideOffer {
   origin: string;
   destination: string;
-  isRoundTrip: boolean;
+  roundTrip: boolean;
 
   departureDateTime: string;
   returnDateTime: string | null;
 
-  vehicle: VehicleNullableId;
-  capacity: number;
+  vehicle: VehicleOptionalId;
+  seatsCapacity: number;
 
   description: string | null;
 }
@@ -77,7 +90,7 @@ export const rideOfferSchema = z
     origin: z.enum(Neighborhoods, "Escolha uma origem válida"),
     destination: z.enum(Neighborhoods, "Escolha um destino válido"),
 
-    isRoundTrip: z.boolean(),
+    isRoundTrip: z.boolean().default(false),
 
     date: z.iso.date("Informe a data da carona"),
     departureTime: z.iso.time({ precision: -1, error: "Informe a hora de saída" }),
@@ -88,7 +101,7 @@ export const rideOfferSchema = z
     model: z.string().trim().min(1, "O modelo é obrigatório").max(50, "O modelo deve ter no máximo 50 caracteres"),
     color: z.string().trim().min(1, "A cor é obrigatória").max(30, "A cor deve ter no máximo 30 caracteres"),
 
-    capacity: z
+    seatsCapacity: z
       .number("Informe o número de vagas")
       .int("Use um número inteiro")
       .min(1, "Mínimo de 1 vaga")
@@ -118,6 +131,12 @@ export const rideOfferSchema = z
           path: ["date"],
           message: `A data não pode ultrapassar 1 semana (${getMaxDate().split("-").reverse().join("/")})`,
         });
+      } else if (data.departureTime && new Date(`${data.date}T${data.departureTime}`) < new Date()) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["departureTime"],
+          message: "O horário de saída não pode ser anterior ao horário atual",
+        });
       }
     }
 
@@ -137,3 +156,25 @@ export const rideOfferSchema = z
       }
     }
   });
+
+export function offerToForm(offer: RideOffer): z.input<typeof rideOfferSchema> {
+  const [date, time] = offer.departureDateTime.split("T");
+
+  return {
+    origin: getNeighborhoodLabel(offer.origin)!,
+    destination: getNeighborhoodLabel(offer.destination)!,
+    isRoundTrip: false,
+
+    date: date,
+    departureTime: time.slice(0, 5),
+    returnTime: "",
+
+    vehicleId: undefined,
+    plate: offer.vehicle.plate ?? "",
+    model: offer.vehicle.model,
+    color: offer.vehicle.color,
+
+    seatsCapacity: offer.seatsCapacity,
+    description: offer.description ?? "",
+  };
+}

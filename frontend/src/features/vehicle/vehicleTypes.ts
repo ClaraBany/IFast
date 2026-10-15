@@ -28,3 +28,7 @@ export interface Vehicle {
   plate: string | null;
   capacity: number;
 }
+
+export interface VehicleOptionalId extends Omit<Vehicle, "id"> {
+  id?: number;
+}
