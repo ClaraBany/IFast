@@ -57,7 +57,7 @@ public class RideOfferService {
             false
         );
 
-        if (rideOfferDto.roundTrip()) {
+        if (rideOfferDto.isRoundTrip()) {
             save(new RideOffer(), rideOfferDto, user, true);
         }
 
@@ -102,9 +102,9 @@ public class RideOfferService {
             .toLocalDate()
             .plusDays(MAX_DAYS_AHEAD)
             .atTime(LocalTime.MAX);
-            
+
         if (dto.departureDateTime().isAfter(latestDeparture)
-            || (dto.roundTrip() && dto.returnDateTime().isAfter(latestDeparture))) {
+            || (dto.isRoundTrip() && dto.returnDateTime().isAfter(latestDeparture))) {
             throw new InvalidDepartureException();
         }
     }

@@ -37,7 +37,7 @@ public record CreateRideOfferDto(
     String description,
 
     @NotNull
-    Boolean roundTrip,
+    Boolean isRoundTrip,
 
     @FutureOrPresent(message = "A data não pode ser anterior a hoje")
     LocalDateTime returnDateTime
@@ -46,7 +46,7 @@ public record CreateRideOfferDto(
     @JsonIgnore 
     @AssertTrue(message = "Data de retorno é obrigatória para viagem de ida e volta")
     public boolean isReturnDateTimeValid() {
-        return !Boolean.TRUE.equals(roundTrip) || returnDateTime != null;
+        return !Boolean.TRUE.equals(isRoundTrip) || returnDateTime != null;
     }
 
     @JsonIgnore
