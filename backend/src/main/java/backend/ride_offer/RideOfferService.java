@@ -1,6 +1,7 @@
 package backend.ride_offer;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
@@ -97,7 +98,11 @@ public class RideOfferService {
             throw new InvalidSeatsCapacityException();
         }
 
-        LocalDateTime latestDeparture = LocalDateTime.now().plusDays(MAX_DAYS_AHEAD);
+        LocalDateTime latestDeparture = LocalDateTime.now()
+            .toLocalDate()
+            .plusDays(MAX_DAYS_AHEAD)
+            .atTime(LocalTime.MAX);
+            
         if (dto.departureDateTime().isAfter(latestDeparture)
             || (dto.roundTrip() && dto.returnDateTime().isAfter(latestDeparture))) {
             throw new InvalidDepartureException();
