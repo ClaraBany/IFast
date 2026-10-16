@@ -9,6 +9,7 @@ import { useState } from "react";
 import FilterMenu from "@shared/components/FilterMenu";
 import type { filterSchema } from "./offerTypes";
 import type z from "zod";
+import ActiveFilters from "@shared/components/ActiveFilters";
 
 export default function Offers() {
   const [open, setOpen] = useState(false);
@@ -40,7 +41,7 @@ export default function Offers() {
     <>
       <title>Ofertas</title>
       <div className="flex-center w-full justify-between">
-        <h2>Caronas Ofertadas</h2>
+        <h2>Ofertas Disponíveis</h2>
 
         <button className="icon-btn bg-white" onClick={() => setOpen(!open)}>
           <SlidersHorizontal size={30} />
@@ -48,6 +49,7 @@ export default function Offers() {
         </button>
         <FilterMenu open={open} setOpen={setOpen} />
       </div>
+      <ActiveFilters />
 
       {isLoading ? (
         <div className="flex-center flex-1">

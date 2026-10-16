@@ -1,6 +1,6 @@
 import { Drawer } from "vaul";
 import { getNeighborhoodKey, getNeighborhoodLabel, Neighborhoods } from "@user/userTypes";
-import { filterSchema, getMaxDate, getMinDate } from "@ride-offer/offerTypes";
+import { filterSchema, getMaxDate, getMinDate, Period, periodLabels } from "@ride-offer/offerTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type z from "zod";
@@ -23,7 +23,7 @@ export default function FilterMenu({ open, setOpen }: FilterMenuProps) {
     formState: { errors },
   } = useForm<z.infer<typeof filterSchema>>({
     resolver: zodResolver(filterSchema),
-    defaultValues: {
+    values: {
       period: (searchParams.get("period") as z.infer<typeof filterSchema>["period"]) || undefined,
       date: searchParams.get("date") || undefined,
       origin: getNeighborhoodLabel(searchParams.get("origin")) || undefined,
@@ -72,38 +72,21 @@ export default function FilterMenu({ open, setOpen }: FilterMenuProps) {
               <label>Período</label>
 
               <div className="flex gap-3">
-                <label className="btn btn-lg cursor-pointer bg-neutral-light transition-all has-checked:bg-primary-selected has-checked:box-shadow">
-                  <input
-                    type="radio"
-                    value="MORNING"
-                    className="sr-only"
-                    {...register("period")}
-                    onClick={handleUnmarkPeriod}
-                  />
-                  <span className="text-slate-900">Manhã</span>
-                </label>
-
-                <label className="btn btn-lg cursor-pointer bg-neutral-light transition-all has-checked:bg-primary-selected has-checked:box-shadow">
-                  <input
-                    type="radio"
-                    value="AFTERNOON"
-                    className="sr-only"
-                    {...register("period")}
-                    onClick={handleUnmarkPeriod}
-                  />
-                  <span className="text-slate-900">Tarde</span>
-                </label>
-
-                <label className="btn btn-lg cursor-pointer bg-neutral-light transition-all has-checked:bg-primary-selected has-checked:box-shadow">
-                  <input
-                    type="radio"
-                    value="EVENING"
-                    className="sr-only"
-                    {...register("period")}
-                    onClick={handleUnmarkPeriod}
-                  />
-                  <span className="text-slate-900">Noite</span>
-                </label>
+                {Object.values(Period).map((period) => (
+                  <label
+                    key={period}
+                    className="btn btn-lg cursor-pointer bg-neutral-light transition-all has-checked:bg-primary-selected has-checked:box-shadow"
+                  >
+                    <input
+                      type="radio"
+                      value={period}
+                      className="sr-only"
+                      {...register("period")}
+                      onClick={handleUnmarkPeriod}
+                    />
+                    <span className="text-slate-900">{periodLabels[period]}</span>
+                  </label>
+                ))}
               </div>
               {errors.period && <span>{errors.period.message}</span>}
             </div>
@@ -117,6 +100,7 @@ export default function FilterMenu({ open, setOpen }: FilterMenuProps) {
                 id="date"
                 min={getMinDate()}
                 max={getMaxDate()}
+                onClick={(e) => e.currentTarget.showPicker()}
               />
               {errors.date && <span>{errors.date.message}</span>}
             </div>
