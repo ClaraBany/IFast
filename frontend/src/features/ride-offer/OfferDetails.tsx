@@ -1,5 +1,5 @@
 import { PageHeader } from "@shared/components/PageHeader";
-import { displayStatusMap } from "./offerTypes";
+import { RideOfferStatus, rideOfferStatusDisplay } from "./offerTypes";
 import { useAuthStore } from "@auth/authStore";
 import { Link, useParams } from "react-router";
 import { ArrowRight, Info, LoaderCircle, SquarePen, Trash2 } from "lucide-react";
@@ -67,13 +67,13 @@ export default function OfferDetails() {
   }
 
   const isDriver = offer.driver.id === user?.id;
-  const status = displayStatusMap[offer.status];
+  const status = rideOfferStatusDisplay[offer.status];
   const { weekday, date, time } = formatDepartureDateTime(offer.departureDateTime);
   const hasDeparted = new Date() >= new Date(offer.departureDateTime);
 
   let action: OfferAction | null = null;
   if (isDriver) {
-    if (offer.status === "AVAILABLE" || offer.status === "FULL") {
+    if (offer.status === RideOfferStatus.AVAILABLE || offer.status === RideOfferStatus.FULL) {
       action = {
         label: "Concluir carona",
         onClick: () => completeOffer(offer.id),
@@ -81,7 +81,7 @@ export default function OfferDetails() {
         disabled: !hasDeparted,
       };
     }
-  } else if (offer.status === "AVAILABLE") {
+  } else if (offer.status === RideOfferStatus.AVAILABLE) {
     action = { label: "Solicitar vaga" };
   }
 
@@ -89,7 +89,7 @@ export default function OfferDetails() {
     <>
       <title>Detalhes Carona</title>
       <PageHeader title="Detalhes">
-        {isDriver && (offer.status == "AVAILABLE" || offer.status == "FULL") && (
+        {isDriver && (offer.status === RideOfferStatus.AVAILABLE || offer.status === RideOfferStatus.FULL) && (
           <>
             <Link to={`/offers/${offer.id}/edit`} className="icon-btn">
               <SquarePen className="text-secondary" size={24} />

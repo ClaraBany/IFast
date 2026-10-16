@@ -2,8 +2,6 @@ import { Neighborhoods, type UserSummary } from "@user/userTypes";
 import type { VehicleOptionalId } from "@vehicle/vehicleTypes";
 import z from "zod";
 
-type status = "AVAILABLE" | "FULL" | "CANCELLED" | "COMPLETED";
-
 export const Period = {
   MORNING: "MORNING",
   AFTERNOON: "AFTERNOON",
@@ -18,54 +16,16 @@ export const periodLabels: Record<Period, string> = {
   EVENING: "Noite",
 };
 
-export interface RideOffer {
-  id: number;
-  status: status;
+export const RideOfferStatus = {
+  AVAILABLE: "AVAILABLE",
+  FULL: "FULL",
+  CANCELLED: "CANCELLED",
+  COMPLETED: "COMPLETED",
+} as const;
 
-  driver: UserSummary;
+export type RideOfferStatus = (typeof RideOfferStatus)[keyof typeof RideOfferStatus];
 
-  origin: string;
-  destination: string;
-
-  departureDateTime: string;
-
-  vehicle: VehicleOptionalId;
-  seatsCapacity: number;
-  seatsTaken: number;
-
-  description: string | null;
-}
-
-export interface RideOfferSummary {
-  id: number;
-  status: status;
-
-  driver: UserSummary;
-
-  origin: string;
-  destination: string;
-
-  departureDateTime: string;
-
-  seatsCapacity: number;
-  seatsTaken: number;
-}
-
-export interface CreateRideOffer {
-  origin: string;
-  destination: string;
-  isRoundTrip: boolean;
-
-  departureDateTime: string;
-  returnDateTime: string | null;
-
-  vehicle: VehicleOptionalId;
-  seatsCapacity: number;
-
-  description: string | null;
-}
-
-export const displayStatusMap = {
+export const rideOfferStatusDisplay: Record<RideOfferStatus, { border: string; bg: string; label: string }> = {
   AVAILABLE: {
     border: "border-primary",
     bg: "bg-primary",
@@ -88,6 +48,40 @@ export const displayStatusMap = {
   },
 };
 
+export interface RideOffer {
+  id: number;
+  status: RideOfferStatus;
+
+  driver: UserSummary;
+
+  origin: string;
+  destination: string;
+
+  departureDateTime: string;
+
+  vehicle: VehicleOptionalId;
+  seatsCapacity: number;
+  seatsTaken: number;
+
+  description: string | null;
+}
+
+export type RideOfferSummary = Omit<RideOffer, "vehicle" | "description">;
+
+export interface CreateRideOffer {
+  origin: string;
+  destination: string;
+  isRoundTrip: boolean;
+
+  departureDateTime: string;
+  returnDateTime: string | null;
+
+  vehicle: VehicleOptionalId;
+  seatsCapacity: number;
+
+  description: string | null;
+}
+
 export function getMinDate(): string {
   return new Date().toLocaleDateString("sv-SE");
 }
@@ -97,6 +91,37 @@ export function getMaxDate(): string {
   maxDate.setDate(maxDate.getDate() + 7);
   return maxDate.toLocaleDateString("sv-SE");
 }
+
+const validateOriginDestination = (
+  data: { origin?: string | null; destination?: string | null },
+  ctx: z.RefinementCtx,
+) => {
+  if (data.origin && data.origin === data.destination) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["destination"],
+      message: "O destino deve ser diferente da origem",
+    });
+  }
+};
+
+const validateDateRange = (date?: string | null, ctx?: z.RefinementCtx) => {
+  if (!date) return;
+
+  if (date < getMinDate()) {
+    ctx?.addIssue({
+      code: "custom",
+      path: ["date"],
+      message: "A data não pode ser anterior a hoje",
+    });
+  } else if (date > getMaxDate()) {
+    ctx?.addIssue({
+      code: "custom",
+      path: ["date"],
+      message: `A data não pode ultrapassar 1 semana (${getMaxDate().split("-").reverse().join("/")})`,
+    });
+  }
+};
 
 export const filterSchema = z
   .object({
@@ -108,29 +133,8 @@ export const filterSchema = z
     destination: z.enum(Neighborhoods, "Escolha um destino válido").or(z.literal("")).optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.origin && data.origin === data.destination) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["destination"],
-        message: "O destino deve ser diferente da origem",
-      });
-    }
-
-    if (data.date) {
-      if (data.date < getMinDate()) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["date"],
-          message: "A data não pode ser anterior a hoje",
-        });
-      } else if (data.date > getMaxDate()) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["date"],
-          message: `A data não pode ultrapassar 1 semana (${getMaxDate().split("-").reverse().join("/")})`,
-        });
-      }
-    }
+    validateOriginDestination(data, ctx);
+    validateDateRange(data.date, ctx);
   });
 
 export const rideOfferSchema = z
@@ -158,34 +162,15 @@ export const rideOfferSchema = z
     description: z.string().trim().max(500, "Máximo de 500 caracteres").optional(),
   })
   .superRefine((data, ctx) => {
-    if (data.origin && data.origin === data.destination) {
+    validateOriginDestination(data, ctx);
+    validateDateRange(data.date, ctx);
+
+    if (data.date && data.departureTime && new Date(`${data.date}T${data.departureTime}`) < new Date()) {
       ctx.addIssue({
         code: "custom",
-        path: ["destination"],
-        message: "O destino deve ser diferente da origem",
+        path: ["departureTime"],
+        message: "O horário de saída não pode ser anterior ao horário atual",
       });
-    }
-
-    if (data.date) {
-      if (data.date < getMinDate()) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["date"],
-          message: "A data não pode ser anterior a hoje",
-        });
-      } else if (data.date > getMaxDate()) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["date"],
-          message: `A data não pode ultrapassar 1 semana (${getMaxDate().split("-").reverse().join("/")})`,
-        });
-      } else if (data.departureTime && new Date(`${data.date}T${data.departureTime}`) < new Date()) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["departureTime"],
-          message: "O horário de saída não pode ser anterior ao horário atual",
-        });
-      }
     }
 
     if (data.isRoundTrip) {
