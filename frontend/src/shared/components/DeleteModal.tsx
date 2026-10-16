@@ -20,7 +20,7 @@ export function DeleteModal({ title, message, open, isLoading = false, onConfirm
             <OctagonAlert size={45} strokeWidth={1.5} />
             <h3>{title}</h3>
           </div>
-          <span className="text-center text-pretty">{message}</span>
+          <span className="text-center text-pretty whitespace-pre-line">{message}</span>
           <div className="flex-center w-full gap-3">
             <Dialog.Close asChild>
               <button

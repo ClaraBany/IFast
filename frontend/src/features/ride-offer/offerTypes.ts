@@ -1,0 +1,213 @@
+import { Neighborhoods, type UserSummary } from "@user/userTypes";
+import type { VehicleOptionalId } from "@vehicle/vehicleTypes";
+import z from "zod";
+
+export const Period = {
+  MORNING: "MORNING",
+  AFTERNOON: "AFTERNOON",
+  EVENING: "EVENING",
+} as const;
+
+export type Period = (typeof Period)[keyof typeof Period];
+
+export const periodLabels: Record<Period, string> = {
+  MORNING: "Manhã",
+  AFTERNOON: "Tarde",
+  EVENING: "Noite",
+};
+
+export const RideOfferStatus = {
+  AVAILABLE: "AVAILABLE",
+  FULL: "FULL",
+  CANCELLED: "CANCELLED",
+  COMPLETED: "COMPLETED",
+} as const;
+
+export type RideOfferStatus = (typeof RideOfferStatus)[keyof typeof RideOfferStatus];
+
+export const rideOfferStatusDisplay: Record<RideOfferStatus, { border: string; bg: string; label: string }> = {
+  AVAILABLE: {
+    border: "border-primary",
+    bg: "bg-primary",
+    label: "Disponível",
+  },
+  FULL: {
+    border: "border-danger",
+    bg: "bg-danger",
+    label: "Lotada",
+  },
+  CANCELLED: {
+    border: "border-danger",
+    bg: "bg-danger",
+    label: "Cancelada",
+  },
+  COMPLETED: {
+    border: "border-secondary",
+    bg: "bg-secondary",
+    label: "Concluída",
+  },
+};
+
+export interface RideOffer {
+  id: number;
+  status: RideOfferStatus;
+
+  driver: UserSummary;
+
+  origin: string;
+  destination: string;
+
+  departureDateTime: string;
+
+  vehicle: VehicleOptionalId;
+  seatsCapacity: number;
+  seatsTaken: number;
+
+  description: string | null;
+}
+
+export type RideOfferSummary = Omit<RideOffer, "vehicle" | "description">;
+
+export interface CreateRideOffer {
+  origin: string;
+  destination: string;
+  isRoundTrip: boolean;
+
+  departureDateTime: string;
+  returnDateTime: string | null;
+
+  vehicle: VehicleOptionalId;
+  seatsCapacity: number;
+
+  description: string | null;
+}
+
+export function getMinDate(): string {
+  return new Date().toLocaleDateString("sv-SE");
+}
+
+export function getMaxDate(): string {
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 7);
+  return maxDate.toLocaleDateString("sv-SE");
+}
+
+const validateOriginDestination = (
+  data: { origin?: string | null; destination?: string | null },
+  ctx: z.RefinementCtx,
+) => {
+  if (data.origin && data.origin === data.destination) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["destination"],
+      message: "O destino deve ser diferente da origem",
+    });
+  }
+};
+
+const validateDateRange = (date?: string | null, ctx?: z.RefinementCtx) => {
+  if (!date) return;
+
+  if (date < getMinDate()) {
+    ctx?.addIssue({
+      code: "custom",
+      path: ["date"],
+      message: "A data não pode ser anterior a hoje",
+    });
+  } else if (date > getMaxDate()) {
+    ctx?.addIssue({
+      code: "custom",
+      path: ["date"],
+      message: `A data não pode ultrapassar 1 semana (${getMaxDate().split("-").reverse().join("/")})`,
+    });
+  }
+};
+
+export const filterSchema = z
+  .object({
+    period: z.enum(Period, "Escolha um período válido").nullish(),
+
+    date: z.iso.date("Informe uma data válida").or(z.literal("")).optional(),
+
+    origin: z.enum(Neighborhoods, "Escolha uma origem válida").or(z.literal("")).optional(),
+    destination: z.enum(Neighborhoods, "Escolha um destino válido").or(z.literal("")).optional(),
+  })
+  .superRefine((data, ctx) => {
+    validateOriginDestination(data, ctx);
+    validateDateRange(data.date, ctx);
+  });
+
+export const rideOfferSchema = z
+  .object({
+    origin: z.enum(Neighborhoods, "Escolha uma origem válida"),
+    destination: z.enum(Neighborhoods, "Escolha um destino válido"),
+
+    isRoundTrip: z.boolean().default(false),
+
+    date: z.iso.date("Informe a data da carona"),
+    departureTime: z.iso.time({ precision: -1, error: "Informe a hora de saída" }),
+    returnTime: z.iso.time({ precision: -1, error: "Informe um horário válido" }).or(z.literal("")).optional(),
+
+    vehicleId: z.string().optional(),
+    plate: z.string().optional(),
+    model: z.string().trim().min(1, "O modelo é obrigatório").max(50, "O modelo deve ter no máximo 50 caracteres"),
+    color: z.string().trim().min(1, "A cor é obrigatória").max(30, "A cor deve ter no máximo 30 caracteres"),
+
+    seatsCapacity: z
+      .number("Informe o número de vagas")
+      .int("Use um número inteiro")
+      .min(1, "Mínimo de 1 vaga")
+      .max(4, "Máximo de 4 vagas"),
+
+    description: z.string().trim().max(500, "Máximo de 500 caracteres").optional(),
+  })
+  .superRefine((data, ctx) => {
+    validateOriginDestination(data, ctx);
+    validateDateRange(data.date, ctx);
+
+    if (data.date && data.departureTime && new Date(`${data.date}T${data.departureTime}`) < new Date()) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["departureTime"],
+        message: "O horário de saída não pode ser anterior ao horário atual",
+      });
+    }
+
+    if (data.isRoundTrip) {
+      if (!data.returnTime) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["returnTime"],
+          message: "Informe a hora de volta",
+        });
+      } else if (data.departureTime && data.returnTime <= data.departureTime) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["returnTime"],
+          message: "A volta deve ser depois da saída",
+        });
+      }
+    }
+  });
+
+export function offerToForm(offer: RideOffer): z.input<typeof rideOfferSchema> {
+  const [date, time] = offer.departureDateTime.split("T");
+
+  return {
+    origin: offer.origin,
+    destination: offer.destination,
+    isRoundTrip: false,
+
+    date: date,
+    departureTime: time.slice(0, 5),
+    returnTime: "",
+
+    vehicleId: undefined,
+    plate: offer.vehicle.plate ?? "",
+    model: offer.vehicle.model,
+    color: offer.vehicle.color,
+
+    seatsCapacity: offer.seatsCapacity,
+    description: offer.description ?? "",
+  };
+}

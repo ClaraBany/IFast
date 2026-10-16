@@ -1,6 +1,7 @@
 import { Bell, Menu } from "lucide-react";
-import Logo from "@assets/logo-primary.png";
+import Logo from "@assets/logo-primary.svg";
 import { Ripples } from "react-ripples-continued";
+import { Link } from "react-router";
 
 interface HeaderProps {
   open: boolean;
@@ -9,16 +10,18 @@ interface HeaderProps {
 
 export default function Header({ open, setOpen }: HeaderProps) {
   return (
-    <header className="fixed top-0 left-0 z-10 flex h-20 w-full items-center justify-between bg-primary px-5">
-      <button className="icon-btn" onClick={() => setOpen(!open)}>
-        <Menu color="white" size={40} />
+    <header className="fixed top-0 left-0 z-10 flex h-16 w-full items-center justify-between bg-primary px-5">
+      <button className="icon-btn p-3" onClick={() => setOpen(!open)}>
+        <Menu color="white" size={24} />
         <Ripples color="var(--ripple-light)" />
       </button>
 
-      <img src={Logo} alt="Logo" className="h-12 brightness-0 invert" />
+      <Link to={"/offers"}>
+        <img src={Logo} alt="Logo" className="h-8 brightness-0 invert" />
+      </Link>
 
-      <button className="icon-btn">
-        <Bell color="white" size={40} strokeWidth={1.5} />
+      <button className="icon-btn p-3">
+        <Bell color="white" size={24} strokeWidth={1.5} />
         <Ripples color="var(--ripple-light)" />
       </button>
     </header>

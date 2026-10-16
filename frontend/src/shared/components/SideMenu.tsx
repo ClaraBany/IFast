@@ -18,7 +18,7 @@ export default function SideMenu({ open, setOpen }: SideMenuProps) {
     <Drawer.Root direction="left" open={open} onOpenChange={setOpen}>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-[1.5px]" />
-        <Drawer.Content className="fixed top-0 bottom-0 left-0 my-20 flex w-[320px] rounded-e-2xl bg-white">
+        <Drawer.Content className="fixed top-0 bottom-0 left-0 my-16 flex w-[320px] rounded-e-2xl bg-white">
           <div className="flex-column w-full items-start gap-5 overflow-y-auto p-6">
             <Link to={`/users/${user!.id}`} onClick={() => setOpen(false)} className="flex-center gap-2.5">
               <ProfilePicture url={user?.pictureUrl} size="lg" />
@@ -31,7 +31,7 @@ export default function SideMenu({ open, setOpen }: SideMenuProps) {
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-side-menu" onClick={() => setOpen(false)}>
+            <Link to={"/history"} className="btn btn-side-menu" onClick={() => setOpen(false)}>
               <RotateCcwClock />
               Histórico de Caronas
               <Ripples color="var(--ripple-dark)" />
@@ -43,7 +43,7 @@ export default function SideMenu({ open, setOpen }: SideMenuProps) {
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-side-menu" onClick={() => setOpen(false)}>
+            <Link to={"/offers/create"} className="btn btn-side-menu" onClick={() => setOpen(false)}>
               <Plus />
               Criar Oferta
               <Ripples color="var(--ripple-dark)" />

@@ -1,0 +1,77 @@
+import OfferCard from "./OfferCard";
+import { Link, useSearchParams } from "react-router";
+import { LoaderCircle, Plus, SlidersHorizontal } from "lucide-react";
+import RetryError from "@shared/components/RetryError";
+import { useQuery } from "@tanstack/react-query";
+import { getAll } from "./offerService";
+import { Ripples } from "react-ripples-continued";
+import { useState } from "react";
+import FilterMenu from "@shared/components/FilterMenu";
+import type { filterSchema } from "./offerTypes";
+import type z from "zod";
+import ActiveFilters from "@shared/components/ActiveFilters";
+
+export default function Offers() {
+  const [open, setOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+
+  const queryParams = {
+    period: (searchParams.get("period") as z.infer<typeof filterSchema>["period"]) || undefined,
+    date: searchParams.get("date") || undefined,
+    origin: searchParams.get("origin") || undefined,
+    destination: searchParams.get("destination") || undefined,
+  };
+
+  const {
+    data: offers = [],
+    isLoading,
+    isFetching,
+    refetch,
+    isError,
+  } = useQuery({
+    queryKey: ["ride-offers", queryParams],
+    queryFn: () => getAll(queryParams),
+  });
+
+  if (isError) {
+    return <RetryError onRetry={refetch} isFetching={isFetching} />;
+  }
+
+  return (
+    <>
+      <title>Ofertas</title>
+      <div className="flex-center w-full justify-between">
+        <h2>Ofertas Disponíveis</h2>
+
+        <button className="icon-btn bg-white" onClick={() => setOpen(!open)}>
+          <SlidersHorizontal size={30} />
+          <Ripples color="var(--ripple-dark)" />
+        </button>
+        <FilterMenu open={open} setOpen={setOpen} />
+      </div>
+      <ActiveFilters />
+
+      {isLoading ? (
+        <div className="flex-center flex-1">
+          <LoaderCircle className="animate-spin text-primary" size={40} />
+        </div>
+      ) : (
+        <div className="mb-16 grid grid-cols-1 gap-7.5 md:grid-cols-2">
+          {offers.length === 0 ? (
+            <p className="text-pretty text-neutral-dark md:col-span-2">
+              Não encontramos nenhuma oferta.{" "}
+              {searchParams.size > 0 ? "Tente remover os filtros" : "Por favor volte mais tarde"}
+            </p>
+          ) : (
+            offers.map((offer) => <OfferCard key={offer.id} offer={offer} />)
+          )}
+        </div>
+      )}
+
+      <Link to={"/offers/create"} className="btn btn-lg fixed right-5 bottom-21 w-fit bg-primary">
+        <Plus size={24} />
+        Criar Oferta
+      </Link>
+    </>
+  );
+}

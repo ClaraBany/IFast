@@ -1,7 +1,7 @@
-@import "@fontsource/poppins/600.css";
-@import "@fontsource/inter/400.css";
-@import "@fontsource/inter/500.css";
-@import "@fontsource/inter/700.css";
+@import "@fontsource/poppins/latin-600.css";
+@import "@fontsource/inter/latin-400.css";
+@import "@fontsource/inter/latin-500.css";
+@import "@fontsource/inter/latin-700.css";
 
 @import "tailwindcss";
 
@@ -28,7 +28,7 @@
 
 @layer base {
   body {
-    @apply min-h-screen bg-primary text-slate-900 caret-primary-selected accent-primary-selected;
+    @apply min-h-screen bg-neutral-light text-slate-900 caret-primary-selected accent-primary-selected;
     font-family: var(--font-inter);
   }
 
@@ -92,7 +92,7 @@
 
 @layer components {
   .form-fields {
-    @apply grid w-full grid-cols-1 gap-4 rounded-2xl bg-white px-5 py-4 md:grid-cols-2;
+    @apply grid w-full grid-cols-1 gap-5 rounded-2xl bg-white px-5 py-4 md:grid-cols-2;
   }
 
   .field {
@@ -101,6 +101,14 @@
     span {
       @apply text-sm text-pretty;
     }
+  }
+
+  .card-container {
+    @apply relative flex cursor-pointer justify-between rounded-2xl border bg-white px-5 py-2.5 transition-all hover:box-shadow;
+  }
+
+  .card-badge {
+    @apply absolute -top-px -right-px flex-center size-9 rounded-tr-2xl rounded-bl-2xl text-white;
   }
 
   .btn {
@@ -132,14 +140,14 @@
   }
 
   .navlink {
-    @apply relative flex-center flex-col overflow-hidden rounded p-1 transition-colors hover:bg-black/10;
+    @apply relative flex-center flex-col overflow-hidden rounded p-0.5 transition-colors hover:bg-black/10;
 
     img {
-      @apply h-7;
+      @apply h-6;
     }
 
     .active-bar {
-      @apply hidden h-1.25 w-full rounded-xl bg-primary brightness-130 group-[.active]:block;
+      @apply h-0 w-0 rounded-xl bg-primary brightness-130 transition-all group-[.active]:h-1.25 group-[.active]:w-full;
     }
   }
 
@@ -154,6 +162,14 @@
   .modal-overlay {
     @apply fixed inset-0 bg-black/40 backdrop-blur-[1.5px];
   }
+
+  .switch-root {
+    @apply h-4.5 w-9.25 shrink-0 cursor-pointer rounded-full bg-neutral-dark transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 data-[state=checked]:bg-primary;
+  }
+
+  .switch-thumb {
+    @apply block size-5 -translate-y-px rounded-full bg-neutral-light transition-transform data-[state=checked]:translate-x-4.75 data-[state=unchecked]:-translate-x-1;
+  }
 }
 
 @utility flex-center {
@@ -162,4 +178,8 @@
 
 @utility flex-column {
   @apply flex flex-col;
+}
+
+@utility box-shadow {
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
