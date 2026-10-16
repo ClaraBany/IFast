@@ -4,6 +4,20 @@ import z from "zod";
 
 type status = "AVAILABLE" | "FULL" | "CANCELLED" | "COMPLETED";
 
+export const Period = {
+  MORNING: "MORNING",
+  AFTERNOON: "AFTERNOON",
+  EVENING: "EVENING",
+} as const;
+
+export type Period = (typeof Period)[keyof typeof Period];
+
+export const periodLabels: Record<Period, string> = {
+  MORNING: "Manhã",
+  AFTERNOON: "Tarde",
+  EVENING: "Noite",
+};
+
 export interface RideOffer {
   id: number;
   status: status;
@@ -40,7 +54,7 @@ export interface RideOfferSummary {
 export interface CreateRideOffer {
   origin: string;
   destination: string;
-  roundTrip: boolean;
+  isRoundTrip: boolean;
 
   departureDateTime: string;
   returnDateTime: string | null;
@@ -83,6 +97,41 @@ export function getMaxDate(): string {
   maxDate.setDate(maxDate.getDate() + 7);
   return maxDate.toLocaleDateString("sv-SE");
 }
+
+export const filterSchema = z
+  .object({
+    period: z.enum(Period, "Escolha um período válido").nullish(),
+
+    date: z.iso.date("Informe uma data válida").or(z.literal("")).optional(),
+
+    origin: z.enum(Neighborhoods, "Escolha uma origem válida").or(z.literal("")).optional(),
+    destination: z.enum(Neighborhoods, "Escolha um destino válido").or(z.literal("")).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.origin && data.origin === data.destination) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["destination"],
+        message: "O destino deve ser diferente da origem",
+      });
+    }
+
+    if (data.date) {
+      if (data.date < getMinDate()) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["date"],
+          message: "A data não pode ser anterior a hoje",
+        });
+      } else if (data.date > getMaxDate()) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["date"],
+          message: `A data não pode ultrapassar 1 semana (${getMaxDate().split("-").reverse().join("/")})`,
+        });
+      }
+    }
+  });
 
 export const rideOfferSchema = z
   .object({

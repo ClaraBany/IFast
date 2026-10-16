@@ -1,12 +1,12 @@
 import OfferIcon from "@assets/card-icons/offer.png";
-import { displayStatusMap, type RideOffer } from "./offerTypes";
+import { displayStatusMap, type RideOfferSummary } from "./offerTypes";
 import ProfilePicture from "@shared/components/ProfilePicture";
 import { Link } from "react-router";
 import { ArrowRight } from "lucide-react";
 import { formatDepartureDateTime } from "@shared/utils/formatDateTime";
 
 type OfferCardProps = {
-  offer: RideOffer;
+  offer: RideOfferSummary;
 };
 
 export default function OfferCard({ offer }: OfferCardProps) {
@@ -31,9 +31,9 @@ export default function OfferCard({ offer }: OfferCardProps) {
           {date} - Saída: {time}
         </p>
 
-        {offer.status !== "COMPLETED" && (
+        {offer.status !== "COMPLETED" && offer.status !== "CANCELLED" && (
           <p>
-            Vagas: {offer.seatsTaken}/{offer.capacity}
+            Vagas: {offer.seatsTaken}/{offer.seatsCapacity}
           </p>
         )}
 
@@ -42,9 +42,9 @@ export default function OfferCard({ offer }: OfferCardProps) {
         </div>
       </Link>
 
-      <Link to={`/users/${offer.owner.id}`} className="relative flex-center w-25 flex-col gap-1.25">
-        <ProfilePicture url={offer.owner.pictureUrl} size="lg" />
-        <p className="text-center">{offer.owner.name}</p>
+      <Link to={`/users/${offer.driver.id}`} className="relative flex-center w-25 flex-col gap-1.25">
+        <ProfilePicture url={offer.driver.pictureUrl} size="lg" />
+        <p className="text-center">{offer.driver.name}</p>
       </Link>
     </div>
   );

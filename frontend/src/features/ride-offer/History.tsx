@@ -4,7 +4,6 @@ import RetryError from "@shared/components/RetryError";
 import { useQuery } from "@tanstack/react-query";
 import { getAll } from "./offerService";
 import { PageHeader } from "@shared/components/PageHeader";
-import { mockOffers } from "./mock";
 
 export default function History() {
   const {
@@ -14,7 +13,7 @@ export default function History() {
     refetch,
     isError,
   } = useQuery({
-    queryKey: ["offers"],
+    queryKey: ["ride-offers"],
     queryFn: getAll,
     enabled: false,
   });

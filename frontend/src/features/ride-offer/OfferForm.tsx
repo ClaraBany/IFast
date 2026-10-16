@@ -76,7 +76,7 @@ export default function OfferForm() {
   });
 
   const { data: offer, isLoading: isLoadingOffer } = useQuery({
-    queryKey: ["offers", id],
+    queryKey: ["ride-offers", id],
     queryFn: () => get(Number(id)),
     enabled: isEdit,
   });
@@ -94,7 +94,7 @@ export default function OfferForm() {
   } = useMutation({
     mutationFn: (data: z.infer<typeof rideOfferSchema>) => (isEdit ? update(Number(id), data) : create(data)),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["offers"] });
+      queryClient.invalidateQueries({ queryKey: ["ride-offers"] });
       setSuccessOpen(true);
     },
   });
@@ -163,14 +163,14 @@ export default function OfferForm() {
               render={({ field }) => (
                 <div className="flex items-center gap-2.5 md:col-span-2">
                   <Switch.Root
-                    id="roundTrip"
+                    id="isRoundTrip"
                     className="switch-root"
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   >
                     <Switch.Thumb className="switch-thumb" />
                   </Switch.Root>
-                  <label htmlFor="roundTrip">Viagem de Ida e Volta</label>
+                  <label htmlFor="isRoundTrip">Viagem de Ida e Volta</label>
                 </div>
               )}
             />

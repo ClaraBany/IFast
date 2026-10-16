@@ -1,5 +1,5 @@
 import OfferCard from "./OfferCard";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { LoaderCircle, Plus, SlidersHorizontal } from "lucide-react";
 import RetryError from "@shared/components/RetryError";
 import { useQuery } from "@tanstack/react-query";
@@ -7,30 +7,30 @@ import { getAll } from "./offerService";
 import { Ripples } from "react-ripples-continued";
 import { useState } from "react";
 import FilterMenu from "@shared/components/FilterMenu";
-import { mockOffers } from "./mock";
+import type { filterSchema } from "./offerTypes";
+import type z from "zod";
 
 export default function Offers() {
   const [open, setOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+
+  const queryParams = {
+    period: (searchParams.get("period") as z.infer<typeof filterSchema>["period"]) || undefined,
+    date: searchParams.get("date") || undefined,
+    origin: searchParams.get("origin") || undefined,
+    destination: searchParams.get("destination") || undefined,
+  };
 
   const {
-    data: offers = mockOffers.filter((offer) => offer.status !== "Completed"),
+    data: offers = [],
     isLoading,
     isFetching,
     refetch,
     isError,
   } = useQuery({
-    queryKey: ["offers"],
-    queryFn: getAll,
-    enabled: false,
+    queryKey: ["ride-offers", queryParams],
+    queryFn: () => getAll(queryParams),
   });
-
-  if (isLoading) {
-    return (
-      <div className="flex-center flex-1">
-        <LoaderCircle className="animate-spin text-primary" size={40} />
-      </div>
-    );
-  }
 
   if (isError) {
     return <RetryError onRetry={refetch} isFetching={isFetching} />;
@@ -49,15 +49,22 @@ export default function Offers() {
         <FilterMenu open={open} setOpen={setOpen} />
       </div>
 
-      <div className="mb-16 grid grid-cols-1 gap-7.5 md:grid-cols-2">
-        {offers.length === 0 ? (
-          <p className="text-pretty text-neutral-dark md:col-span-2">
-            Não encontramos nenhuma oferta. Por favor volte mais tarde
-          </p>
-        ) : (
-          offers.map((offer) => <OfferCard key={offer.id} offer={offer} />)
-        )}
-      </div>
+      {isLoading ? (
+        <div className="flex-center flex-1">
+          <LoaderCircle className="animate-spin text-primary" size={40} />
+        </div>
+      ) : (
+        <div className="mb-16 grid grid-cols-1 gap-7.5 md:grid-cols-2">
+          {offers.length === 0 ? (
+            <p className="text-pretty text-neutral-dark md:col-span-2">
+              Não encontramos nenhuma oferta.{" "}
+              {searchParams.size > 0 ? "Tente remover os filtros" : "Por favor volte mais tarde"}
+            </p>
+          ) : (
+            offers.map((offer) => <OfferCard key={offer.id} offer={offer} />)
+          )}
+        </div>
+      )}
 
       <Link to={"/offers/create"} className="btn btn-lg fixed right-5 bottom-21 w-fit bg-primary">
         <Plus size={24} />

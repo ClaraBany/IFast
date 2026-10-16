@@ -33,14 +33,14 @@ export default function OfferDetails() {
     refetch,
     isFetching,
   } = useQuery({
-    queryKey: ["offers", id],
+    queryKey: ["ride-offers", id],
     queryFn: () => get(Number(id)),
   });
 
   const { mutate: cancelOffer, isPending: isPendingCancel } = useMutation({
     mutationFn: (id: number) => cancel(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["offers"] });
+      queryClient.invalidateQueries({ queryKey: ["ride-offers"] });
       setDeleteOpen(false);
     },
   });
@@ -48,7 +48,7 @@ export default function OfferDetails() {
   const { mutate: completeOffer, isPending: isPendingComplete } = useMutation({
     mutationFn: (id: number) => complete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["offers"] });
+      queryClient.invalidateQueries({ queryKey: ["ride-offers"] });
       setSuccessOpen(true);
     },
   });
