@@ -9,6 +9,14 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.set("Authorization", `Bearer ${token}`);
   }
+
+  if (import.meta.env.DEV && ["post", "put"].includes(config.method?.toLowerCase() ?? "")) {
+    console.group(`[Axios Request] ${config.method?.toUpperCase()} ${config.url}`);
+    console.log("Payload/Data:", config.data);
+    console.log("Headers:", config.headers);
+    console.groupEnd();
+  }
+
   return config;
 });
 
