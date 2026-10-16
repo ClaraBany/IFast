@@ -2,7 +2,7 @@ import { PageHeader } from "@shared/components/PageHeader";
 import { displayStatusMap } from "./offerTypes";
 import { useAuthStore } from "@auth/authStore";
 import { Link, useParams } from "react-router";
-import { ArrowRight, LoaderCircle, SquarePen, Trash2 } from "lucide-react";
+import { ArrowRight, Info, LoaderCircle, SquarePen, Trash2 } from "lucide-react";
 import { Ripples } from "react-ripples-continued";
 import ProfilePicture from "@shared/components/ProfilePicture";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ type OfferAction = {
   label: string;
   onClick?: () => void;
   isPending?: boolean;
+  disabled?: boolean;
 };
 
 export default function OfferDetails() {
@@ -68,6 +69,7 @@ export default function OfferDetails() {
   const isDriver = offer.driver.id === user?.id;
   const status = displayStatusMap[offer.status];
   const { weekday, date, time } = formatDepartureDateTime(offer.departureDateTime);
+  const hasDeparted = new Date() >= new Date(offer.departureDateTime);
 
   let action: OfferAction | null = null;
   if (isDriver) {
@@ -76,6 +78,7 @@ export default function OfferDetails() {
         label: "Concluir carona",
         onClick: () => completeOffer(offer.id),
         isPending: isPendingComplete,
+        disabled: !hasDeparted,
       };
     }
   } else if (offer.status === "AVAILABLE") {
@@ -195,10 +198,21 @@ export default function OfferDetails() {
       )}
 
       {action && (
-        <button className="btn btn-lg mt-auto bg-primary" onClick={action.onClick} disabled={action.isPending}>
-          {action.isPending ? <LoaderCircle className="animate-spin" /> : action.label}
-          <Ripples color="var(--ripple-light)" />
-        </button>
+        <div className="mt-auto">
+          {isDriver && !hasDeparted && (
+            <p className="mb-1 text-neutral-dark">
+              <Info className="mb-1 inline size-4" /> Será possível concluir a carona após o horário de saída
+            </p>
+          )}
+          <button
+            className="btn btn-lg bg-primary"
+            onClick={action.onClick}
+            disabled={action.isPending || action.disabled}
+          >
+            {action.isPending ? <LoaderCircle className="animate-spin" /> : action.label}
+            <Ripples color="var(--ripple-light)" />
+          </button>
+        </div>
       )}
 
       <SuccessModal open={successOpen} message="Oferta concluída com sucesso!" onClose={() => setSuccessOpen(false)} />
