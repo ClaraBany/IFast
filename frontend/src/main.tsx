@@ -10,7 +10,7 @@ import AuthLayout from "@shared/layouts/AuthLayout.tsx";
 import MainLayout from "@shared/layouts/MainLayout";
 import Login from "@auth/Login";
 import Register from "@auth/Register";
-import Offer from "@ride-offer/Offer";
+import Offers from "@ride-offer/Offers.tsx";
 import MyRides from "@my-rides/MyRides";
 import Request from "@ride-request/Request";
 import { LoaderCircle } from "lucide-react";
