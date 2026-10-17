@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import RetryError from "@shared/components/RetryError";
 import { PageHeader } from "@shared/components/PageHeader";
 import ProfilePicture from "@shared/components/ProfilePicture";
+import { neighborhoodsTestLabels } from "./userTypes";
 
 export default function Profile() {
   const authUser = useAuthStore((state) => state.user);
@@ -89,7 +90,7 @@ export default function Profile() {
           {authUser?.id == id && (
             <p>
               <span className="text-label">Endereço: </span>
-              {profile.user.address ?? "(não definido)"}
+              {profile.user.address ? neighborhoodsTestLabels[profile.user.address] : "(não definido)"}
             </p>
           )}
         </div>

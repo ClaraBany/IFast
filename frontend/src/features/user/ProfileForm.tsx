@@ -1,15 +1,27 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import z from "zod";
-import { Neighborhoods, updateProfileSchema } from "./userTypes";
-import { updateProfile } from "./userService";
+import { Controller, useForm } from "react-hook-form";
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react";
+import { Check, ChevronDown } from "lucide-react";
+import { NeighborhoodsTest, neighborhoodsTestLabels, updateProfileSchema } from "./userTypes";
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@auth/authStore";
 import { useNavigate } from "react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { PageHeader } from "@shared/components/PageHeader";
-import { useQueryClient } from "@tanstack/react-query";
 import SubmitButton from "@shared/components/SubmitButton";
 import { SuccessModal } from "@shared/components/SucessModal";
-import { useState } from "react";
+import { updateProfile } from "./userService";
+import type z from "zod";
+
+const normalize = (text: string) =>
+  text
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase();
+
+const addressOptions = [...updateProfileSchema.shape.address.unwrap().options].sort((a, b) =>
+  neighborhoodsTestLabels[a].localeCompare(neighborhoodsTestLabels[b], "pt-BR"),
+);
 
 export default function ProfileForm() {
   const user = useAuthStore((state) => state.user);
@@ -17,9 +29,11 @@ export default function ProfileForm() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [successOpen, setSuccessOpen] = useState(false);
+  const [query, setQuery] = useState("");
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof updateProfileSchema>>({
@@ -27,10 +41,15 @@ export default function ProfileForm() {
     mode: "onTouched",
     defaultValues: {
       name: user?.name,
-      address: user?.address ?? "",
+      address: (user?.address ?? null) as z.infer<typeof updateProfileSchema>["address"],
       phoneNumber: user?.phoneNumber ?? "",
     },
   });
+
+  const filteredOptions =
+    query === ""
+      ? addressOptions
+      : addressOptions.filter((key) => normalize(neighborhoodsTestLabels[key]).includes(normalize(query)));
 
   const onSubmit = async (data: z.infer<typeof updateProfileSchema>) => {
     setUser(await updateProfile(data));
@@ -51,7 +70,7 @@ export default function ProfileForm() {
   return (
     <>
       <title>Editar Perfil</title>
-      <PageHeader title="Editar Pefil" />
+      <PageHeader title="Editar Perfil" />
 
       <form onSubmit={handleSubmit(onSubmit)} className="flex-column flex-1 gap-4">
         <section className="form-fields">
@@ -70,22 +89,59 @@ export default function ProfileForm() {
 
           <div className="field">
             <label htmlFor="address">Bairro</label>
-            <input
-              {...register("address")}
-              aria-invalid={errors.address ? "true" : "false"}
-              type="text"
-              list="neighborhood-list"
-              autoComplete="off"
-              placeholder="Selecione seu bairro"
-              id="address"
+            <Controller
+              name="address"
+              control={control}
+              render={({ field }) => (
+                <Combobox
+                  value={field.value}
+                  immediate
+                  onChange={(value) => field.onChange(value)}
+                  onClose={() => setQuery("")}
+                >
+                  <div className="relative">
+                    <ComboboxInput
+                      id="address"
+                      ref={field.ref}
+                      aria-invalid={errors.address ? "true" : "false"}
+                      autoComplete="off"
+                      placeholder="Selecione seu bairro"
+                      className="pr-12!"
+                      displayValue={(key: NeighborhoodsTest | null) => (key ? neighborhoodsTestLabels[key] : "")}
+                      onChange={(event) => {
+                        setQuery(event.target.value);
+                        if (event.target.value === "") field.onChange(null);
+                      }}
+                      onBlur={field.onBlur}
+                    />
+                    <ComboboxButton className="absolute inset-y-0 right-0 flex items-center px-3.5">
+                      <ChevronDown className="text-neutral-dark" size={20} />
+                    </ComboboxButton>
+                  </div>
+
+                  <ComboboxOptions
+                    anchor="bottom"
+                    transition
+                    className="w-(--input-width) rounded-xl border border-gray-200 bg-white p-1 shadow-lg transition duration-100 ease-in [--anchor-gap:--spacing(1)] empty:invisible data-leave:data-closed:opacity-0"
+                  >
+                    {filteredOptions.length === 0 ? (
+                      <div className="px-3 py-1.5 text-neutral-dark select-none">Nenhum bairro encontrado</div>
+                    ) : (
+                      filteredOptions.map((key) => (
+                        <ComboboxOption
+                          key={key}
+                          value={key}
+                          className="group flex items-center gap-2 rounded-lg px-3 py-1.5 select-none data-focus:bg-primary-selected/25"
+                        >
+                          <Check className="invisible size-4 text-primary group-data-selected:visible" />
+                          {neighborhoodsTestLabels[key]}
+                        </ComboboxOption>
+                      ))
+                    )}
+                  </ComboboxOptions>
+                </Combobox>
+              )}
             />
-            <datalist id="neighborhood-list">
-              {Object.values(Neighborhoods)
-                .filter((name) => name !== "IFNMG")
-                .map((name) => (
-                  <option key={name} value={name} />
-                ))}
-            </datalist>
             {errors.address && <span>{errors.address.message}</span>}
           </div>
 
