@@ -1,10 +1,11 @@
 import { Drawer } from "vaul";
-import { getNeighborhoodKey, getNeighborhoodLabel, Neighborhoods } from "@user/userTypes";
+import { Neighborhoods } from "@user/userTypes";
 import { filterSchema, getMaxDate, getMinDate, Period, periodLabels } from "@ride-offer/offerTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type z from "zod";
 import { useSearchParams } from "react-router";
+import NeighborhoodCombobox from "@user/NeighborhoodCombobox";
 
 interface FilterMenuProps {
   open: boolean;
@@ -20,14 +21,15 @@ export default function FilterMenu({ open, setOpen }: FilterMenuProps) {
     reset,
     getValues,
     setValue,
+    control,
     formState: { errors },
   } = useForm<z.infer<typeof filterSchema>>({
     resolver: zodResolver(filterSchema),
     values: {
       period: (searchParams.get("period") as z.infer<typeof filterSchema>["period"]) || undefined,
       date: searchParams.get("date") || undefined,
-      origin: getNeighborhoodLabel(searchParams.get("origin")) || undefined,
-      destination: getNeighborhoodLabel(searchParams.get("destination")) || undefined,
+      origin: searchParams.get("origin") as Neighborhoods | null,
+      destination: searchParams.get("destination") as Neighborhoods | null,
     },
     mode: "onTouched",
   });
@@ -37,15 +39,15 @@ export default function FilterMenu({ open, setOpen }: FilterMenuProps) {
 
     if (data.period) newParams.set("period", data.period);
     if (data.date) newParams.set("date", data.date);
-    if (data.origin) newParams.set("origin", getNeighborhoodKey(data.origin)!);
-    if (data.destination) newParams.set("destination", getNeighborhoodKey(data.destination)!);
+    if (data.origin) newParams.set("origin", data.origin);
+    if (data.destination) newParams.set("destination", data.destination);
 
     setSearchParams(newParams);
     setOpen(false);
   };
 
   const onClear = () => {
-    reset({ period: null, date: "", origin: "", destination: "" });
+    reset({ period: null, date: "", origin: null, destination: null });
     setSearchParams(new URLSearchParams());
     setOpen(false);
   };
@@ -105,38 +107,20 @@ export default function FilterMenu({ open, setOpen }: FilterMenuProps) {
               {errors.date && <span>{errors.date.message}</span>}
             </div>
 
-            <div className="field">
-              <label htmlFor="origin">Origem</label>
-              <input
-                {...register("origin")}
-                aria-invalid={errors.origin ? "true" : "false"}
-                id="origin"
-                type="text"
-                list="neighborhood-list"
-                autoComplete="off"
-                placeholder="Escolha a origem da carona"
-              />
-              <datalist id="neighborhood-list">
-                {Object.values(Neighborhoods).map((name) => (
-                  <option key={name} value={name} />
-                ))}
-              </datalist>
-              {errors.origin && <span>{errors.origin.message}</span>}
-            </div>
-
-            <div className="field">
-              <label htmlFor="destination">Destino</label>
-              <input
-                {...register("destination")}
-                aria-invalid={errors.destination ? "true" : "false"}
-                id="destination"
-                type="text"
-                list="neighborhood-list"
-                autoComplete="off"
-                placeholder="Escolha o destino da carona"
-              />
-              {errors.destination && <span>{errors.destination.message}</span>}
-            </div>
+            <NeighborhoodCombobox
+              control={control}
+              name="origin"
+              label="Origem"
+              placeholder="Escolha a origem da carona"
+              position={"top"}
+            />
+            <NeighborhoodCombobox
+              control={control}
+              name="destination"
+              label="Destino"
+              placeholder="Escolha o destino da carona"
+              position={"top"}
+            />
 
             <div className="mt-5 flex-center w-full justify-between gap-4 md:col-start-2">
               <button className="btn btn-lg bg-neutral-light text-neutral-dark" type="button" onClick={onClear}>

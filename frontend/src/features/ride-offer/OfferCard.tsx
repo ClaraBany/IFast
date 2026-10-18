@@ -4,6 +4,7 @@ import ProfilePicture from "@shared/components/ProfilePicture";
 import { Link } from "react-router";
 import { ArrowRight } from "lucide-react";
 import { formatDepartureDateTime } from "@shared/utils/formatDateTime";
+import { NeighborhoodsLabels } from "@user/userTypes";
 
 type OfferCardProps = {
   offer: RideOfferSummary;
@@ -24,7 +25,8 @@ export default function OfferCard({ offer }: OfferCardProps) {
         className="flex flex-1 flex-col items-start gap-2.5 after:absolute after:inset-0 after:content-['']"
       >
         <p>
-          {offer.origin} <ArrowRight className="mb-1 inline size-4" /> {offer.destination}
+          {NeighborhoodsLabels[offer.origin]} <ArrowRight className="mb-1 inline size-4" />{" "}
+          {NeighborhoodsLabels[offer.destination]}
         </p>
 
         <p>

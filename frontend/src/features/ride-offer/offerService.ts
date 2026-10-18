@@ -1,13 +1,12 @@
 import { api } from "@shared/api";
-import { getNeighborhoodKey, getNeighborhoodLabel } from "@user/userTypes";
 import type z from "zod";
-import type { CreateRideOffer, filterSchema, RideOffer, rideOfferSchema, RideOfferSummary } from "./offerTypes";
+import type { CreateRideOffer, Filter, RideOffer, rideOfferSchema, RideOfferSummary } from "./offerTypes";
 import type { IdResponse } from "@shared/types";
 
 function toCreateRideOffer(form: z.infer<typeof rideOfferSchema>): CreateRideOffer {
   return {
-    origin: getNeighborhoodKey(form.origin)!,
-    destination: getNeighborhoodKey(form.destination)!,
+    origin: form.origin,
+    destination: form.destination,
     isRoundTrip: form.isRoundTrip,
 
     departureDateTime: `${form.date}T${form.departureTime}`,
@@ -26,22 +25,14 @@ function toCreateRideOffer(form: z.infer<typeof rideOfferSchema>): CreateRideOff
   };
 }
 
-function withNeighborhoodLabel(offer: RideOffer): RideOffer {
-  return {
-    ...offer,
-    origin: getNeighborhoodLabel(offer.origin)!,
-    destination: getNeighborhoodLabel(offer.destination)!,
-  };
-}
-
-export async function getAll(filters: z.infer<typeof filterSchema>): Promise<RideOfferSummary[]> {
-  const response = await api.get<RideOffer[]>("/ride-offers", { params: filters });
-  return response.data.map(withNeighborhoodLabel);
+export async function getAll(filters: Filter): Promise<RideOfferSummary[]> {
+  const response = await api.get<RideOfferSummary[]>("/ride-offers", { params: filters });
+  return response.data;
 }
 
 export async function get(offerId: number): Promise<RideOffer> {
   const response = await api.get<RideOffer>(`/ride-offers/${offerId}`);
-  return withNeighborhoodLabel(response.data);
+  return response.data;
 }
 
 export async function create(form: z.infer<typeof rideOfferSchema>): Promise<IdResponse> {

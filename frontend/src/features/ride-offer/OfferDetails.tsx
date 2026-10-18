@@ -12,6 +12,7 @@ import { useState } from "react";
 import { DeleteModal } from "@shared/components/DeleteModal";
 import { formatDepartureDateTime } from "@shared/utils/formatDateTime";
 import { SuccessModal } from "@shared/components/SucessModal";
+import { NeighborhoodsLabels } from "@user/userTypes";
 
 type OfferAction = {
   label: string;
@@ -105,7 +106,8 @@ export default function OfferDetails() {
       </PageHeader>
 
       <h3 className="text-center">
-        {offer.origin} <ArrowRight className="mb-1 inline" /> {offer.destination}
+        {NeighborhoodsLabels[offer.origin]} <ArrowRight className="mb-1 inline" />{" "}
+        {NeighborhoodsLabels[offer.destination]}
       </h3>
 
       <section className="card-container pointer-events-none border-0 px-6 shadow-none">

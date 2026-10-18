@@ -1,89 +1,54 @@
 import z from "zod";
 
-export const Neighborhoods: Record<string, string> = {
+export const Neighborhoods = {
   IFNMG: "IFNMG",
 
-  CIDADE_NOVA: "Cidade Nova",
-  CIDADE_VERDE: "Cidade Verde",
-  CIDADE_JARDIM: "Cidade Jardim",
-  SAO_PEDRO: "São Pedro",
-  SANTO_ANTONIO: "Santo Antônio",
-  CENTRO: "Centro",
-  PLANALTO: "Planalto",
-  RESIDENCIAL_LARANJEIRAS: "Residencial Laranjeiras",
-  PARQUE_SAO_JOAO: "Parque São João",
-  SAO_JUDAS_TADEU: "São Judas Tadeu",
-  DARWIN_CORDEIRO: "Darwin Cordeiro",
-  TERESA_CRISTINA: "Teresa Cristina",
-  JARDIM_PARAISO: "Jardim Paraíso",
-  MONTE_DAS_OLIVEIRAS: "Monte das Oliveiras",
-  PEDRO_GOMES: "Pedro Gomes",
-  SAO_FRANCISCO: "São Francisco",
-  PANORAMICO: "Panorâmico",
-};
-
-export function getNeighborhoodKey(label: string): string | undefined {
-  return Object.entries(Neighborhoods).find(([, value]) => value === label)?.[0];
-}
-
-export function getNeighborhoodLabel(key: string | null): string | null {
-  if (!key) return null;
-  return Neighborhoods[key] ?? null;
-}
-
-export function getCounterpart(label: string, userAddress?: string | null): string | null {
-  if (!Object.values(Neighborhoods).includes(label)) return null;
-
-  if (label !== Neighborhoods.IFNMG) return Neighborhoods.IFNMG;
-
-  return userAddress ?? "";
-}
-
-export const NeighborhoodsTest = {
-  IFNMG: "IFNMG",
-
+  CENTRO: "CENTRO",
+  CIDADE_JARDIM: "CIDADE_JARDIM",
   CIDADE_NOVA: "CIDADE_NOVA",
   CIDADE_VERDE: "CIDADE_VERDE",
-  CIDADE_JARDIM: "CIDADE_JARDIM",
-  SAO_PEDRO: "SAO_PEDRO",
-  SANTO_ANTONIO: "SANTO_ANTONIO",
-  CENTRO: "CENTRO",
-  PLANALTO: "PLANALTO",
-  RESIDENCIAL_LARANJEIRAS: "RESIDENCIAL_LARANJEIRAS",
-  PARQUE_SAO_JOAO: "PARQUE_SAO_JOAO",
-  SAO_JUDAS_TADEU: "SAO_JUDAS_TADEU",
   DARWIN_CORDEIRO: "DARWIN_CORDEIRO",
-  TERESA_CRISTINA: "TERESA_CRISTINA",
   JARDIM_PARAISO: "JARDIM_PARAISO",
   MONTE_DAS_OLIVEIRAS: "MONTE_DAS_OLIVEIRAS",
-  PEDRO_GOMES: "PEDRO_GOMES",
-  SAO_FRANCISCO: "SAO_FRANCISCO",
   PANORAMICO: "PANORAMICO",
+  PARQUE_SAO_JOAO: "PARQUE_SAO_JOAO",
+  PEDRO_GOMES: "PEDRO_GOMES",
+  PLANALTO: "PLANALTO",
+  RESIDENCIAL_LARANJEIRAS: "RESIDENCIAL_LARANJEIRAS",
+  SANTO_ANTONIO: "SANTO_ANTONIO",
+  SAO_FRANCISCO: "SAO_FRANCISCO",
+  SAO_JUDAS_TADEU: "SAO_JUDAS_TADEU",
+  SAO_PEDRO: "SAO_PEDRO",
+  TERESA_CRISTINA: "TERESA_CRISTINA",
 } as const;
 
-export type NeighborhoodsTest = (typeof NeighborhoodsTest)[keyof typeof NeighborhoodsTest];
+export type Neighborhoods = (typeof Neighborhoods)[keyof typeof Neighborhoods];
 
-export const neighborhoodsTestLabels: Record<NeighborhoodsTest, string> = {
+export const NeighborhoodsLabels: Record<Neighborhoods, string> = {
   IFNMG: "IFNMG",
 
+  CENTRO: "Centro",
+  CIDADE_JARDIM: "Cidade Jardim",
   CIDADE_NOVA: "Cidade Nova",
   CIDADE_VERDE: "Cidade Verde",
-  CIDADE_JARDIM: "Cidade Jardim",
-  SAO_PEDRO: "São Pedro",
-  SANTO_ANTONIO: "Santo Antônio",
-  CENTRO: "Centro",
-  PLANALTO: "Planalto",
-  RESIDENCIAL_LARANJEIRAS: "Residencial Laranjeiras",
-  PARQUE_SAO_JOAO: "Parque São João",
-  SAO_JUDAS_TADEU: "São Judas Tadeu",
   DARWIN_CORDEIRO: "Darwin Cordeiro",
-  TERESA_CRISTINA: "Teresa Cristina",
   JARDIM_PARAISO: "Jardim Paraíso",
   MONTE_DAS_OLIVEIRAS: "Monte das Oliveiras",
-  PEDRO_GOMES: "Pedro Gomes",
-  SAO_FRANCISCO: "São Francisco",
   PANORAMICO: "Panorâmico",
+  PARQUE_SAO_JOAO: "Parque São João",
+  PEDRO_GOMES: "Pedro Gomes",
+  PLANALTO: "Planalto",
+  RESIDENCIAL_LARANJEIRAS: "Residencial Laranjeiras",
+  SANTO_ANTONIO: "Santo Antônio",
+  SAO_FRANCISCO: "São Francisco",
+  SAO_JUDAS_TADEU: "São Judas Tadeu",
+  SAO_PEDRO: "São Pedro",
+  TERESA_CRISTINA: "Teresa Cristina",
 };
+
+export function getCounterpart(key: Neighborhoods, userAddress?: Neighborhoods | null) {
+  return key !== Neighborhoods.IFNMG ? Neighborhoods.IFNMG : (userAddress ?? null);
+}
 
 export const updateProfileSchema = z.object({
   name: z
@@ -96,10 +61,7 @@ export const updateProfileSchema = z.object({
     .regex(/^\(\d{2}\) \d{5}-\d{4}$/, "Telefone inválido")
     .or(z.literal(""))
     .optional(),
-  address: z
-    .enum(NeighborhoodsTest, { message: "Selecione um bairro da lista" })
-    .exclude([NeighborhoodsTest.IFNMG])
-    .nullable(),
+  address: z.enum(Neighborhoods, { message: "Selecione um bairro da lista" }).exclude([Neighborhoods.IFNMG]).nullable(),
 });
 
 export interface User {
@@ -107,8 +69,8 @@ export interface User {
   name: string;
   email: string;
   pictureUrl: string;
-  phoneNumber: string | null;
-  address?: NeighborhoodsTest;
+  phoneNumber?: string;
+  address?: Neighborhoods;
 }
 
 export interface UserSummary {

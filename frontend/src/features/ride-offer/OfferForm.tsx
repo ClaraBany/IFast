@@ -15,6 +15,7 @@ import type z from "zod";
 import { Ripples } from "react-ripples-continued";
 import { getAll as getVehicles } from "@vehicle/vehicleService";
 import { useAuthStore } from "@auth/authStore";
+import NeighborhoodCombobox from "@user/NeighborhoodCombobox";
 
 export default function OfferForm() {
   const { id } = useParams();
@@ -37,7 +38,7 @@ export default function OfferForm() {
     mode: "onTouched",
     shouldUnregister: true,
     defaultValues: {
-      origin: userAddress ?? "",
+      origin: userAddress ?? undefined,
       destination: Neighborhoods.IFNMG,
       isRoundTrip: false,
       date: getMinDate(),
@@ -101,11 +102,9 @@ export default function OfferForm() {
 
   const onSubmit = (data: z.infer<typeof rideOfferSchema>) => saveOffer(data);
 
-  const syncCounterpart = (other: "origin" | "destination") => (e: React.ChangeEvent<HTMLInputElement>) => {
-    const counterpart = getCounterpart(e.target.value, userAddress);
-    if (counterpart === null) return;
-
-    setValue(other, counterpart, { shouldValidate: !!errors[other] });
+  const syncCounterpart = (other: "origin" | "destination") => (value: Neighborhoods | null) => {
+    if (!value) return;
+    setValue(other, getCounterpart(value, userAddress) as Neighborhoods, { shouldValidate: !!errors[other] });
   };
 
   if ((isEdit && isLoadingOffer) || isLoadingVehicles) {
@@ -123,38 +122,20 @@ export default function OfferForm() {
 
       <form className="flex-column flex-1 gap-4" onSubmit={handleSubmit(onSubmit)}>
         <section className="form-fields">
-          <div className="field">
-            <label htmlFor="origin">Origem</label>
-            <input
-              {...register("origin", { onChange: syncCounterpart("destination") })}
-              aria-invalid={errors.origin ? "true" : "false"}
-              id="origin"
-              type="text"
-              list="neighborhood-list"
-              autoComplete="off"
-              placeholder="Escolha a origem da carona"
-            />
-            <datalist id="neighborhood-list">
-              {Object.values(Neighborhoods).map((name) => (
-                <option key={name} value={name} />
-              ))}
-            </datalist>
-            {errors.origin && <span>{errors.origin.message}</span>}
-          </div>
-
-          <div className="field">
-            <label htmlFor="destination">Destino</label>
-            <input
-              {...register("destination", { onChange: syncCounterpart("origin") })}
-              aria-invalid={errors.destination ? "true" : "false"}
-              id="destination"
-              type="text"
-              list="neighborhood-list"
-              autoComplete="off"
-              placeholder="Escolha o destino da carona"
-            />
-            {errors.destination && <span>{errors.destination.message}</span>}
-          </div>
+          <NeighborhoodCombobox
+            control={control}
+            name="origin"
+            label="Origem"
+            placeholder="Escolha a origem da carona"
+            onValueChange={syncCounterpart("destination")}
+          />
+          <NeighborhoodCombobox
+            control={control}
+            name="destination"
+            label="Destino"
+            placeholder="Escolha o destino da carona"
+            onValueChange={syncCounterpart("origin")}
+          />
 
           {!isEdit && (
             <Controller

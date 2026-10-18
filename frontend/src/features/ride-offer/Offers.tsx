@@ -7,19 +7,19 @@ import { getAll } from "./offerService";
 import { Ripples } from "react-ripples-continued";
 import { useState } from "react";
 import FilterMenu from "@shared/components/FilterMenu";
-import type { filterSchema } from "./offerTypes";
-import type z from "zod";
+import type { Period } from "./offerTypes";
 import ActiveFilters from "@shared/components/ActiveFilters";
+import type { Neighborhoods } from "@user/userTypes";
 
 export default function Offers() {
   const [open, setOpen] = useState(false);
   const [searchParams] = useSearchParams();
 
   const queryParams = {
-    period: (searchParams.get("period") as z.infer<typeof filterSchema>["period"]) || undefined,
+    period: (searchParams.get("period") as Period) || undefined,
     date: searchParams.get("date") || undefined,
-    origin: searchParams.get("origin") || undefined,
-    destination: searchParams.get("destination") || undefined,
+    origin: (searchParams.get("origin") as Neighborhoods) || undefined,
+    destination: (searchParams.get("destination") as Neighborhoods) || undefined,
   };
 
   const {

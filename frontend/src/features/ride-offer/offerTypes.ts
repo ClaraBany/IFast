@@ -54,8 +54,8 @@ export interface RideOffer {
 
   driver: UserSummary;
 
-  origin: string;
-  destination: string;
+  origin: Neighborhoods;
+  destination: Neighborhoods;
 
   departureDateTime: string;
 
@@ -69,8 +69,8 @@ export interface RideOffer {
 export type RideOfferSummary = Omit<RideOffer, "vehicle" | "description">;
 
 export interface CreateRideOffer {
-  origin: string;
-  destination: string;
+  origin: Neighborhoods;
+  destination: Neighborhoods;
   isRoundTrip: boolean;
 
   departureDateTime: string;
@@ -80,6 +80,13 @@ export interface CreateRideOffer {
   seatsCapacity: number;
 
   description: string | null;
+}
+
+export interface Filter {
+  period?: Period;
+  date?: string;
+  origin?: Neighborhoods;
+  destination?: Neighborhoods;
 }
 
 export function getMinDate(): string {
@@ -129,8 +136,8 @@ export const filterSchema = z
 
     date: z.iso.date("Informe uma data válida").or(z.literal("")).optional(),
 
-    origin: z.enum(Neighborhoods, "Escolha uma origem válida").or(z.literal("")).optional(),
-    destination: z.enum(Neighborhoods, "Escolha um destino válido").or(z.literal("")).optional(),
+    origin: z.enum(Neighborhoods, { message: "Escolha uma origem válida" }).nullable(),
+    destination: z.enum(Neighborhoods, { message: "Escolha um destino válido" }).nullable(),
   })
   .superRefine((data, ctx) => {
     validateOriginDestination(data, ctx);
@@ -139,8 +146,8 @@ export const filterSchema = z
 
 export const rideOfferSchema = z
   .object({
-    origin: z.enum(Neighborhoods, "Escolha uma origem válida"),
-    destination: z.enum(Neighborhoods, "Escolha um destino válido"),
+    origin: z.enum(Neighborhoods, { message: "Escolha uma origem válida" }),
+    destination: z.enum(Neighborhoods, { message: "Escolha um destino válido" }),
 
     isRoundTrip: z.boolean().default(false),
 

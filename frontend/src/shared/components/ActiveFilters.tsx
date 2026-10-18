@@ -1,6 +1,6 @@
 import { useSearchParams } from "react-router";
 import { Period, periodLabels } from "@ride-offer/offerTypes";
-import { getNeighborhoodLabel } from "@user/userTypes";
+import { NeighborhoodsLabels, type Neighborhoods } from "@user/userTypes";
 
 type FilterConfig = {
   key: string;
@@ -11,8 +11,8 @@ type FilterConfig = {
 const FILTERS: FilterConfig[] = [
   { key: "period", format: (v) => periodLabels[v as Period] ?? v },
   { key: "date", format: (v) => v.split("-").reverse().join("/") },
-  { key: "origin", label: "Origem", format: (v) => getNeighborhoodLabel(v)! },
-  { key: "destination", label: "Destino", format: (v) => getNeighborhoodLabel(v)! },
+  { key: "origin", label: "Origem", format: (v) => NeighborhoodsLabels[v as Neighborhoods] ?? v },
+  { key: "destination", label: "Destino", format: (v) => NeighborhoodsLabels[v as Neighborhoods] ?? v },
 ];
 
 export default function ActiveFilters() {
