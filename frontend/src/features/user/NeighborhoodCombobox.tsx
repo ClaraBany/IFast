@@ -69,21 +69,13 @@ export default function NeighborhoodCombobox<T extends FieldValues>({
           </ComboboxButton>
         </div>
 
-        <ComboboxOptions
-          anchor={position}
-          transition
-          className="pointer-events-auto z-30 w-(--input-width) rounded-xl border border-gray-200 bg-white p-1 shadow-lg transition duration-100 ease-in [--anchor-gap:--spacing(1)] empty:invisible data-closed:opacity-0"
-        >
+        <ComboboxOptions anchor={position} transition className="dropdown-options pointer-events-auto z-30">
           {filteredOptions.length === 0 ? (
-            <div className="px-3 py-1.5 text-neutral-dark select-none">Nenhum bairro encontrado</div>
+            <div className="dropdown-option text-neutral-dark">Nenhum bairro encontrado</div>
           ) : (
             filteredOptions.map((key) => (
-              <ComboboxOption
-                key={key}
-                value={key}
-                className="group flex items-center gap-2 rounded-lg px-3 py-1.5 select-none data-focus:bg-primary-selected/25"
-              >
-                <Check className="invisible size-4 text-primary group-data-selected:visible" />
+              <ComboboxOption key={key} value={key} className="group dropdown-option">
+                <Check className="dropdown-check" />
                 {NeighborhoodsLabels[key]}
               </ComboboxOption>
             ))

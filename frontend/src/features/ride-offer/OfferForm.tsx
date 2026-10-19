@@ -1,6 +1,6 @@
 import { PageHeader } from "@shared/components/PageHeader";
 import SubmitButton from "@shared/components/SubmitButton";
-import { CirclePlus, LoaderCircle, Minus, Plus } from "lucide-react";
+import { Check, ChevronDown, CirclePlus, LoaderCircle, Minus, Plus } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router";
 import * as Switch from "@radix-ui/react-switch";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -16,6 +16,7 @@ import { Ripples } from "react-ripples-continued";
 import { getAll as getVehicles } from "@vehicle/vehicleService";
 import { useAuthStore } from "@auth/authStore";
 import NeighborhoodCombobox from "@user/NeighborhoodCombobox";
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
 
 export default function OfferForm() {
   const { id } = useParams();
@@ -205,14 +206,41 @@ export default function OfferForm() {
                 </Link>
               ) : (
                 <>
-                  <select {...register("vehicleId")} aria-invalid={errors.vehicleId ? "true" : "false"} id="vehicleId">
-                    <option value="">Escolha um veículo</option>
-                    {vehicles.map((v) => (
-                      <option key={v.id} value={v.id}>
-                        {v.model}, {v.color}
-                      </option>
-                    ))}
-                  </select>
+                  <Controller
+                    name="vehicleId"
+                    control={control}
+                    render={({ field }) => (
+                      <Listbox value={field.value ?? ""} onChange={field.onChange}>
+                        <ListboxButton
+                          id="vehicleId"
+                          ref={(el) => field.ref(el)}
+                          aria-invalid={errors.vehicleId ? "true" : "false"}
+                          onBlur={field.onBlur}
+                          className="input flex items-center justify-between gap-2 text-left"
+                        >
+                          <span className={selectedVehicle ? "truncate" : "truncate text-neutral-dark"}>
+                            {selectedVehicle
+                              ? `${selectedVehicle.model}, ${selectedVehicle.color}`
+                              : "Escolha um veículo"}
+                          </span>
+                          <ChevronDown className="shrink-0 text-neutral-dark" size={20} />
+                        </ListboxButton>
+
+                        <ListboxOptions anchor="bottom" transition className="dropdown-options">
+                          <ListboxOption value="" className="dropdown-option group text-neutral-dark">
+                            <Check className="dropdown-check" />
+                            Escolha um veículo
+                          </ListboxOption>
+                          {vehicles.map((v) => (
+                            <ListboxOption key={v.id} value={String(v.id)} className="dropdown-option group">
+                              <Check className="dropdown-check" />
+                              {v.model}, {v.color}
+                            </ListboxOption>
+                          ))}
+                        </ListboxOptions>
+                      </Listbox>
+                    )}
+                  />
                   {errors.vehicleId && <span>{errors.vehicleId.message}</span>}
                 </>
               )}
