@@ -1,5 +1,5 @@
 import OfferCard from "./OfferCard";
-import { Link, useSearchParams } from "react-router";
+import { Link } from "react-router";
 import { LoaderCircle, Plus, SlidersHorizontal } from "lucide-react";
 import RetryError from "@shared/components/RetryError";
 import { useQuery } from "@tanstack/react-query";
@@ -7,20 +7,12 @@ import { getAll } from "./offerService";
 import { Ripples } from "react-ripples-continued";
 import { useState } from "react";
 import FilterMenu from "@shared/components/FilterMenu";
-import type { Period } from "./offerTypes";
 import ActiveFilters from "@shared/components/ActiveFilters";
-import type { Neighborhoods } from "@user/userTypes";
+import { useFilters } from "@shared/hooks/useFilter";
 
 export default function Offers() {
   const [open, setOpen] = useState(false);
-  const [searchParams] = useSearchParams();
-
-  const queryParams = {
-    period: (searchParams.get("period") as Period) || undefined,
-    date: searchParams.get("date") || undefined,
-    origin: (searchParams.get("origin") as Neighborhoods) || undefined,
-    destination: (searchParams.get("destination") as Neighborhoods) || undefined,
-  };
+  const { filters, hasFilters } = useFilters();
 
   const {
     data: offers = [],
@@ -29,8 +21,8 @@ export default function Offers() {
     refetch,
     isError,
   } = useQuery({
-    queryKey: ["ride-offers", queryParams],
-    queryFn: () => getAll(queryParams),
+    queryKey: ["ride-offers", filters],
+    queryFn: () => getAll(filters),
   });
 
   if (isError) {
@@ -59,8 +51,7 @@ export default function Offers() {
         <div className="mb-16 grid grid-cols-1 gap-7.5 md:grid-cols-2">
           {offers.length === 0 ? (
             <p className="text-pretty text-neutral-dark md:col-span-2">
-              Não encontramos nenhuma oferta.{" "}
-              {searchParams.size > 0 ? "Tente remover os filtros" : "Por favor volte mais tarde"}
+              Não encontramos nenhuma oferta. {hasFilters ? "Tente remover os filtros" : "Por favor volte mais tarde"}
             </p>
           ) : (
             offers.map((offer) => <OfferCard key={offer.id} offer={offer} />)

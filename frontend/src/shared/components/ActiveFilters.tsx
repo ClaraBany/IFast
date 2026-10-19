@@ -1,52 +1,33 @@
-import { useSearchParams } from "react-router";
-import { Period, periodLabels } from "@ride-offer/offerTypes";
-import { NeighborhoodsLabels, type Neighborhoods } from "@user/userTypes";
-
-type FilterConfig = {
-  key: string;
-  label?: string;
-  format?: (value: string) => string;
-};
-
-const FILTERS: FilterConfig[] = [
-  { key: "period", format: (v) => periodLabels[v as Period] ?? v },
-  { key: "date", format: (v) => v.split("-").reverse().join("/") },
-  { key: "origin", label: "Origem", format: (v) => NeighborhoodsLabels[v as Neighborhoods] ?? v },
-  { key: "destination", label: "Destino", format: (v) => NeighborhoodsLabels[v as Neighborhoods] ?? v },
-];
+import { periodLabels } from "@ride-offer/offerTypes";
+import { useFilters } from "@shared/hooks/useFilter";
+import { NeighborhoodsLabels } from "@user/userTypes";
 
 export default function ActiveFilters() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { filters, removeFilter } = useFilters();
 
-  const activeFilters = FILTERS.filter((filter) => searchParams.get(filter.key));
+  const chips = [
+    { key: "period", text: filters.period && periodLabels[filters.period] },
+    { key: "date", text: filters.date?.split("-").reverse().join("/") },
+    { key: "origin", text: filters.origin && `Origem: ${NeighborhoodsLabels[filters.origin]}` },
+    { key: "destination", text: filters.destination && `Destino: ${NeighborhoodsLabels[filters.destination]}` },
+  ] as const;
 
-  if (activeFilters.length === 0) return null;
+  const activeChips = chips.filter((chip) => chip.text);
 
-  function removeFilter(key: string) {
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      next.delete(key);
-      return next;
-    });
-  }
+  if (activeChips.length === 0) return null;
 
   return (
     <div className="-mb-3 flex gap-3 overflow-x-auto">
-      {activeFilters.map(({ key, label, format }) => {
-        const value = searchParams.get(key)!;
-
-        return (
-          <button
-            key={key}
-            type="button"
-            onClick={() => removeFilter(key)}
-            className="flex-center cursor-pointer gap-1 rounded-3xl border border-primary bg-white px-4 py-0.5 whitespace-nowrap hover:brightness-95"
-          >
-            {label && `${label}: `}
-            {format ? format(value) : value}
-          </button>
-        );
-      })}
+      {activeChips.map(({ key, text }) => (
+        <button
+          key={key}
+          type="button"
+          onClick={() => removeFilter(key)}
+          className="flex-center cursor-pointer gap-1 rounded-3xl border border-primary bg-white px-4 py-0.5 whitespace-nowrap hover:brightness-95"
+        >
+          {text}
+        </button>
+      ))}
     </div>
   );
 }

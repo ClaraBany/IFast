@@ -1,11 +1,10 @@
 import { Drawer } from "vaul";
-import { Neighborhoods } from "@user/userTypes";
 import { filterSchema, getMaxDate, getMinDate, Period, periodLabels } from "@ride-offer/offerTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type z from "zod";
-import { useSearchParams } from "react-router";
 import NeighborhoodCombobox from "@user/NeighborhoodCombobox";
+import { useFilters } from "@shared/hooks/useFilter";
 
 interface FilterMenuProps {
   open: boolean;
@@ -13,7 +12,7 @@ interface FilterMenuProps {
 }
 
 export default function FilterMenu({ open, setOpen }: FilterMenuProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { filters, applyFilters, clearFilters } = useFilters();
 
   const {
     register,
@@ -25,30 +24,18 @@ export default function FilterMenu({ open, setOpen }: FilterMenuProps) {
     formState: { errors },
   } = useForm<z.infer<typeof filterSchema>>({
     resolver: zodResolver(filterSchema),
-    values: {
-      period: (searchParams.get("period") as z.infer<typeof filterSchema>["period"]) || undefined,
-      date: searchParams.get("date") || undefined,
-      origin: searchParams.get("origin") as Neighborhoods | null,
-      destination: searchParams.get("destination") as Neighborhoods | null,
-    },
+    values: { ...filters, origin: filters.origin ?? null, destination: filters.destination ?? null },
     mode: "onTouched",
   });
 
   const onSubmit = (data: z.infer<typeof filterSchema>) => {
-    const newParams = new URLSearchParams();
-
-    if (data.period) newParams.set("period", data.period);
-    if (data.date) newParams.set("date", data.date);
-    if (data.origin) newParams.set("origin", data.origin);
-    if (data.destination) newParams.set("destination", data.destination);
-
-    setSearchParams(newParams);
+    applyFilters(data);
     setOpen(false);
   };
 
   const onClear = () => {
     reset({ period: null, date: "", origin: null, destination: null });
-    setSearchParams(new URLSearchParams());
+    clearFilters();
     setOpen(false);
   };
 
