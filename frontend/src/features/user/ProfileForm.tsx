@@ -10,7 +10,7 @@ import SubmitButton from "@shared/components/SubmitButton";
 import { SuccessModal } from "@shared/components/SucessModal";
 import { updateProfile } from "./userService";
 import type z from "zod";
-import NeighborhoodCombobox from "./NeighborhoodCombobox";
+import NeighborhoodCombobox from "@shared/components/NeighborhoodCombobox";
 
 const addressOptions = [...updateProfileSchema.shape.address.unwrap().options];
 

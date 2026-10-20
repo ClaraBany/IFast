@@ -1,10 +1,11 @@
 import { Drawer } from "vaul";
-import { filterSchema, getMaxDate, getMinDate, Period, periodLabels } from "@ride-offer/offerTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type z from "zod";
-import NeighborhoodCombobox from "@user/NeighborhoodCombobox";
+import NeighborhoodCombobox from "@shared/components/NeighborhoodCombobox";
 import { useFilters } from "@shared/hooks/useFilter";
+import { filterSchema, Period, periodLabels } from "@shared/types/filter";
+import { getMaxDate, getMinDate } from "@shared/utils/dateLimits";
 
 interface FilterMenuProps {
   open: boolean;

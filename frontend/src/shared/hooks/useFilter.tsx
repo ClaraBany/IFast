@@ -1,7 +1,7 @@
+import { Period } from "@shared/types/filter";
+import { Neighborhoods } from "@shared/types/neighborhoods";
 import { useSearchParams } from "react-router";
 import z from "zod";
-import { Neighborhoods } from "@user/userTypes";
-import { Period } from "@ride-offer/offerTypes";
 
 export const FILTER_KEYS = ["period", "date", "origin", "destination"] as const;
 export type FilterKey = (typeof FILTER_KEYS)[number];

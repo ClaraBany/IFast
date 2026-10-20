@@ -1,6 +1,6 @@
-import { periodLabels } from "@ride-offer/offerTypes";
 import { useFilters } from "@shared/hooks/useFilter";
-import { NeighborhoodsLabels } from "@user/userTypes";
+import { periodLabels } from "@shared/types/filter";
+import { NeighborhoodsLabels } from "@shared/types/neighborhoods";
 
 export default function ActiveFilters() {
   const { filters, removeFilter } = useFilters();

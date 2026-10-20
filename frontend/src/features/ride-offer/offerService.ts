@@ -1,7 +1,8 @@
 import { api } from "@shared/api";
 import type z from "zod";
-import type { CreateRideOffer, Filter, RideOffer, rideOfferSchema, RideOfferSummary } from "./offerTypes";
-import type { IdResponse } from "@shared/types";
+import type { CreateRideOffer, RideOffer, rideOfferSchema, RideOfferSummary } from "./offerTypes";
+import type { Filter } from "@shared/types/filter";
+import type { IdResponse } from "@shared/types/common";
 
 function toCreateRideOffer(form: z.infer<typeof rideOfferSchema>): CreateRideOffer {
   return {

@@ -12,7 +12,7 @@ import { useState } from "react";
 import { DeleteModal } from "@shared/components/DeleteModal";
 import { formatDepartureDateTime } from "@shared/utils/formatDateTime";
 import { SuccessModal } from "@shared/components/SucessModal";
-import { NeighborhoodsLabels } from "@user/userTypes";
+import { NeighborhoodsLabels } from "@shared/types/neighborhoods";
 
 type OfferAction = {
   label: string;

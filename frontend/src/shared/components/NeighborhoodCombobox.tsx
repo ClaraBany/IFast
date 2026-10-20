@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useController, type Control, type FieldPath, type FieldValues } from "react-hook-form";
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from "@headlessui/react";
 import { Check, ChevronDown } from "lucide-react";
-import { Neighborhoods, NeighborhoodsLabels } from "@user/userTypes";
+import { Neighborhoods, NeighborhoodsLabels } from "@shared/types/neighborhoods";
 
 const normalize = (text: string) =>
   text

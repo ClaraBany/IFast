@@ -4,7 +4,7 @@ import ProfilePicture from "@shared/components/ProfilePicture";
 import { Link } from "react-router";
 import { ArrowRight } from "lucide-react";
 import { formatDepartureDateTime } from "@shared/utils/formatDateTime";
-import { NeighborhoodsLabels } from "@user/userTypes";
+import { NeighborhoodsLabels } from "@shared/types/neighborhoods";
 
 type OfferCardProps = {
   offer: RideOfferSummary;

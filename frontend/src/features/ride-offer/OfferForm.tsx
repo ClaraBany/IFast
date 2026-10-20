@@ -4,19 +4,20 @@ import { Check, ChevronDown, CirclePlus, LoaderCircle, Minus, Plus } from "lucid
 import { Link, useNavigate, useParams } from "react-router";
 import * as Switch from "@radix-ui/react-switch";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { getCounterpart, Neighborhoods } from "@user/userTypes";
 import { SuccessModal } from "@shared/components/SucessModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { getMaxDate, getMinDate, offerToForm, rideOfferSchema } from "./offerTypes";
+import { offerToForm, rideOfferSchema } from "./offerTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { create, get, update } from "./offerService";
 import type z from "zod";
 import { Ripples } from "react-ripples-continued";
 import { getAll as getVehicles } from "@vehicle/vehicleService";
 import { useAuthStore } from "@auth/authStore";
-import NeighborhoodCombobox from "@user/NeighborhoodCombobox";
+import NeighborhoodCombobox from "@shared/components/NeighborhoodCombobox";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
+import { getCounterpart, Neighborhoods } from "@shared/types/neighborhoods";
+import { getMaxDate, getMinDate } from "@shared/utils/dateLimits";
 
 export default function OfferForm() {
   const { id } = useParams();

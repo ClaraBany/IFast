@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import RetryError from "@shared/components/RetryError";
 import { PageHeader } from "@shared/components/PageHeader";
 import ProfilePicture from "@shared/components/ProfilePicture";
-import { NeighborhoodsLabels } from "./userTypes";
+import { NeighborhoodsLabels } from "@shared/types/neighborhoods";
 
 export default function Profile() {
   const authUser = useAuthStore((state) => state.user);

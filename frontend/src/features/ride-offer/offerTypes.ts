@@ -1,20 +1,8 @@
-import { Neighborhoods, type UserSummary } from "@user/userTypes";
+import { validateDateRange, validateOriginDestination } from "@shared/types/filter";
+import { Neighborhoods } from "@shared/types/neighborhoods";
+import { type UserSummary } from "@user/userTypes";
 import type { VehicleOptionalId } from "@vehicle/vehicleTypes";
 import z from "zod";
-
-export const Period = {
-  MORNING: "MORNING",
-  AFTERNOON: "AFTERNOON",
-  EVENING: "EVENING",
-} as const;
-
-export type Period = (typeof Period)[keyof typeof Period];
-
-export const periodLabels: Record<Period, string> = {
-  MORNING: "Manhã",
-  AFTERNOON: "Tarde",
-  EVENING: "Noite",
-};
 
 export const RideOfferStatus = {
   AVAILABLE: "AVAILABLE",
@@ -81,68 +69,6 @@ export interface CreateRideOffer {
 
   description: string | null;
 }
-
-export interface Filter {
-  period?: Period;
-  date?: string;
-  origin?: Neighborhoods;
-  destination?: Neighborhoods;
-}
-
-export function getMinDate(): string {
-  return new Date().toLocaleDateString("sv-SE");
-}
-
-export function getMaxDate(): string {
-  const maxDate = new Date();
-  maxDate.setDate(maxDate.getDate() + 7);
-  return maxDate.toLocaleDateString("sv-SE");
-}
-
-const validateOriginDestination = (
-  data: { origin?: string | null; destination?: string | null },
-  ctx: z.RefinementCtx,
-) => {
-  if (data.origin && data.origin === data.destination) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["destination"],
-      message: "O destino deve ser diferente da origem",
-    });
-  }
-};
-
-const validateDateRange = (date?: string | null, ctx?: z.RefinementCtx) => {
-  if (!date) return;
-
-  if (date < getMinDate()) {
-    ctx?.addIssue({
-      code: "custom",
-      path: ["date"],
-      message: "A data não pode ser anterior a hoje",
-    });
-  } else if (date > getMaxDate()) {
-    ctx?.addIssue({
-      code: "custom",
-      path: ["date"],
-      message: `A data não pode ultrapassar 1 semana (${getMaxDate().split("-").reverse().join("/")})`,
-    });
-  }
-};
-
-export const filterSchema = z
-  .object({
-    period: z.enum(Period, "Escolha um período válido").nullish(),
-
-    date: z.iso.date("Informe uma data válida").or(z.literal("")).optional(),
-
-    origin: z.enum(Neighborhoods, { message: "Escolha uma origem válida" }).nullable(),
-    destination: z.enum(Neighborhoods, { message: "Escolha um destino válido" }).nullable(),
-  })
-  .superRefine((data, ctx) => {
-    validateOriginDestination(data, ctx);
-    validateDateRange(data.date, ctx);
-  });
 
 export const rideOfferSchema = z
   .object({
