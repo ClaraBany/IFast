@@ -1,10 +1,9 @@
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { useAuthStore } from "@auth/authStore";
 import Logo from "@assets/logo-primary.svg";
 
-import App from "./App.tsx";
 import "@shared/styles.css";
 import AuthLayout from "@shared/layouts/AuthLayout.tsx";
 import MainLayout from "@shared/layouts/MainLayout";
@@ -53,7 +52,7 @@ const router = createBrowserRouter([
       {
         element: <MainLayout />,
         children: [
-          { path: "/", element: <App /> },
+          { path: "/", element: <Navigate to="/offers" replace /> },
           { path: "/offers", element: <Offers /> },
           { path: "/offers/:id", element: <OfferDetails /> },
           { path: "/offers/create", element: <OfferForm /> },
