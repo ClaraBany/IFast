@@ -7,7 +7,7 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { getCounterpart, Neighborhoods } from "@user/userTypes";
 import { SuccessModal } from "@shared/components/SucessModal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { getMaxDate, getMinDate, offerToForm, rideOfferSchema } from "./offerTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { create, get, update } from "./offerService";
@@ -22,7 +22,6 @@ export default function OfferForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const [successOpen, setSuccessOpen] = useState(false);
-  const hasAutoSelectedVehicle = useRef(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const userAddress = useAuthStore((s) => s.user?.address);
@@ -52,15 +51,10 @@ export default function OfferForm() {
     queryFn: getVehicles,
   });
 
-  const vehicleId = useWatch({ control, name: "vehicleId" });
-  const selectedVehicle = vehicles.find((v) => String(v.id) === String(vehicleId));
+  const autoVehicleId = !isEdit && vehicles.length === 1 ? String(vehicles[0].id) : undefined;
+  const watchedVehicleId = useWatch({ control, name: "vehicleId" });
 
-  useEffect(() => {
-    if (!isEdit && vehicles.length === 1 && !vehicleId && !hasAutoSelectedVehicle.current) {
-      setValue("vehicleId", String(vehicles[0].id));
-      hasAutoSelectedVehicle.current = true;
-    }
-  }, [isEdit, setValue, vehicleId, vehicles]);
+  const selectedVehicle = vehicles.find((v) => String(v.id) === String(watchedVehicleId ?? autoVehicleId));
 
   useEffect(() => {
     if (selectedVehicle) {
@@ -209,6 +203,7 @@ export default function OfferForm() {
                   <Controller
                     name="vehicleId"
                     control={control}
+                    defaultValue={autoVehicleId}
                     render={({ field }) => (
                       <Listbox value={field.value ?? ""} onChange={field.onChange}>
                         <ListboxButton
