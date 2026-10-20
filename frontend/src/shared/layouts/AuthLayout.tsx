@@ -1,6 +1,6 @@
 import { Outlet } from "react-router";
 import Logo from "@assets/logo-primary.svg";
-import { GlobalErrorModal } from "@shared/components/GlobalErrorModal";
+import { GlobalErrorModal } from "@shared/components/modals/GlobalErrorModal";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export default function AuthLayout() {

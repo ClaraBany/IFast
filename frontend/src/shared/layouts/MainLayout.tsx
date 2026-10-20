@@ -1,9 +1,9 @@
-import Header from "@shared/components/Header";
-import NavBar from "@shared/components/NavBar";
-import SideMenu from "@shared/components/SideMenu";
 import { useState } from "react";
 import { Outlet, ScrollRestoration } from "react-router";
-import { GlobalErrorModal } from "@shared/components/GlobalErrorModal";
+import { GlobalErrorModal } from "@shared/components/modals/GlobalErrorModal";
+import Header from "@shared/components/navigation/Header";
+import SideMenu from "@shared/components/navigation/SideMenu";
+import NavBar from "@shared/components/navigation/NavBar";
 
 export default function MainLayout() {
   const [open, setOpen] = useState(false);

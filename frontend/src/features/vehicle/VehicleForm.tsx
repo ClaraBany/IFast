@@ -4,14 +4,14 @@ import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { Ripples } from "react-ripples-continued";
 import { useState, useEffect } from "react";
-import { SuccessModal } from "@shared/components/SucessModal";
+import { SuccessModal } from "@shared/components/modals/SucessModal";
 import { LoaderCircle, Plus, Minus } from "lucide-react";
 import { useParams } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PageHeader } from "@shared/components/PageHeader";
-import SubmitButton from "@shared/components/SubmitButton";
+import { PageHeader } from "@shared/components/navigation/PageHeader";
+import SubmitButton from "@shared/components/form/SubmitButton";
 
 export default function VehicleForm() {
   const { id } = useParams();

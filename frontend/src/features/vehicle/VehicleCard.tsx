@@ -3,7 +3,7 @@ import { Trash2, Car, LoaderCircle } from "lucide-react";
 import { del } from "./vehicleService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router";
-import { DeleteModal } from "@shared/components/DeleteModal";
+import { DeleteModal } from "@shared/components/modals/DeleteModal";
 import { useState } from "react";
 import { Ripples } from "react-ripples-continued";
 

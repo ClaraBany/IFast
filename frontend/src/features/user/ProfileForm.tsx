@@ -5,12 +5,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@auth/authStore";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PageHeader } from "@shared/components/PageHeader";
-import SubmitButton from "@shared/components/SubmitButton";
-import { SuccessModal } from "@shared/components/SucessModal";
+import { PageHeader } from "@shared/components/navigation/PageHeader";
+import SubmitButton from "@shared/components/form/SubmitButton";
+import { SuccessModal } from "@shared/components/modals/SucessModal";
 import { updateProfile } from "./userService";
 import type z from "zod";
-import NeighborhoodCombobox from "@shared/components/NeighborhoodCombobox";
+import NeighborhoodCombobox from "@shared/components/form/NeighborhoodCombobox";
 
 const addressOptions = [...updateProfileSchema.shape.address.unwrap().options];
 

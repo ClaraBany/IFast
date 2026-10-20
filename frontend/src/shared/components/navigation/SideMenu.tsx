@@ -3,7 +3,7 @@ import { Car, RotateCcwClock, RefreshCcw, Plus, LayoutDashboard, LogOut } from "
 import { Ripples } from "react-ripples-continued";
 import { Link } from "react-router";
 import { Drawer } from "vaul";
-import ProfilePicture from "./ProfilePicture";
+import ProfilePicture from "../ProfilePicture";
 
 interface SideMenuProps {
   open: boolean;

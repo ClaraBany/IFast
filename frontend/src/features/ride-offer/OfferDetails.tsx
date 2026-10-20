@@ -1,4 +1,4 @@
-import { PageHeader } from "@shared/components/PageHeader";
+import { PageHeader } from "@shared/components/navigation/PageHeader";
 import { RideOfferStatus, rideOfferStatusDisplay } from "./offerTypes";
 import { useAuthStore } from "@auth/authStore";
 import { Link, useParams } from "react-router";
@@ -9,9 +9,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { cancel, complete, get } from "./offerService";
 import RetryError from "@shared/components/RetryError";
 import { useState } from "react";
-import { DeleteModal } from "@shared/components/DeleteModal";
+import { DeleteModal } from "@shared/components/modals/DeleteModal";
 import { formatDepartureDateTime } from "@shared/utils/formatDateTime";
-import { SuccessModal } from "@shared/components/SucessModal";
+import { SuccessModal } from "@shared/components/modals/SucessModal";
 import { NeighborhoodsLabels } from "@shared/types/neighborhoods";
 
 type OfferAction = {

@@ -6,8 +6,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getAll } from "./offerService";
 import { Ripples } from "react-ripples-continued";
 import { useState } from "react";
-import FilterMenu from "@shared/components/FilterMenu";
-import ActiveFilters from "@shared/components/ActiveFilters";
+import FilterMenu from "@shared/components/filter/FilterMenu";
+import ActiveFilters from "@shared/components/filter/ActiveFilters";
 import { useFilters } from "@shared/hooks/useFilter";
 
 export default function Offers() {

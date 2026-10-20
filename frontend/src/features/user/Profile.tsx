@@ -5,7 +5,7 @@ import { Ripples } from "react-ripples-continued";
 import { getProfile } from "./userService";
 import { useQuery } from "@tanstack/react-query";
 import RetryError from "@shared/components/RetryError";
-import { PageHeader } from "@shared/components/PageHeader";
+import { PageHeader } from "@shared/components/navigation/PageHeader";
 import ProfilePicture from "@shared/components/ProfilePicture";
 import { NeighborhoodsLabels } from "@shared/types/neighborhoods";
 
