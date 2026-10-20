@@ -159,7 +159,7 @@ export default function VehicleForm() {
         open={successOpen}
         onClose={() => {
           setSuccessOpen(false);
-          navigate(-1);
+          navigate("/vehicles", { replace: true });
         }}
       />
     </>

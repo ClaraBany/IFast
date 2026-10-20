@@ -341,7 +341,7 @@ export default function OfferForm() {
         open={successOpen}
         onClose={() => {
           setSuccessOpen(false);
-          navigate(`/offers/${responseId?.id}`);
+          navigate(`/offers/${responseId?.id}`, { replace: true });
         }}
       />
     </>

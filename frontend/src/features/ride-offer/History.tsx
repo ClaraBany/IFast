@@ -3,11 +3,11 @@ import { LoaderCircle } from "lucide-react";
 import RetryError from "@shared/components/RetryError";
 import { useQuery } from "@tanstack/react-query";
 import { getAll } from "./offerService";
-import { PageHeader } from "@shared/components/PageHeader";
+import { PageHeader } from "@shared/components/navigation/PageHeader";
 
 export default function History() {
   const {
-    data: offers = mockOffers.filter((offer) => offer.status === "Completed"),
+    data: offers,
     isLoading,
     isFetching,
     refetch,
