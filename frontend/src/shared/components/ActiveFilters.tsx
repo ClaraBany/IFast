@@ -17,7 +17,7 @@ export default function ActiveFilters() {
   if (activeChips.length === 0) return null;
 
   return (
-    <div className="-mb-3 flex gap-3 overflow-x-auto">
+    <div className="-mb-3 flex scrollbar-none gap-3 overflow-x-auto [&::-webkit-scrollbar]:hidden">
       {activeChips.map(({ key, text }) => (
         <button
           key={key}
