@@ -221,8 +221,9 @@ export default function OfferDetails() {
 
       <DeleteModal
         open={deleteOpen}
-        title="Excluir Oferta"
-        message={`Tem certeza que deseja excluir essa oferta?${offer.seatsTaken ? "\nOs passageiros serão notificados" : ""}`}
+        title="Cancelar Oferta"
+        message={`Tem certeza que deseja cancelar essa oferta?${offer.seatsTaken ? "\nOs passageiros serão notificados" : ""}`}
+        buttonLabel="Cancelar"
         isLoading={isPendingCancel}
         onConfirm={() => cancelOffer(offer.id)}
         onCancel={() => setDeleteOpen(false)}

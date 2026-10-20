@@ -4,13 +4,22 @@ import { OctagonAlert, LoaderCircle } from "lucide-react";
 type DeleteModalProps = {
   title: string;
   message: string;
+  buttonLabel?: string;
   open: boolean;
   isLoading?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 };
 
-export function DeleteModal({ title, message, open, isLoading = false, onConfirm, onCancel }: DeleteModalProps) {
+export function DeleteModal({
+  title,
+  message,
+  buttonLabel = "Excluir",
+  open,
+  isLoading = false,
+  onConfirm,
+  onCancel,
+}: DeleteModalProps) {
   return (
     <Dialog.Root open={open} onOpenChange={(open) => !open && !isLoading && onCancel()}>
       <Dialog.Portal>
@@ -32,7 +41,7 @@ export function DeleteModal({ title, message, open, isLoading = false, onConfirm
               </button>
             </Dialog.Close>
             <button className="btn btn-sm w-full bg-danger" onClick={onConfirm} disabled={isLoading}>
-              {isLoading ? <LoaderCircle className="animate-spin" /> : "Excluir"}
+              {isLoading ? <LoaderCircle className="animate-spin" /> : buttonLabel}
             </button>
           </div>
         </Dialog.Content>
