@@ -14,8 +14,8 @@ function toCreateRideOffer(form: z.infer<typeof rideOfferSchema>): CreateRideOff
     returnDateTime: form.isRoundTrip && form.returnTime ? `${form.date}T${form.returnTime}` : null,
 
     vehicle: {
-      id: undefined,
-      plate: form.plate || null,
+      id: form.vehicleId ? Number(form.vehicleId) : undefined,
+      plate: form.vehicleId ? form.plate || null : null,
       model: form.model,
       color: form.color,
       capacity: form.seatsCapacity,

@@ -135,7 +135,7 @@ export function offerToForm(offer: RideOffer): z.input<typeof rideOfferSchema> {
     departureTime: time.slice(0, 5),
     returnTime: "",
 
-    vehicleId: undefined,
+    vehicleId: String(offer.vehicle.id),
     plate: offer.vehicle.plate ?? "",
     model: offer.vehicle.model,
     color: offer.vehicle.color,

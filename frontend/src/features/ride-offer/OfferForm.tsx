@@ -58,6 +58,15 @@ export default function OfferForm() {
   const selectedVehicle = vehicles.find((v) => String(v.id) === String(watchedVehicleId ?? autoVehicleId));
 
   useEffect(() => {
+    if (isLoadingVehicles) return;
+
+    if (watchedVehicleId && !selectedVehicle) {
+      setValue("vehicleId", undefined);
+      setValue("plate", undefined);
+    }
+  }, [isLoadingVehicles, watchedVehicleId, selectedVehicle, setValue]);
+
+  useEffect(() => {
     if (selectedVehicle) {
       setValue("model", selectedVehicle.model, { shouldValidate: true });
       setValue("color", selectedVehicle.color, { shouldValidate: true });
