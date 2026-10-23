@@ -105,7 +105,7 @@ export default function ProfileForm() {
         open={successOpen}
         onClose={() => {
           setSuccessOpen(false);
-          navigate(`/users/${user?.id}`, { replace: true });
+          navigate(-1);
         }}
       />
     </>
