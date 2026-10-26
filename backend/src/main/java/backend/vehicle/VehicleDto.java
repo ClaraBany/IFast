@@ -14,8 +14,7 @@ import lombok.Setter;
 @Setter 
 @AllArgsConstructor 
 @NoArgsConstructor
-public class VehicleDto {    
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+public class VehicleDto {
     private Long id;
 
     @NotBlank 

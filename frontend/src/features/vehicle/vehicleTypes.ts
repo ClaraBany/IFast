@@ -1,9 +1,9 @@
 import z from "zod";
 
 export const vehicleSchema = z.object({
-  model: z.string().min(1, "O modelo é obrigatório").max(50, "O modelo deve ter no máximo 50 caracteres"),
+  model: z.string().trim().min(1, "O modelo é obrigatório").max(50, "O modelo deve ter no máximo 50 caracteres"),
 
-  color: z.string().min(1, "A cor é obrigatória").max(30, "A cor deve ter no máximo 30 caracteres"),
+  color: z.string().trim().min(1, "A cor é obrigatória").max(30, "A cor deve ter no máximo 30 caracteres"),
 
   plate: z
     .union([
@@ -18,7 +18,7 @@ export const vehicleSchema = z.object({
     ])
     .optional(),
 
-  capacity: z.number().int().min(1, "Capacidade mínima é 1"),
+  capacity: z.number().int().min(1, "Capacidade mínima é 1").max(4, "Capacidade máxima é 4"),
 });
 
 export interface Vehicle {
@@ -27,4 +27,8 @@ export interface Vehicle {
   color: string;
   plate: string | null;
   capacity: number;
+}
+
+export interface VehicleOptionalId extends Omit<Vehicle, "id"> {
+  id?: number;
 }

@@ -4,14 +4,14 @@ import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { Ripples } from "react-ripples-continued";
 import { useState, useEffect } from "react";
-import { SuccessModal } from "@shared/components/SucessModal";
+import { SuccessModal } from "@shared/components/modals/SucessModal";
 import { LoaderCircle, Plus, Minus } from "lucide-react";
 import { useParams } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PageHeader } from "@shared/components/PageHeader";
-import SubmitButton from "@shared/components/SubmitButton";
+import { PageHeader } from "@shared/components/navigation/PageHeader";
+import SubmitButton from "@shared/components/form/SubmitButton";
 
 export default function VehicleForm() {
   const { id } = useParams();
@@ -95,7 +95,7 @@ export default function VehicleForm() {
 
           <div className="field">
             <label htmlFor="plate">
-              Placa <span>(Opcional)</span>
+              Placa <span className="text-neutral-dark">(Opcional)</span>
             </label>
             <input
               {...register("plate")}
@@ -112,7 +112,9 @@ export default function VehicleForm() {
           </div>
 
           <div className="field">
-            <label htmlFor="capacity">Capacidade</label>
+            <label htmlFor="capacity">
+              Capacidade <span className="text-neutral-dark">(Sem contar o motorista)</span>
+            </label>
 
             <Controller
               name="capacity"
@@ -122,7 +124,7 @@ export default function VehicleForm() {
                   <button
                     type="button"
                     onClick={() => field.onChange(Math.max((field.value ?? 1) - 1, 1))}
-                    className="btn h-full text-danger"
+                    className="btn h-full rounded-e-none text-danger"
                   >
                     <Minus size={18} />
                     <Ripples color="var(--ripple-dark)" />
@@ -136,8 +138,8 @@ export default function VehicleForm() {
 
                   <button
                     type="button"
-                    onClick={() => field.onChange((field.value ?? 1) + 1)}
-                    className="btn h-full text-primary"
+                    onClick={() => field.onChange(Math.min((field.value ?? 1) + 1, 4))}
+                    className="btn h-full rounded-s-none text-primary"
                   >
                     <Plus size={18} />
                     <Ripples color="var(--ripple-dark)" />
@@ -157,7 +159,7 @@ export default function VehicleForm() {
         open={successOpen}
         onClose={() => {
           setSuccessOpen(false);
-          navigate("/vehicles");
+          navigate(-1);
         }}
       />
     </>

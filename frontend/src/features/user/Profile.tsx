@@ -5,8 +5,9 @@ import { Ripples } from "react-ripples-continued";
 import { getProfile } from "./userService";
 import { useQuery } from "@tanstack/react-query";
 import RetryError from "@shared/components/RetryError";
-import { PageHeader } from "@shared/components/PageHeader";
+import { PageHeader } from "@shared/components/navigation/PageHeader";
 import ProfilePicture from "@shared/components/ProfilePicture";
+import { NeighborhoodsLabels } from "@shared/types/neighborhoods";
 
 export default function Profile() {
   const authUser = useAuthStore((state) => state.user);
@@ -49,7 +50,7 @@ export default function Profile() {
 
       <section className="flex-column items-center gap-1.5">
         <ProfilePicture url={profile.user.pictureUrl} size="xl" />
-        <h3>{profile.user.name}</h3>
+        <h3 className="text-center">{profile.user.name}</h3>
       </section>
 
       <section className="flex-column w-full gap-2.5">
@@ -89,7 +90,7 @@ export default function Profile() {
           {authUser?.id == id && (
             <p>
               <span className="text-label">Endereço: </span>
-              {profile.user.address ?? "(não definido)"}
+              {profile.user.address ? NeighborhoodsLabels[profile.user.address] : "(não definido)"}
             </p>
           )}
         </div>

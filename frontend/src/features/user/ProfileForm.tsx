@@ -1,15 +1,18 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import z from "zod";
-import { Neighborhoods, updateProfileSchema } from "./userTypes";
-import { updateProfile } from "./userService";
+import { updateProfileSchema } from "./userTypes";
+import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "@auth/authStore";
 import { useNavigate } from "react-router";
-import { PageHeader } from "@shared/components/PageHeader";
-import { useQueryClient } from "@tanstack/react-query";
-import SubmitButton from "@shared/components/SubmitButton";
-import { SuccessModal } from "@shared/components/SucessModal";
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PageHeader } from "@shared/components/navigation/PageHeader";
+import SubmitButton from "@shared/components/form/SubmitButton";
+import { SuccessModal } from "@shared/components/modals/SucessModal";
+import { updateProfile } from "./userService";
+import type z from "zod";
+import NeighborhoodCombobox from "@shared/components/form/NeighborhoodCombobox";
+
+const addressOptions = [...updateProfileSchema.shape.address.unwrap().options];
 
 export default function ProfileForm() {
   const user = useAuthStore((state) => state.user);
@@ -20,6 +23,7 @@ export default function ProfileForm() {
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<z.infer<typeof updateProfileSchema>>({
@@ -27,7 +31,7 @@ export default function ProfileForm() {
     mode: "onTouched",
     defaultValues: {
       name: user?.name,
-      address: user?.address ?? "",
+      address: (user?.address ?? null) as z.infer<typeof updateProfileSchema>["address"],
       phoneNumber: user?.phoneNumber ?? "",
     },
   });
@@ -51,9 +55,9 @@ export default function ProfileForm() {
   return (
     <>
       <title>Editar Perfil</title>
-      <PageHeader title="Editar Pefil" />
+      <PageHeader title="Editar Perfil" />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex-column flex-1">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex-column flex-1 gap-4">
         <section className="form-fields">
           <div className="field">
             <label htmlFor="name">Nome</label>
@@ -68,26 +72,13 @@ export default function ProfileForm() {
             {errors.name && <span>{errors.name.message}</span>}
           </div>
 
-          <div className="field">
-            <label htmlFor="address">Bairro</label>
-            <input
-              {...register("address")}
-              aria-invalid={errors.address ? "true" : "false"}
-              type="text"
-              list="neighborhood-list"
-              autoComplete="off"
-              placeholder="Selecione seu bairro"
-              id="address"
-            />
-            <datalist id="neighborhood-list">
-              {Object.values(Neighborhoods)
-                .filter((name) => name !== "IFNMG")
-                .map((name) => (
-                  <option key={name} value={name} />
-                ))}
-            </datalist>
-            {errors.address && <span>{errors.address.message}</span>}
-          </div>
+          <NeighborhoodCombobox
+            control={control}
+            name="address"
+            label="Bairro"
+            placeholder="Selecione seu bairro"
+            options={addressOptions}
+          />
 
           <div className="field">
             <label htmlFor="phoneNumber">Telefone</label>

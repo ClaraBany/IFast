@@ -1,24 +1,18 @@
 import { Outlet } from "react-router";
-import Logo from "@assets/logo-primary.png";
-import { useLayoutEffect } from "react";
-import { GlobalErrorModal } from "@shared/components/GlobalErrorModal";
+import Logo from "@assets/logo-primary.svg";
+import { GlobalErrorModal } from "@shared/components/modals/GlobalErrorModal";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export default function AuthLayout() {
-  useLayoutEffect(() => {
-    document.documentElement.classList.add("bg-neutral-light");
-
-    return () => {
-      document.documentElement.classList.remove("bg-neutral-light");
-    };
-  }, []);
-
   return (
-    <main className="relative flex-center min-h-screen flex-col gap-5 bg-neutral-light p-5">
-      <GlobalErrorModal />
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <main className="relative flex-center min-h-screen flex-col gap-5 bg-neutral-light p-5">
+        <GlobalErrorModal />
 
-      <img src={Logo} alt="Logo" className="h-22.25" />
+        <img src={Logo} alt="Logo" className="h-22.25" />
 
-      <Outlet />
-    </main>
+        <Outlet />
+      </main>
+    </GoogleOAuthProvider>
   );
 }

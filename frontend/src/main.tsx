@@ -1,17 +1,15 @@
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router";
-import { GoogleOAuthProvider } from "@react-oauth/google";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router";
 import { useAuthStore } from "@auth/authStore";
-import Logo from "@assets/logo-primary.png";
+import Logo from "@assets/logo-primary.svg";
 
-import App from "./App.tsx";
 import "@shared/styles.css";
 import AuthLayout from "@shared/layouts/AuthLayout.tsx";
 import MainLayout from "@shared/layouts/MainLayout";
 import Login from "@auth/Login";
 import Register from "@auth/Register";
-import Offer from "@ride-offer/Offer";
+import Offers from "@ride-offer/Offers.tsx";
 import MyRides from "@my-rides/MyRides";
 import Request from "@ride-request/Request";
 import { LoaderCircle } from "lucide-react";
@@ -22,6 +20,10 @@ import ProfileForm from "@user/ProfileForm.tsx";
 import Vehicles from "@vehicle/Vehicles";
 import VehicleForm from "@vehicle/VehicleForm.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import OfferDetails from "@ride-offer/OfferDetails";
+import OfferForm from "@ride-offer/OfferForm";
+import NotFoundPage from "./NotFoundPage";
+import History from "@ride-offer/History";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,8 +52,12 @@ const router = createBrowserRouter([
       {
         element: <MainLayout />,
         children: [
-          { path: "/", element: <App /> },
-          { path: "/offer", element: <Offer /> },
+          { path: "/", element: <Navigate to="/offers" replace /> },
+          { path: "/offers", element: <Offers /> },
+          { path: "/offers/:id", element: <OfferDetails /> },
+          { path: "/offers/create", element: <OfferForm /> },
+          { path: "/offers/:id/edit", element: <OfferForm /> },
+          { path: "/history", element: <History /> },
           { path: "/myrides", element: <MyRides /> },
           { path: "/request", element: <Request /> },
           { path: "/users/:id", element: <Profile /> },
@@ -63,6 +69,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+  { path: "*", element: <NotFoundPage /> },
 ]);
 
 export function AppInitializer() {
@@ -89,9 +96,7 @@ export function AppInitializer() {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-        <AppInitializer />
-      </GoogleOAuthProvider>
+      <AppInitializer />
     </QueryClientProvider>
   </StrictMode>,
 );
