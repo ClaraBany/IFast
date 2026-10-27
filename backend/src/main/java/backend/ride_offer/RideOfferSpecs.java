@@ -8,7 +8,7 @@ import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 
 import backend.ride_offer.dto.FilterRideOfferDto;
-import backend.ride_offer.enums.Period;
+import backend.shared.enums.Period;
 import backend.ride_offer.enums.StatusOffer;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;

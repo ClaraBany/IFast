@@ -1,8 +1,6 @@
 package backend.vehicle;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import backend.validation.ValidationPatterns;
+import backend.shared.validation.ValidationPatterns;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;

@@ -2,8 +2,8 @@ package backend.ride_offer.dto;
 
 import java.time.LocalDate;
 
-import backend.ride_offer.enums.Period;
-import backend.user.Neighborhoods;
+import backend.shared.enums.Period;
+import backend.shared.enums.Neighborhoods;
 import jakarta.validation.constraints.FutureOrPresent;
 
 public record FilterRideOfferDto(

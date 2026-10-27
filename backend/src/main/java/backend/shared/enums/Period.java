@@ -1,4 +1,4 @@
-package backend.ride_offer.enums;
+package backend.shared.enums;
 
 public enum Period {
     MORNING,

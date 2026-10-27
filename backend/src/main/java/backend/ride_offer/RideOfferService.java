@@ -16,7 +16,7 @@ import backend.ride_offer.dto.FilterRideOfferDto;
 import backend.ride_offer.dto.RideOfferDto;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.ride_offer.enums.StatusOffer;
-import backend.dto.IdResponseDto;
+import backend.shared.dto.IdResponseDto;
 import backend.ride_offer.exceptions.InvalidDepartureException;
 import backend.user.User;
 import jakarta.persistence.EntityNotFoundException;

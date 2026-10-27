@@ -1,6 +1,6 @@
 package backend.user.dto;
 
-import backend.user.Neighborhoods;
+import backend.shared.enums.Neighborhoods;
 import backend.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

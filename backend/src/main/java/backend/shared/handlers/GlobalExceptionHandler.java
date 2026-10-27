@@ -1,4 +1,4 @@
-package backend.handlers;
+package backend.shared.handlers;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import backend.dto.ErrorResponseDto;
+import backend.shared.dto.ErrorResponseDto;
 import backend.auth.exceptions.EmailAlreadyRegisteredException;
 import backend.auth.exceptions.GoogleAccountException;
 import backend.auth.exceptions.InvalidCredentialsException;

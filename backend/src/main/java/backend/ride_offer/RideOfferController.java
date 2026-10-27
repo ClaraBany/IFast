@@ -19,7 +19,7 @@ import backend.ride_offer.dto.RideOfferDto;
 import backend.ride_offer.dto.FilterRideOfferDto;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.user.User;
-import backend.dto.IdResponseDto;
+import backend.shared.dto.IdResponseDto;
 import jakarta.validation.Valid;
 
 @RestController

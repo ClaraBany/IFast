@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import backend.user.Neighborhoods;
+import backend.shared.enums.Neighborhoods;
 import backend.vehicle.VehicleDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
