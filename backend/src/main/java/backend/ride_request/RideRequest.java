@@ -5,6 +5,8 @@ import backend.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.SoftDeleteType;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,8 +16,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "ride_request")
 @EntityListeners(AuditingEntityListener.class)
+@SoftDelete(strategy = SoftDeleteType.TIMESTAMP, columnName = "deleted_at")
+@Table(name = "ride_request")
 public class RideRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
