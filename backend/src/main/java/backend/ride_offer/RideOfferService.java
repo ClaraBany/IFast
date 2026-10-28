@@ -12,7 +12,7 @@ import backend.ride_offer.exceptions.InvalidRideOfferStateException;
 import backend.ride_offer.exceptions.InvalidSeatsCapacityException;
 import backend.ride_offer.exceptions.RideOfferNotDepartedException;
 import backend.ride_offer.dto.CreateRideOfferDto;
-import backend.ride_offer.dto.FilterRideOfferDto;
+import backend.shared.dto.FilterRideDto;
 import backend.ride_offer.dto.RideOfferDto;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.ride_offer.enums.StatusOffer;
@@ -31,7 +31,7 @@ public class RideOfferService {
         this.rideOfferRepository = rideOfferRepository;
     }
 
-    public List<RideOfferSummaryDto> getAll(FilterRideOfferDto filter) {
+    public List<RideOfferSummaryDto> getAll(FilterRideDto filter) {
         return rideOfferRepository
             .findAll(RideOfferSpecs.withFilter(filter), Sort.by("departureDateTime").ascending())
             .stream()

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import backend.ride_offer.dto.CreateRideOfferDto;
 import backend.ride_offer.dto.RideOfferDto;
-import backend.ride_offer.dto.FilterRideOfferDto;
+import backend.shared.dto.FilterRideDto;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.user.User;
 import backend.shared.dto.IdResponseDto;
@@ -32,7 +32,7 @@ public class RideOfferController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RideOfferSummaryDto>> getAll(@Valid FilterRideOfferDto filterDto) {
+    public ResponseEntity<List<RideOfferSummaryDto>> getAll(@Valid FilterRideDto filterDto) {
         List<RideOfferSummaryDto> response = rideOfferService.getAll(filterDto);
         return ResponseEntity.ok(response);
     }
