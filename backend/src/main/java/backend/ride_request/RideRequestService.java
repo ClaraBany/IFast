@@ -16,11 +16,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import static backend.shared.constants.RideConstants.MAX_DAYS_AHEAD;
+
 @AllArgsConstructor
 @Service
 public class RideRequestService {
-    private static final int MAX_DAYS_AHEAD = 7;
-
     private final RideRequestRepository rideRequestRepository;
 
     public List<RideRequestDto> getAll(FilterRideDto filter) {

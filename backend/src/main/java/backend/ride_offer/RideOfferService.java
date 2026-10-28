@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,15 +22,12 @@ import backend.ride_offer.exceptions.InvalidDepartureException;
 import backend.user.User;
 import jakarta.persistence.EntityNotFoundException;
 
+import static backend.shared.constants.RideConstants.MAX_DAYS_AHEAD;
+
+@AllArgsConstructor
 @Service
 public class RideOfferService {
-    private static final int MAX_DAYS_AHEAD = 7;
-
     private final RideOfferRepository rideOfferRepository;
-
-    public RideOfferService(RideOfferRepository rideOfferRepository) {
-        this.rideOfferRepository = rideOfferRepository;
-    }
 
     public List<RideOfferSummaryDto> getAll(FilterRideDto filter) {
         return rideOfferRepository
