@@ -58,15 +58,15 @@ public class RideOfferController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/{rideOfferId}/cancel")
-    public ResponseEntity<Void> cancel(@PathVariable Long rideOfferId, @AuthenticationPrincipal User user) {
-        rideOfferService.cancel(rideOfferId, user);
-        return ResponseEntity.noContent().build();
-    }
-
     @PatchMapping("/{rideOfferId}/complete")
     public ResponseEntity<Void> complete(@PathVariable Long rideOfferId, @AuthenticationPrincipal User user) {
         rideOfferService.complete(rideOfferId, user);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{rideOfferId}/cancel")
+    public ResponseEntity<Void> cancel(@PathVariable Long rideOfferId, @AuthenticationPrincipal User user) {
+        rideOfferService.cancel(rideOfferId, user);
         return ResponseEntity.noContent().build();
     }
 }

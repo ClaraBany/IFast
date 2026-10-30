@@ -78,16 +78,16 @@ public class RideOfferService {
         }
 
         return new IdResponseDto(save(rideOffer, rideOfferDto, user, false).getId());
-    }    
-
-    @Transactional
-    public void cancel(Long rideOfferId, User user) {
-        transitionStatus(rideOfferId, user, StatusOffer.CANCELLED);
     }
 
     @Transactional
     public void complete(Long rideOfferId, User user) {
         transitionStatus(rideOfferId, user, StatusOffer.COMPLETED);
+    }
+
+    @Transactional
+    public void cancel(Long rideOfferId, User user) {
+        transitionStatus(rideOfferId, user, StatusOffer.CANCELLED);
     }
 
     private void validateOffer(CreateRideOfferDto dto) {

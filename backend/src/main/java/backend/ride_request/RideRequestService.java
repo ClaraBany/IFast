@@ -25,15 +25,15 @@ public class RideRequestService {
 
     public List<RideRequestDto> getAll(FilterRideDto filter) {
         return rideRequestRepository
-                .findAll(RideRequestSpecs.withFilter(filter), Sort.by("desiredDepartureStart").ascending())
-                .stream()
-                .map(RideRequestDto::new)
-                .toList();
+            .findAll(RideRequestSpecs.withFilter(filter), Sort.by("desiredDepartureStart").ascending())
+            .stream()
+            .map(RideRequestDto::new)
+            .toList();
     }
 
     public RideRequestDto get(Long rideRequestId) {
         RideRequest rideRequest = rideRequestRepository.findById(rideRequestId)
-                .orElseThrow(EntityNotFoundException::new);
+            .orElseThrow(EntityNotFoundException::new);
 
         return new RideRequestDto(rideRequest);
     }
@@ -58,7 +58,9 @@ public class RideRequestService {
         validateRequest(dto);
 
         RideRequest request = rideRequestRepository.findByIdAndRequester(rideRequestId, user)
-                .orElseThrow(EntityNotFoundException::new);
+            .orElseThrow(EntityNotFoundException::new);
+
+        request.requireOpen();
 
         request.setOrigin(dto.origin());
         request.setDestination(dto.destination());
@@ -69,18 +71,19 @@ public class RideRequestService {
     }
 
     @Transactional
-    public void delete(Long rideRequestId, User user){
+    public void cancel(Long rideRequestId, User user) {
         RideRequest request = rideRequestRepository.findByIdAndRequester(rideRequestId, user)
-                .orElseThrow(EntityNotFoundException::new);
+            .orElseThrow(EntityNotFoundException::new);
 
-        rideRequestRepository.delete(request);
+        request.cancel();
+        rideRequestRepository.save(request);
     }
 
     private void validateRequest(CreateRideRequestDto dto) {
         LocalDateTime latestDeparture = LocalDateTime.now()
-                .toLocalDate()
-                .plusDays(MAX_DAYS_AHEAD)
-                .atTime(LocalTime.MAX);
+            .toLocalDate()
+            .plusDays(MAX_DAYS_AHEAD)
+            .atTime(LocalTime.MAX);
 
         if (dto.desiredDepartureStart().isAfter(latestDeparture) || dto.desiredDepartureEnd().isAfter(latestDeparture)) {
             throw new InvalidDepartureException();

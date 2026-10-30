@@ -3,6 +3,7 @@ package backend.shared.handlers;
 import java.util.List;
 import java.util.UUID;
 
+import backend.ride_request.exceptions.InvalidRideRequestStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -128,7 +129,11 @@ public class GlobalExceptionHandler {
         return buildResponse(e, request, HttpStatus.FORBIDDEN, "Acesso negado", null);
     }
 
-    @ExceptionHandler({EmailAlreadyRegisteredException.class, InvalidRideOfferStateException.class})
+    @ExceptionHandler({
+            EmailAlreadyRegisteredException.class,
+            InvalidRideOfferStateException.class,
+            InvalidRideRequestStateException.class
+    })
     public ResponseEntity<ErrorResponseDto> handleConflict(Exception e, HttpServletRequest request) {
         return buildResponse(e, request, HttpStatus.CONFLICT, e.getMessage(), null);
     }

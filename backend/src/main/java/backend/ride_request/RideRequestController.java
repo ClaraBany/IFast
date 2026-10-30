@@ -48,9 +48,9 @@ public class RideRequestController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{rideRequestId}")
-    public ResponseEntity<Void> delete(@PathVariable Long rideRequestId, @AuthenticationPrincipal User user) {
-        rideRequestService.delete(rideRequestId, user);
+    @PatchMapping("/{rideRequestId}/cancel")
+    public ResponseEntity<Void> cancel(@PathVariable Long rideRequestId, @AuthenticationPrincipal User user) {
+        rideRequestService.cancel(rideRequestId, user);
         return ResponseEntity.noContent().build();
     }
 }

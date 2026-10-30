@@ -14,7 +14,8 @@ public class RideOfferSpecs {
 
     public static Specification<RideOffer> withFilter(FilterRideDto filter) {
         return Specification.<RideOffer>where(
-                (root, query, cb) -> cb.equal(root.get("status"), StatusOffer.AVAILABLE))
+            (root, query, cb) ->
+                cb.equal(root.get("status"), StatusOffer.AVAILABLE))
             .and((root, query, cb) ->
                 cb.greaterThanOrEqualTo(root.get("departureDateTime"), LocalDateTime.now()))
             .and(RideFilterSpecs.hasOrigin(filter.origin()))

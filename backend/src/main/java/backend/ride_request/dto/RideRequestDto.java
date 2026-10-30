@@ -1,6 +1,7 @@
 package backend.ride_request.dto;
 
 import backend.ride_request.RideRequest;
+import backend.ride_request.enums.StatusRequest;
 import backend.shared.enums.Neighborhoods;
 import backend.user.dto.UserSummaryDto;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class RideRequestDto {
     private Long id;
+    private StatusRequest status;
     private UserSummaryDto requester;
     private Neighborhoods origin;
     private Neighborhoods destination;
@@ -23,6 +25,7 @@ public class RideRequestDto {
 
     public RideRequestDto(RideRequest rideRequest) {
         this.id = rideRequest.getId();
+        this.status = rideRequest.getStatus();
         this.requester = new UserSummaryDto(rideRequest.getRequester());
         this.origin = rideRequest.getOrigin();
         this.destination = rideRequest.getDestination();
