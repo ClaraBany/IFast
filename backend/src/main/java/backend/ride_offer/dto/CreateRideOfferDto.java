@@ -2,6 +2,7 @@ package backend.ride_offer.dto;
 
 import java.time.LocalDateTime;
 
+import backend.shared.validation.MaxDaysAhead;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import backend.shared.enums.Neighborhoods;
@@ -31,6 +32,7 @@ public record CreateRideOfferDto(
 
     @NotNull 
     @FutureOrPresent(message = "A data não pode ser anterior a hoje")
+    @MaxDaysAhead()
     LocalDateTime departureDateTime,
 
     @Size(max = 500, message = "Máximo de 500 caracteres")
@@ -40,6 +42,7 @@ public record CreateRideOfferDto(
     Boolean isRoundTrip,
 
     @FutureOrPresent(message = "A data não pode ser anterior a hoje")
+    @MaxDaysAhead()
     LocalDateTime returnDateTime
 ) {
 

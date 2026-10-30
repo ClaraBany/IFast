@@ -24,7 +24,6 @@ import backend.shared.dto.ErrorResponseDto;
 import backend.auth.exceptions.EmailAlreadyRegisteredException;
 import backend.auth.exceptions.GoogleAccountException;
 import backend.auth.exceptions.InvalidCredentialsException;
-import backend.ride_offer.exceptions.InvalidDepartureException;
 import backend.ride_offer.exceptions.InvalidRideOfferStateException;
 import backend.ride_offer.exceptions.InvalidSeatsCapacityException;
 import backend.ride_offer.exceptions.RideOfferNotDepartedException;
@@ -80,7 +79,6 @@ public class GlobalExceptionHandler {
     }
     
     @ExceptionHandler({
-        InvalidDepartureException.class,
         InvalidSeatsCapacityException.class,
         RideOfferNotDepartedException.class
     })

@@ -4,7 +4,6 @@ import backend.ride_offer.RideOfferRepository;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.shared.dto.FilterRideDto;
 import backend.shared.dto.IdResponseDto;
-import backend.ride_offer.exceptions.InvalidDepartureException;
 import backend.ride_request.dto.CreateRideRequestDto;
 import backend.ride_request.dto.RideRequestDto;
 import backend.user.User;
@@ -15,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
-
-import static backend.shared.constants.RideConstants.MAX_DAYS_AHEAD;
 
 @AllArgsConstructor
 @Service
@@ -61,8 +57,6 @@ public class RideRequestService {
 
     @Transactional
     public IdResponseDto create(CreateRideRequestDto dto, User user) {
-        validateRequest(dto);
-
         RideRequest request = new RideRequest();
 
         request.setRequester(user);
@@ -76,8 +70,6 @@ public class RideRequestService {
 
     @Transactional
     public IdResponseDto update(Long rideRequestId, CreateRideRequestDto dto, User user) {
-        validateRequest(dto);
-
         RideRequest request = rideRequestRepository.findByIdAndRequester(rideRequestId, user)
             .orElseThrow(EntityNotFoundException::new);
 
@@ -98,16 +90,5 @@ public class RideRequestService {
 
         request.cancel();
         rideRequestRepository.save(request);
-    }
-
-    private void validateRequest(CreateRideRequestDto dto) {
-        LocalDateTime latestDeparture = LocalDateTime.now()
-            .toLocalDate()
-            .plusDays(MAX_DAYS_AHEAD)
-            .atTime(LocalTime.MAX);
-
-        if (dto.desiredDepartureStart().isAfter(latestDeparture) || dto.desiredDepartureEnd().isAfter(latestDeparture)) {
-            throw new InvalidDepartureException();
-        }
     }
 }

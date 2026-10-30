@@ -1,7 +1,6 @@
 package backend.ride_offer;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -18,11 +17,8 @@ import backend.ride_offer.dto.RideOfferDto;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.ride_offer.enums.StatusOffer;
 import backend.shared.dto.IdResponseDto;
-import backend.ride_offer.exceptions.InvalidDepartureException;
 import backend.user.User;
 import jakarta.persistence.EntityNotFoundException;
-
-import static backend.shared.constants.RideConstants.MAX_DAYS_AHEAD;
 
 @AllArgsConstructor
 @Service
@@ -94,16 +90,6 @@ public class RideOfferService {
         Integer vehicleCapacity = dto.vehicle().getCapacity();
         if (vehicleCapacity == null || dto.seatsCapacity() > vehicleCapacity) {
             throw new InvalidSeatsCapacityException();
-        }
-
-        LocalDateTime latestDeparture = LocalDateTime.now()
-            .toLocalDate()
-            .plusDays(MAX_DAYS_AHEAD)
-            .atTime(LocalTime.MAX);
-
-        if (dto.departureDateTime().isAfter(latestDeparture)
-            || (dto.isRoundTrip() && dto.returnDateTime().isAfter(latestDeparture))) {
-            throw new InvalidDepartureException();
         }
     }
 

@@ -1,6 +1,7 @@
 package backend.ride_request.dto;
 
 import backend.shared.enums.Neighborhoods;
+import backend.shared.validation.MaxDaysAhead;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDateTime;
@@ -14,10 +15,12 @@ public record CreateRideRequestDto(
 
     @NotNull(message = "Informe o horário inicial desejado")
     @FutureOrPresent(message = "O horário inicial não pode estar no passado")
+    @MaxDaysAhead()
     LocalDateTime desiredDepartureStart,
 
     @NotNull(message = "Informe o horário final desejado")
     @FutureOrPresent(message = "O horário final não pode estar no passado")
+    @MaxDaysAhead()
     LocalDateTime desiredDepartureEnd
 ) {
     @AssertTrue(message = "O horário final deve ser depois do inícial")
