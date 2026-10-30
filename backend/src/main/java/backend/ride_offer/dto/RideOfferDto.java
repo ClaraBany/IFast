@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import backend.ride_offer.RideOffer;
 import backend.ride_offer.enums.StatusOffer;
-import backend.user.Neighborhoods;
+import backend.shared.enums.Neighborhoods;
 import backend.user.dto.UserSummaryDto;
 import backend.vehicle.VehicleDto;
 import lombok.Getter;

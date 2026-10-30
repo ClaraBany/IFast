@@ -1,8 +1,9 @@
-package backend.handlers;
+package backend.shared.handlers;
 
 import java.util.List;
 import java.util.UUID;
 
+import backend.ride_request.exceptions.InvalidRideRequestStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -19,11 +20,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import backend.dto.ErrorResponseDto;
+import backend.shared.dto.ErrorResponseDto;
 import backend.auth.exceptions.EmailAlreadyRegisteredException;
 import backend.auth.exceptions.GoogleAccountException;
 import backend.auth.exceptions.InvalidCredentialsException;
-import backend.ride_offer.exceptions.InvalidDepartureException;
 import backend.ride_offer.exceptions.InvalidRideOfferStateException;
 import backend.ride_offer.exceptions.InvalidSeatsCapacityException;
 import backend.ride_offer.exceptions.RideOfferNotDepartedException;
@@ -79,7 +79,6 @@ public class GlobalExceptionHandler {
     }
     
     @ExceptionHandler({
-        InvalidDepartureException.class,
         InvalidSeatsCapacityException.class,
         RideOfferNotDepartedException.class
     })
@@ -128,7 +127,11 @@ public class GlobalExceptionHandler {
         return buildResponse(e, request, HttpStatus.FORBIDDEN, "Acesso negado", null);
     }
 
-    @ExceptionHandler({EmailAlreadyRegisteredException.class, InvalidRideOfferStateException.class})
+    @ExceptionHandler({
+            EmailAlreadyRegisteredException.class,
+            InvalidRideOfferStateException.class,
+            InvalidRideRequestStateException.class
+    })
     public ResponseEntity<ErrorResponseDto> handleConflict(Exception e, HttpServletRequest request) {
         return buildResponse(e, request, HttpStatus.CONFLICT, e.getMessage(), null);
     }

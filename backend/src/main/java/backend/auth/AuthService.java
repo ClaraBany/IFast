@@ -20,7 +20,7 @@ import backend.auth.exceptions.InvalidCredentialsException;
 import backend.security.exceptions.InvalidGoogleTokenException;
 import backend.security.GoogleIdTokenService;
 import backend.security.JwtService;
-import backend.validation.ValidationPatterns;
+import backend.shared.validation.ValidationPatterns;
 
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,9 +1,9 @@
 package backend.ride_offer;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,28 +12,22 @@ import backend.ride_offer.exceptions.InvalidRideOfferStateException;
 import backend.ride_offer.exceptions.InvalidSeatsCapacityException;
 import backend.ride_offer.exceptions.RideOfferNotDepartedException;
 import backend.ride_offer.dto.CreateRideOfferDto;
-import backend.ride_offer.dto.FilterRideOfferDto;
+import backend.shared.dto.FilterRideDto;
 import backend.ride_offer.dto.RideOfferDto;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.ride_offer.enums.StatusOffer;
-import backend.dto.IdResponseDto;
-import backend.ride_offer.exceptions.InvalidDepartureException;
+import backend.shared.dto.IdResponseDto;
 import backend.user.User;
 import jakarta.persistence.EntityNotFoundException;
 
+@AllArgsConstructor
 @Service
 public class RideOfferService {
-    private static final int MAX_DAYS_AHEAD = 7;
-
     private final RideOfferRepository rideOfferRepository;
 
-    public RideOfferService(RideOfferRepository rideOfferRepository) {
-        this.rideOfferRepository = rideOfferRepository;
-    }
-
-    public List<RideOfferSummaryDto> getAll(FilterRideOfferDto filter) {
+    public List<RideOfferSummaryDto> getAll(FilterRideDto filter, User user) {
         return rideOfferRepository
-            .findAll(RideOfferSpecs.withFilter(filter), Sort.by("departureDateTime").ascending())
+            .findAll(RideOfferSpecs.withFilter(filter, user.getId()), Sort.by("departureDateTime").ascending())
             .stream()
             .map(RideOfferSummaryDto::new)
             .toList();
@@ -80,11 +74,6 @@ public class RideOfferService {
         }
 
         return new IdResponseDto(save(rideOffer, rideOfferDto, user, false).getId());
-    }    
-
-    @Transactional
-    public void cancel(Long rideOfferId, User user) {
-        transitionStatus(rideOfferId, user, StatusOffer.CANCELLED);
     }
 
     @Transactional
@@ -92,20 +81,15 @@ public class RideOfferService {
         transitionStatus(rideOfferId, user, StatusOffer.COMPLETED);
     }
 
+    @Transactional
+    public void cancel(Long rideOfferId, User user) {
+        transitionStatus(rideOfferId, user, StatusOffer.CANCELLED);
+    }
+
     private void validateOffer(CreateRideOfferDto dto) {
         Integer vehicleCapacity = dto.vehicle().getCapacity();
         if (vehicleCapacity == null || dto.seatsCapacity() > vehicleCapacity) {
             throw new InvalidSeatsCapacityException();
-        }
-
-        LocalDateTime latestDeparture = LocalDateTime.now()
-            .toLocalDate()
-            .plusDays(MAX_DAYS_AHEAD)
-            .atTime(LocalTime.MAX);
-
-        if (dto.departureDateTime().isAfter(latestDeparture)
-            || (dto.isRoundTrip() && dto.returnDateTime().isAfter(latestDeparture))) {
-            throw new InvalidDepartureException();
         }
     }
 

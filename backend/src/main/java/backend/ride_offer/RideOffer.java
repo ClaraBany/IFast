@@ -6,7 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import backend.user.Neighborhoods;
+import backend.shared.enums.Neighborhoods;
 import backend.user.User;
 import backend.vehicle.VehicleDto;
 import backend.vehicle.VehicleDtoConverter;
@@ -27,7 +27,7 @@ public class RideOffer {
     private Long id;
 
     @ManyToOne 
-    @JoinColumn(name = "driver_id")
+    @JoinColumn(name = "driver_id", nullable = false)
     private User driver;
 
     @Convert(converter = VehicleDtoConverter.class)
