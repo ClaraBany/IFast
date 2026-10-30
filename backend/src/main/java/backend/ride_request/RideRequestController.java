@@ -1,5 +1,6 @@
 package backend.ride_request;
 
+import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.shared.dto.FilterRideDto;
 import backend.shared.dto.IdResponseDto;
 import backend.ride_request.dto.CreateRideRequestDto;
@@ -29,6 +30,12 @@ public class RideRequestController {
     @GetMapping("/{rideRequestId}")
     public ResponseEntity<RideRequestDto> get(@PathVariable Long rideRequestId) {
         RideRequestDto response = rideRequestService.get(rideRequestId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{rideRequestId}/matching-offers")
+    public ResponseEntity<List<RideOfferSummaryDto>> getMatchingOffers(@PathVariable Long rideRequestId) {
+        List<RideOfferSummaryDto> response = rideRequestService.getMatchingOffers(rideRequestId);
         return ResponseEntity.ok(response);
     }
 

@@ -1,5 +1,7 @@
 package backend.ride_request;
 
+import backend.ride_offer.RideOfferRepository;
+import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.shared.dto.FilterRideDto;
 import backend.shared.dto.IdResponseDto;
 import backend.ride_offer.exceptions.InvalidDepartureException;
@@ -22,6 +24,7 @@ import static backend.shared.constants.RideConstants.MAX_DAYS_AHEAD;
 @Service
 public class RideRequestService {
     private final RideRequestRepository rideRequestRepository;
+    private final RideOfferRepository rideOfferRepository;
 
     public List<RideRequestDto> getAll(FilterRideDto filter) {
         return rideRequestRepository
@@ -36,6 +39,24 @@ public class RideRequestService {
             .orElseThrow(EntityNotFoundException::new);
 
         return new RideRequestDto(rideRequest);
+    }
+
+    public List<RideOfferSummaryDto> getMatchingOffers(Long rideRequestId) {
+        RideRequest request = rideRequestRepository.findById(rideRequestId)
+            .orElseThrow(EntityNotFoundException::new);
+
+        return rideOfferRepository
+            .findMatching(
+                request.getOrigin(),
+                request.getDestination(),
+                request.getDesiredDepartureStart(),
+                request.getDesiredDepartureEnd(),
+                request.getRequester(),
+                LocalDateTime.now()
+            )
+            .stream()
+            .map(RideOfferSummaryDto::new)
+            .toList();
     }
 
     @Transactional
