@@ -27,7 +27,7 @@ public class RideOffer {
     private Long id;
 
     @ManyToOne 
-    @JoinColumn(name = "driver_id")
+    @JoinColumn(name = "driver_id", nullable = false)
     private User driver;
 
     @Convert(converter = VehicleDtoConverter.class)

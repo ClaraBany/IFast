@@ -32,8 +32,9 @@ public class RideOfferController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RideOfferSummaryDto>> getAll(@Valid FilterRideDto filterDto) {
-        List<RideOfferSummaryDto> response = rideOfferService.getAll(filterDto);
+    public ResponseEntity<List<RideOfferSummaryDto>> getAll(@Valid FilterRideDto filterDto,
+                                                            @AuthenticationPrincipal User user) {
+        List<RideOfferSummaryDto> response = rideOfferService.getAll(filterDto, user);
         return ResponseEntity.ok(response);
     }
 

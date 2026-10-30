@@ -25,9 +25,9 @@ import jakarta.persistence.EntityNotFoundException;
 public class RideOfferService {
     private final RideOfferRepository rideOfferRepository;
 
-    public List<RideOfferSummaryDto> getAll(FilterRideDto filter) {
+    public List<RideOfferSummaryDto> getAll(FilterRideDto filter, User user) {
         return rideOfferRepository
-            .findAll(RideOfferSpecs.withFilter(filter), Sort.by("departureDateTime").ascending())
+            .findAll(RideOfferSpecs.withFilter(filter, user.getId()), Sort.by("departureDateTime").ascending())
             .stream()
             .map(RideOfferSummaryDto::new)
             .toList();

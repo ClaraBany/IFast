@@ -12,6 +12,11 @@ public final class RideFilterSpecs {
 
     private RideFilterSpecs() {}
 
+    public static <T> Specification<T> differentUser(Long userId, String userField) {
+        return (root, query, cb) ->
+            cb.notEqual(root.get(userField).get("id"), userId);
+    }
+
     public static <T> Specification<T> hasOrigin(Neighborhoods origin) {
         return (root, query, cb) ->
             origin == null ? null : cb.equal(root.get("origin"), origin);

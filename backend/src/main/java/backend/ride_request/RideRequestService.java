@@ -22,9 +22,9 @@ public class RideRequestService {
     private final RideRequestRepository rideRequestRepository;
     private final RideOfferRepository rideOfferRepository;
 
-    public List<RideRequestDto> getAll(FilterRideDto filter) {
+    public List<RideRequestDto> getAll(FilterRideDto filter, User user) {
         return rideRequestRepository
-            .findAll(RideRequestSpecs.withFilter(filter), Sort.by("desiredDepartureStart").ascending())
+            .findAll(RideRequestSpecs.withFilter(filter, user.getId()), Sort.by("desiredDepartureStart").ascending())
             .stream()
             .map(RideRequestDto::new)
             .toList();

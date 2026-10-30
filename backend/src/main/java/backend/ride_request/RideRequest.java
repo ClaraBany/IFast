@@ -30,7 +30,7 @@ public class RideRequest {
     private StatusRequest status = StatusRequest.PENDING;
 
     @ManyToOne
-    @JoinColumn(name = "requester_id")
+    @JoinColumn(name = "requester_id", nullable = false)
     private User requester;
 
     @Column(nullable = false)

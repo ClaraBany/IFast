@@ -12,12 +12,13 @@ public class RideOfferSpecs {
 
     private RideOfferSpecs() {}
 
-    public static Specification<RideOffer> withFilter(FilterRideDto filter) {
+    public static Specification<RideOffer> withFilter(FilterRideDto filter, Long userId) {
         return Specification.<RideOffer>where(
             (root, query, cb) ->
                 cb.equal(root.get("status"), StatusOffer.AVAILABLE))
             .and((root, query, cb) ->
                 cb.greaterThanOrEqualTo(root.get("departureDateTime"), LocalDateTime.now()))
+            .and(RideFilterSpecs.differentUser(userId, "driver"))
             .and(RideFilterSpecs.hasOrigin(filter.origin()))
             .and(RideFilterSpecs.hasDestination(filter.destination()))
             .and(RideFilterSpecs.onDay(filter.date(), "departureDateTime"))
