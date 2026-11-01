@@ -1,4 +1,4 @@
-package backend.user;
+package backend.shared.enums;
 
 public enum Neighborhoods {
     IFNMG,

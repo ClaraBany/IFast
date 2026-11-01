@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import backend.ride_offer.dto.CreateRideOfferDto;
 import backend.ride_offer.dto.RideOfferDto;
-import backend.ride_offer.dto.FilterRideOfferDto;
+import backend.shared.dto.FilterRideDto;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.user.User;
-import backend.dto.IdResponseDto;
+import backend.shared.dto.IdResponseDto;
 import jakarta.validation.Valid;
 
 @RestController
@@ -32,8 +32,9 @@ public class RideOfferController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RideOfferSummaryDto>> getAll(@Valid FilterRideOfferDto filterDto) {
-        List<RideOfferSummaryDto> response = rideOfferService.getAll(filterDto);
+    public ResponseEntity<List<RideOfferSummaryDto>> getAll(@Valid FilterRideDto filterDto,
+                                                            @AuthenticationPrincipal User user) {
+        List<RideOfferSummaryDto> response = rideOfferService.getAll(filterDto, user);
         return ResponseEntity.ok(response);
     }
 
@@ -58,15 +59,15 @@ public class RideOfferController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/{rideOfferId}/cancel")
-    public ResponseEntity<Void> cancel(@PathVariable Long rideOfferId, @AuthenticationPrincipal User user) {
-        rideOfferService.cancel(rideOfferId, user);
-        return ResponseEntity.noContent().build();
-    }
-
     @PatchMapping("/{rideOfferId}/complete")
     public ResponseEntity<Void> complete(@PathVariable Long rideOfferId, @AuthenticationPrincipal User user) {
         rideOfferService.complete(rideOfferId, user);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{rideOfferId}/cancel")
+    public ResponseEntity<Void> cancel(@PathVariable Long rideOfferId, @AuthenticationPrincipal User user) {
+        rideOfferService.cancel(rideOfferId, user);
         return ResponseEntity.noContent().build();
     }
 }

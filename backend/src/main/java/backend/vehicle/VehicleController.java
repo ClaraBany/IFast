@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import backend.dto.IdResponseDto;
+import backend.shared.dto.IdResponseDto;
 
 import jakarta.validation.Valid;
 

@@ -1,6 +1,6 @@
 package backend.auth.dto;
 
-import backend.validation.ValidationPatterns;
+import backend.shared.validation.ValidationPatterns;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

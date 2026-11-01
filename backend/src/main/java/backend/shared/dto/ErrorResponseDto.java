@@ -1,4 +1,4 @@
-package backend.dto;
+package backend.shared.dto;
 
 import java.util.List;
 

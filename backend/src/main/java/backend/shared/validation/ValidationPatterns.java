@@ -1,4 +1,4 @@
-package backend.validation;
+package backend.shared.validation;
 
 public final class ValidationPatterns {
 
