@@ -4,16 +4,30 @@ import { Neighborhoods } from "@shared/types/neighborhoods";
 import z from "zod";
 import { getMaxDate, getMinDate } from "@shared/utils/dateLimits";
 
+export const RideRequestStatus = {
+  PENDING: "PENDING",
+  ACCEPTED: "ACCEPTED",
+  CANCELLED: "CANCELLED",
+} as const;
+
+export type RideRequestStatus = (typeof RideRequestStatus)[keyof typeof RideRequestStatus];
+
 export interface RideRequest {
   id: number;
-  passenger: UserSummary;
+  status: RideRequestStatus;
+  requester: UserSummary;
   origin: Neighborhoods;
   destination: Neighborhoods;
-  startDateTime: string;
-  endDateTime: string;
+  desiredDepartureStart: string;
+  desiredDepartureEnd: string;
 }
 
-export type CreateRideRequest = Omit<RideRequest, "id" | "passenger">;
+export interface CreateRideRequest {
+  origin: Neighborhoods;
+  destination: Neighborhoods;
+  desiredDepartureStart: string;
+  desiredDepartureEnd: string;
+}
 
 export const requestSchema = z
   .object({
@@ -44,10 +58,7 @@ export const requestSchema = z
         path: ["date"],
         message: "A data não pode ultrapassar uma semana",
       });
-    } else if (
-      data.date === getMinDate() &&
-      new Date(`${data.date}T${data.startTime}`) <= new Date()
-    ) {
+    } else if (data.date === getMinDate() && new Date(`${data.date}T${data.startTime}`) <= new Date()) {
       ctx.addIssue({
         code: "custom",
         path: ["startTime"],

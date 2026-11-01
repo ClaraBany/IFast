@@ -6,8 +6,9 @@ import { Ripples } from "react-ripples-continued";
 import RetryError from "@shared/components/RetryError";
 import { formatDepartureDateTime } from "@shared/utils/formatDateTime";
 import OfferCard from "@ride-offer/OfferCard";
-import { getCompatibleOffers } from "@ride-offer/offerService";
-import { get, remove } from "./requestService";
+import { get, getMatchingOffers, cancel } from "./requestService";
+import { useAuthStore } from "@auth/authStore";
+import { RideRequestStatus } from "./requestTypes";
 import { NeighborhoodsLabels } from "@shared/types/neighborhoods";
 import { DeleteModal } from "@shared/components/modals/DeleteModal";
 import { PageHeader } from "@shared/components/navigation/PageHeader";
@@ -16,6 +17,7 @@ export default function RequestDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const user = useAuthStore((state) => state.user);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const requestId = Number(id);
 
@@ -38,17 +40,17 @@ export default function RequestDetails() {
     isFetching: isFetchingOffers,
     refetch: refetchOffers,
   } = useQuery({
-    queryKey: ["ride-requests", id, "compatible-offers"],
-    queryFn: () => getCompatibleOffers(request!),
+    queryKey: ["ride-requests", id, "matching-offers"],
+    queryFn: () => getMatchingOffers(requestId),
     enabled: Boolean(request),
   });
 
-  const { mutate: deleteRequest, isPending: isDeleting } = useMutation({
-    mutationFn: () => remove(requestId),
+  const { mutate: cancelRequest, isPending: isDeleting } = useMutation({
+    mutationFn: () => cancel(requestId),
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: ["ride-requests", id] });
       queryClient.invalidateQueries({ queryKey: ["ride-requests"] });
-      navigate("/request");
+      navigate("/requests");
     },
   });
 
@@ -61,30 +63,41 @@ export default function RequestDetails() {
   }
 
   if (isRequestError || !request) {
-    return <RetryError onRetry={refetchRequest} isFetching={isFetchingRequest} message="Não foi possível carregar o pedido." />;
+    return (
+      <RetryError
+        onRetry={refetchRequest}
+        isFetching={isFetchingRequest}
+        message="Não foi possível carregar o pedido."
+      />
+    );
   }
 
-  const { weekday, date, time: startTime } = formatDepartureDateTime(request.startDateTime);
-  const { time: endTime } = formatDepartureDateTime(request.endDateTime);
+  const { weekday, date, time: startTime } = formatDepartureDateTime(request.desiredDepartureStart);
+  const { time: endTime } = formatDepartureDateTime(request.desiredDepartureEnd);
+  const canManageRequest = request.requester.id === user?.id && request.status === RideRequestStatus.PENDING;
 
   return (
     <>
       <title>Detalhes do Pedido</title>
       <PageHeader title="Detalhes do Pedido">
-        <Link to={`/request/${request.id}/edit`} className="icon-btn text-secondary" aria-label="Editar pedido">
-          <Pencil size={22} />
-          <Ripples color="var(--ripple-dark)" on="mouseDown" />
-        </Link>
-        <button
-          type="button"
-          className="icon-btn text-danger"
-          aria-label="Excluir pedido"
-          onClick={() => setDeleteOpen(true)}
-          disabled={isDeleting}
-        >
-          <Trash2 size={22} />
-          <Ripples color="var(--ripple-dark)" on="mouseDown" />
-        </button>
+        {canManageRequest && (
+          <>
+            <Link to={`/requests/${request.id}/edit`} className="icon-btn text-secondary" aria-label="Editar pedido">
+              <Pencil size={22} />
+              <Ripples color="var(--ripple-dark)" on="mouseDown" />
+            </Link>
+            <button
+              type="button"
+              className="icon-btn text-danger"
+              aria-label="Cancelar pedido"
+              onClick={() => setDeleteOpen(true)}
+              disabled={isDeleting}
+            >
+              <Trash2 size={22} />
+              <Ripples color="var(--ripple-dark)" on="mouseDown" />
+            </button>
+          </>
+        )}
       </PageHeader>
 
       <h3 className="text-center">
@@ -127,14 +140,16 @@ export default function RequestDetails() {
         )}
       </section>
 
-      <DeleteModal
-        open={deleteOpen}
-        title="Excluir Pedido"
-        message="Tem certeza que deseja excluir este pedido?"
-        isLoading={isDeleting}
-        onConfirm={() => deleteRequest()}
-        onCancel={() => setDeleteOpen(false)}
-      />
+      {canManageRequest && (
+        <DeleteModal
+          open={deleteOpen}
+          title="Cancelar Pedido"
+          message="Tem certeza que deseja cancelar este pedido?"
+          isLoading={isDeleting}
+          onConfirm={() => cancelRequest()}
+          onCancel={() => setDeleteOpen(false)}
+        />
+      )}
     </>
   );
 }

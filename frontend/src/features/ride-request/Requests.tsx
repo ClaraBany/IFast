@@ -65,7 +65,7 @@ export default function Requests() {
         </div>
       )}
 
-      <Link to="/request/create" className="btn btn-lg fixed right-5 bottom-21 w-fit bg-primary">
+      <Link to="/requests/create" className="btn btn-lg fixed right-5 bottom-21 w-fit bg-primary">
         <Plus size={24} />
         Pedir Carona
       </Link>

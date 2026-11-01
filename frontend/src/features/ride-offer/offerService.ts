@@ -1,5 +1,4 @@
 import { api } from "@shared/api";
-import type { RideRequest } from "@ride-request/requestTypes";
 import type z from "zod";
 import type { CreateRideOffer, RideOffer, rideOfferSchema, RideOfferSummary } from "./offerTypes";
 import type { Filter } from "@shared/types/filter";
@@ -30,37 +29,6 @@ function toCreateRideOffer(form: z.infer<typeof rideOfferSchema>): CreateRideOff
 export async function getAll(filters: Filter): Promise<RideOfferSummary[]> {
   const response = await api.get<RideOfferSummary[]>("/ride-offers", { params: filters });
   return response.data;
-}
-
-export async function getCompatibleOffers(request: RideRequest): Promise<RideOfferSummary[]> {
-  const [date, startTime] = request.startDateTime.split("T");
-  const [, endTime] = request.endDateTime.split("T");
-  const startMinutes = Number(startTime.slice(0, 2)) * 60 + Number(startTime.slice(3, 5));
-  const endMinutes = Number(endTime.slice(0, 2)) * 60 + Number(endTime.slice(3, 5));
-  const duration = endMinutes - startMinutes;
-  const departureMinutes = [startMinutes + Math.floor(duration / 3), startMinutes + Math.floor((duration * 2) / 3)];
-  const drivers = [
-    { id: 3, name: "Ana Clara", pictureUrl: "" },
-    { id: 4, name: "Pedro Inácio", pictureUrl: "" },
-  ];
-
-  return departureMinutes.map((minutes, index) => {
-    const hours = Math.floor(minutes / 60)
-      .toString()
-      .padStart(2, "0");
-    const remainingMinutes = (minutes % 60).toString().padStart(2, "0");
-
-    return {
-      id: request.id * 100 + index + 1,
-      status: "AVAILABLE",
-      driver: drivers[index],
-      origin: request.origin,
-      destination: request.destination,
-      departureDateTime: `${date}T${hours}:${remainingMinutes}:00`,
-      seatsCapacity: 4,
-      seatsTaken: 1,
-    };
-  });
 }
 
 export async function get(offerId: number): Promise<RideOffer> {

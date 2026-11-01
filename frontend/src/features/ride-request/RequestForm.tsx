@@ -57,8 +57,8 @@ export default function RequestForm() {
 
   useEffect(() => {
     if (!request) return;
-    const [date, startTime] = request.startDateTime.split("T");
-    const [, endTime] = request.endDateTime.split("T");
+    const [date, startTime] = request.desiredDepartureStart.split("T");
+    const [, endTime] = request.desiredDepartureEnd.split("T");
     reset({
       origin: request.origin,
       destination: request.destination,
@@ -68,9 +68,12 @@ export default function RequestForm() {
     });
   }, [request, reset]);
 
-  const { mutate: saveRequest, isPending, data: responseId } = useMutation({
-    mutationFn: (data: z.infer<typeof requestSchema>) =>
-      isEdit ? update(Number(id), data) : create(data),
+  const {
+    mutate: saveRequest,
+    isPending,
+    data: responseId,
+  } = useMutation({
+    mutationFn: (data: z.infer<typeof requestSchema>) => (isEdit ? update(Number(id), data) : create(data)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["ride-requests"] });
       setSuccessOpen(true);
@@ -92,7 +95,9 @@ export default function RequestForm() {
   }
 
   if (isEdit && isRequestError) {
-    return <RetryError onRetry={refetch} isFetching={isFetchingRequest} message="Não foi possível carregar o pedido." />;
+    return (
+      <RetryError onRetry={refetch} isFetching={isFetchingRequest} message="Não foi possível carregar o pedido." />
+    );
   }
 
   return (
@@ -100,7 +105,7 @@ export default function RequestForm() {
       <title>{isEdit ? "Editar pedido" : "Criar pedido"}</title>
       <PageHeader title={isEdit ? "Editar Pedido" : "Criar Pedido"} />
 
-      <form className="flex-column flex-1 gap-4" onSubmit={handleSubmit(saveRequest)}>
+      <form className="flex-column flex-1 gap-4" onSubmit={handleSubmit((data) => saveRequest(data))}>
         <section className="form-fields">
           <NeighborhoodCombobox
             control={control}
@@ -135,9 +140,6 @@ export default function RequestForm() {
             <label>Horário Desejado</label>
             <div className="flex items-start gap-3">
               <div className="field w-full">
-                <label className="sr-only" htmlFor="start-time">
-                  A partir de
-                </label>
                 <input
                   {...register("startTime")}
                   id="start-time"
@@ -149,9 +151,6 @@ export default function RequestForm() {
               </div>
               <span className="mt-3 shrink-0">Até as</span>
               <div className="field w-full">
-                <label className="sr-only" htmlFor="end-time">
-                  Até
-                </label>
                 <input
                   {...register("endTime")}
                   id="end-time"
@@ -173,7 +172,7 @@ export default function RequestForm() {
         open={successOpen}
         onClose={() => {
           setSuccessOpen(false);
-          navigate(`/request/${responseId?.id ?? id}`);
+          navigate(`/requests/${responseId?.id ?? id}`);
         }}
       />
     </>
