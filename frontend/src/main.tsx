@@ -11,7 +11,9 @@ import Login from "@auth/Login";
 import Register from "@auth/Register";
 import Offers from "@ride-offer/Offers.tsx";
 import MyRides from "@my-rides/MyRides";
-import Request from "@ride-request/Request";
+import Requests from "@ride-request/Requests.tsx";
+import RequestForm from "@ride-request/RequestForm";
+import RequestDetails from "@ride-request/RequestDetails";
 import { LoaderCircle } from "lucide-react";
 import RequireAuth from "@auth/RequireAuth";
 import RequireGuest from "@auth/RequireGuest";
@@ -59,7 +61,10 @@ const router = createBrowserRouter([
           { path: "/offers/:id/edit", element: <OfferForm /> },
           { path: "/history", element: <History /> },
           { path: "/myrides", element: <MyRides /> },
-          { path: "/request", element: <Request /> },
+          { path: "/requests", element: <Requests /> },
+          { path: "/requests/create", element: <RequestForm /> },
+          { path: "/requests/:id", element: <RequestDetails /> },
+          { path: "/requests/:id/edit", element: <RequestForm /> },
           { path: "/users/:id", element: <Profile /> },
           { path: "/profile/edit", element: <ProfileForm /> },
           { path: "/vehicles", element: <Vehicles /> },

@@ -49,7 +49,7 @@ export default function SideMenu({ open, setOpen }: SideMenuProps) {
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-side-menu" onClick={() => setOpen(false)}>
+            <Link to={"/requests/create"} className="btn btn-side-menu" onClick={() => setOpen(false)}>
               <Plus />
               Criar Pedido
               <Ripples color="var(--ripple-dark)" />

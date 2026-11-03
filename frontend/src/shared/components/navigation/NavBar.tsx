@@ -22,7 +22,7 @@ export default function NavBar() {
           <Ripples color="var(--ripple-light)" />
         </NavLink>
 
-        <NavLink to={"/request"} className="navlink group">
+        <NavLink to={"/requests"} className="navlink group">
           <img src={RideRequest} alt="Pedidos" />
           <span>Pedidos</span>
           <div className="active-bar" />

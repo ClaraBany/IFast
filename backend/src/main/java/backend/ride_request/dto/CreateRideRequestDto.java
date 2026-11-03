@@ -14,7 +14,6 @@ public record CreateRideRequestDto(
     Neighborhoods destination,
 
     @NotNull(message = "Informe o horário inicial desejado")
-    @FutureOrPresent(message = "O horário inicial não pode estar no passado")
     @MaxDaysAhead()
     LocalDateTime desiredDepartureStart,
 
