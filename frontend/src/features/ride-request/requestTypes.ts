@@ -58,10 +58,10 @@ export const requestSchema = z
         path: ["date"],
         message: "A data não pode ultrapassar uma semana",
       });
-    } else if (data.date === getMinDate() && new Date(`${data.date}T${data.startTime}`) <= new Date()) {
+    } else if (data.date === getMinDate() && new Date(`${data.date}T${data.endTime}`) <= new Date()) {
       ctx.addIssue({
         code: "custom",
-        path: ["startTime"],
+        path: ["endTime"],
         message: "O horário desejado não pode ser anterior ao horário atual",
       });
     }
