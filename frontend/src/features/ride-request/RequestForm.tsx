@@ -136,7 +136,7 @@ export default function RequestForm() {
             {errors.date && <span>{errors.date.message}</span>}
           </div>
 
-          <div className="field md:col-span-2">
+          <div className="flex flex-col gap-1.5 md:col-span-2">
             <label>Horário Desejado</label>
             <div className="flex items-start gap-3">
               <div className="field w-full">
@@ -149,7 +149,7 @@ export default function RequestForm() {
                 />
                 {errors.startTime && <span>{errors.startTime.message}</span>}
               </div>
-              <span className="mt-3 shrink-0">Até as</span>
+              <span className="mt-4 shrink-0">Até as</span>
               <div className="field w-full">
                 <input
                   {...register("endTime")}
