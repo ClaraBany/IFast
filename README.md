@@ -19,6 +19,8 @@ IFast/
 └── backend/    # API REST (Spring Boot)
 ```
 
+Consulte a [documentação da API](./backend/API.md) para ver endpoints, entradas, retornos e status HTTP.
+
 ## Pré-requisitos
 
 - [Node.js](https://nodejs.org/) 20+ e npm
