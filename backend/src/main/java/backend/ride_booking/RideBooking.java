@@ -35,10 +35,6 @@ public class RideBooking {
     @Enumerated(EnumType.STRING)
     private InitiatedBy initiatedBy;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private InitiatedBy cancelledBy;
-
     @ManyToOne
     @JoinColumn(name = "passenger_id", nullable = false)
     private User passenger;
