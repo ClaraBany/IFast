@@ -3,6 +3,7 @@ package backend.ride_request;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.shared.dto.FilterRideDto;
 import backend.shared.dto.IdResponseDto;
+import backend.shared.enums.RideListStatus;
 import backend.ride_request.dto.CreateRideRequestDto;
 import backend.ride_request.dto.RideRequestDto;
 import backend.user.User;
@@ -25,6 +26,13 @@ public class RideRequestController {
     public ResponseEntity<List<RideRequestDto>> getAll(@Valid FilterRideDto filterDto,
                                                        @AuthenticationPrincipal User user) {
         List<RideRequestDto> response = rideRequestService.getAll(filterDto, user);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/my-requests")
+    public ResponseEntity<List<RideRequestDto>> getMyRequests(@RequestParam RideListStatus status,
+                                                              @AuthenticationPrincipal User user) {
+        List<RideRequestDto> response = rideRequestService.getMyRequests(status, user);
         return ResponseEntity.ok(response);
     }
 

@@ -103,10 +103,26 @@ public class RideOffer {
         this.status = StatusOffer.CANCELLED;
     }
 
+    public void occupySeat() {
+        if (this.status != StatusOffer.AVAILABLE) {
+            throw new InvalidRideOfferStateException();
+        }
+
+        seatsTaken++;
+        refreshAvailability();
+    }
+
     public void requireOpen() {
         if (status != StatusOffer.AVAILABLE && status != StatusOffer.FULL) {
             throw new InvalidRideOfferStateException();
         }
+    }
+
+    public void releaseSeat() {
+        if (this.seatsTaken <= 0) throw new IllegalStateException();
+
+        this.seatsTaken--;
+        refreshAvailability();
     }
 
     //TODO: adicionar ride_offer_template

@@ -6,6 +6,7 @@ import backend.shared.dto.FilterRideDto;
 import backend.shared.dto.IdResponseDto;
 import backend.ride_request.dto.CreateRideRequestDto;
 import backend.ride_request.dto.RideRequestDto;
+import backend.shared.enums.RideListStatus;
 import backend.user.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,14 @@ public class RideRequestService {
             .stream()
             .map(RideRequestDto::new)
             .toList();
+    }
+
+    public List<RideRequestDto> getMyRequests(RideListStatus status, User user) {
+        List<RideRequest> requests = status == RideListStatus.COMPLETED
+            ? rideRequestRepository.findCompletedByRequester(user)
+            : rideRequestRepository.findOpenByRequester(user);
+
+        return requests.stream().map(RideRequestDto::new).toList();
     }
 
     public RideRequestDto get(Long rideRequestId) {
