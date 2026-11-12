@@ -33,8 +33,8 @@ public class RideBookingService {
     private final RideRequestRepository rideRequestRepository;
 
     public List<RideBookingDto> getMyBookings(RideListStatus status, User user) {
-        List<RideBooking> bookings = status == RideListStatus.COMPLETED
-            ? rideBookingRepository.findCompletedByPassenger(user)
+        List<RideBooking> bookings = status == RideListStatus.CLOSED
+            ? rideBookingRepository.findClosedByPassenger(user)
             : rideBookingRepository.findOpenByPassenger(user);
 
         return bookings.stream().map(RideBookingDto::new).toList();

@@ -34,8 +34,8 @@ public class RideRequestService {
     }
 
     public List<RideRequestDto> getMyRequests(RideListStatus status, User user) {
-        List<RideRequest> requests = status == RideListStatus.COMPLETED
-            ? rideRequestRepository.findCompletedByRequester(user)
+        List<RideRequest> requests = status == RideListStatus.CLOSED
+            ? rideRequestRepository.findClosedByRequester(user)
             : rideRequestRepository.findOpenByRequester(user);
 
         return requests.stream().map(RideRequestDto::new).toList();

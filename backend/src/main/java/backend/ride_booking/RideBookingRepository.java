@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import backend.ride_booking.enums.StatusBooking;
-import backend.ride_offer.enums.StatusOffer;
 import backend.ride_offer.RideOffer;
 import backend.ride_request.RideRequest;
 import backend.user.User;
@@ -45,7 +44,7 @@ public interface RideBookingRepository extends JpaRepository<RideBooking, Long>{
       )
     order by b.rideOffer.departureDateTime asc
     """)
-    List<RideBooking> findCompletedByPassenger(@Param("passenger") User passenger);
+    List<RideBooking> findClosedByPassenger(@Param("passenger") User passenger);
 
     @Query("""
     select b from RideBooking b

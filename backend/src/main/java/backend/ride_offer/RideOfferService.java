@@ -84,7 +84,7 @@ public class RideOfferService {
 
         rideOffer.complete();
         rideOfferRepository.save(rideOffer);
-        rideBookingService.cancelPendingByOffer(rideOfferId);
+        rideBookingService.cancelPendingByOffer(rideOffer.getId());
     }
 
     @Transactional

@@ -23,7 +23,7 @@ public interface RideOfferRepository extends JpaRepository<RideOffer, Long>, Jpa
       and o.status in (backend.ride_offer.enums.StatusOffer.COMPLETED, backend.ride_offer.enums.StatusOffer.CANCELLED)
     order by o.departureDateTime asc
     """)
-    List<RideOffer> findCompletedByDriver(@Param("driver") User driver);
+    List<RideOffer> findClosedByDriver(@Param("driver") User driver);
 
     @Query("""
     select o from RideOffer o

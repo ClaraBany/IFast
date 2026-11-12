@@ -18,7 +18,7 @@ public interface RideRequestRepository extends JpaRepository<RideRequest, Long>,
       and r.status in (backend.ride_request.enums.StatusRequest.CANCELLED, backend.ride_request.enums.StatusRequest.ACCEPTED)
     order by r.desiredDepartureStart asc
     """)
-    List<RideRequest> findCompletedByRequester(@Param("requester") User requester);
+    List<RideRequest> findClosedByRequester(@Param("requester") User requester);
 
     @Query("""
     select r from RideRequest r
