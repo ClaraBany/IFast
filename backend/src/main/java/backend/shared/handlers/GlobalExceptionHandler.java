@@ -27,6 +27,9 @@ import backend.auth.exceptions.InvalidCredentialsException;
 import backend.ride_offer.exceptions.InvalidRideOfferStateException;
 import backend.ride_offer.exceptions.InvalidSeatsCapacityException;
 import backend.ride_offer.exceptions.RideOfferNotDepartedException;
+import backend.ride_booking.exceptions.DuplicateRideBookingException;
+import backend.ride_booking.exceptions.IncompatibleRideBookingException;
+import backend.ride_booking.exceptions.InvalidRideBookingStateException;
 import backend.security.exceptions.InvalidGoogleTokenException;
 import backend.security.exceptions.TokenJwtInvalidException;
 import jakarta.persistence.EntityNotFoundException;
@@ -80,7 +83,8 @@ public class GlobalExceptionHandler {
     
     @ExceptionHandler({
         InvalidSeatsCapacityException.class,
-        RideOfferNotDepartedException.class
+        RideOfferNotDepartedException.class,
+        IncompatibleRideBookingException.class
     })
     public ResponseEntity<ErrorResponseDto> handleBusinessValidation(Exception e, HttpServletRequest request) {
         return buildResponse(e, request, HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage(), null);
@@ -130,7 +134,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             EmailAlreadyRegisteredException.class,
             InvalidRideOfferStateException.class,
-            InvalidRideRequestStateException.class
+            InvalidRideRequestStateException.class,
+            InvalidRideBookingStateException.class,
+            DuplicateRideBookingException.class,
     })
     public ResponseEntity<ErrorResponseDto> handleConflict(Exception e, HttpServletRequest request) {
         return buildResponse(e, request, HttpStatus.CONFLICT, e.getMessage(), null);

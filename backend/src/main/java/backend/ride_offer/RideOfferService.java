@@ -8,11 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import backend.ride_offer.exceptions.InvalidSeatsCapacityException;
+import backend.ride_booking.RideBookingService;
 import backend.ride_offer.dto.CreateRideOfferDto;
 import backend.shared.dto.FilterRideDto;
 import backend.ride_offer.dto.RideOfferDto;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.shared.dto.IdResponseDto;
+import backend.shared.enums.RideListStatus;
 import backend.user.User;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -20,6 +22,7 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class RideOfferService {
     private final RideOfferRepository rideOfferRepository;
+    private final RideBookingService rideBookingService;
 
     public List<RideOfferSummaryDto> getAll(FilterRideDto filter, User user) {
         return rideOfferRepository
@@ -27,6 +30,14 @@ public class RideOfferService {
             .stream()
             .map(RideOfferSummaryDto::new)
             .toList();
+    }
+
+    public List<RideOfferSummaryDto> getMyOffers(RideListStatus status, User user) {
+        List<RideOffer> offers = status == RideListStatus.CLOSED
+                ? rideOfferRepository.findClosedByDriver(user)
+                : rideOfferRepository.findOpenByDriver(user);
+
+        return offers.stream().map(RideOfferSummaryDto::new).toList();
     }
 
     public RideOfferDto get(Long rideOfferId) {
@@ -73,6 +84,7 @@ public class RideOfferService {
 
         rideOffer.complete();
         rideOfferRepository.save(rideOffer);
+        rideBookingService.cancelPendingByOffer(rideOffer.getId());
     }
 
     @Transactional
@@ -82,6 +94,7 @@ public class RideOfferService {
 
         rideOffer.cancel();
         rideOfferRepository.save(rideOffer);
+        rideBookingService.cancelAllByOffer(rideOffer.getId());
     }
 
     private void validateOffer(CreateRideOfferDto dto) {

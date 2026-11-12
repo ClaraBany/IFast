@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,7 @@ import backend.ride_offer.dto.CreateRideOfferDto;
 import backend.ride_offer.dto.RideOfferDto;
 import backend.shared.dto.FilterRideDto;
 import backend.ride_offer.dto.RideOfferSummaryDto;
+import backend.shared.enums.RideListStatus;
 import backend.user.User;
 import backend.shared.dto.IdResponseDto;
 import jakarta.validation.Valid;
@@ -35,6 +37,13 @@ public class RideOfferController {
     public ResponseEntity<List<RideOfferSummaryDto>> getAll(@Valid FilterRideDto filterDto,
                                                             @AuthenticationPrincipal User user) {
         List<RideOfferSummaryDto> response = rideOfferService.getAll(filterDto, user);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/my-offers")
+    public ResponseEntity<List<RideOfferSummaryDto>> getMyOffers(@RequestParam RideListStatus status,
+                                                          @AuthenticationPrincipal User user) {
+        List<RideOfferSummaryDto> response = rideOfferService.getMyOffers(status, user);
         return ResponseEntity.ok(response);
     }
 

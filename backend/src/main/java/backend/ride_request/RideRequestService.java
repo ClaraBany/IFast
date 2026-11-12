@@ -1,11 +1,13 @@
 package backend.ride_request;
 
 import backend.ride_offer.RideOfferRepository;
+import backend.ride_booking.RideBookingService;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.shared.dto.FilterRideDto;
 import backend.shared.dto.IdResponseDto;
 import backend.ride_request.dto.CreateRideRequestDto;
 import backend.ride_request.dto.RideRequestDto;
+import backend.shared.enums.RideListStatus;
 import backend.user.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.List;
 public class RideRequestService {
     private final RideRequestRepository rideRequestRepository;
     private final RideOfferRepository rideOfferRepository;
+    private final RideBookingService rideBookingService;
 
     public List<RideRequestDto> getAll(FilterRideDto filter, User user) {
         return rideRequestRepository
@@ -28,6 +31,14 @@ public class RideRequestService {
             .stream()
             .map(RideRequestDto::new)
             .toList();
+    }
+
+    public List<RideRequestDto> getMyRequests(RideListStatus status, User user) {
+        List<RideRequest> requests = status == RideListStatus.CLOSED
+            ? rideRequestRepository.findClosedByRequester(user)
+            : rideRequestRepository.findOpenByRequester(user);
+
+        return requests.stream().map(RideRequestDto::new).toList();
     }
 
     public RideRequestDto get(Long rideRequestId) {
@@ -90,5 +101,6 @@ public class RideRequestService {
 
         request.cancel();
         rideRequestRepository.save(request);
+        rideBookingService.cancelPendingByRequest(request);
     }
 }
