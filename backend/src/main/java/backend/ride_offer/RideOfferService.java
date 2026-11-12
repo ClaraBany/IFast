@@ -92,6 +92,7 @@ public class RideOfferService {
             .orElseThrow(EntityNotFoundException::new);
 
         rideOffer.cancel();
+        rideOfferRepository.save(rideOffer);
         rideBookingService.cancelAllByOffer(rideOffer.getId());
     }
 
