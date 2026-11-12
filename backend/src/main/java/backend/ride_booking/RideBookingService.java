@@ -11,6 +11,7 @@ import backend.ride_booking.dto.RideBookingDto;
 import backend.ride_booking.enums.InitiatedBy;
 import backend.ride_booking.enums.StatusBooking;
 import backend.ride_booking.exceptions.DuplicateRideBookingException;
+import backend.ride_booking.exceptions.IncompatibleRideBookingException;
 import backend.ride_booking.exceptions.InvalidRideBookingStateException;
 import backend.ride_offer.RideOffer;
 import backend.ride_offer.RideOfferRepository;
