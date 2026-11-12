@@ -99,6 +99,7 @@ public class RideBookingService {
         if(rideOffer.getStatus() != StatusOffer.AVAILABLE){ 
             throw new InvalidRideOfferStateException();
         }
+        ensureCompatible(rideRequest, rideOffer);
         ensureNoExistingBooking(rideRequest.getRequester(), rideOffer);
 
         RideBooking rideBooking = new RideBooking();
@@ -172,6 +173,13 @@ public class RideBookingService {
     private void ensureNoExistingBooking(User passenger, RideOffer rideOffer) {
         if (rideBookingRepository.existsByPassengerAndRideOffer(passenger, rideOffer)) {
             throw new DuplicateRideBookingException();
+        }
+    }
+
+    private void ensureCompatible(RideRequest rideRequest, RideOffer rideOffer) {
+        if (rideOffer.getDepartureDateTime().isBefore(rideRequest.getDesiredDepartureStart())
+            || rideOffer.getDepartureDateTime().isAfter(rideRequest.getDesiredDepartureEnd())) {
+            throw new IncompatibleRideBookingException();
         }
     }
 
