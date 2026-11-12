@@ -122,7 +122,9 @@ public class RideBookingService {
         rideBooking.accept();
 
         if (rideBooking.getRideRequest() != null) {
-            rideBooking.getRideRequest().accept();
+            RideRequest rideRequest = rideBooking.getRideRequest();
+            rideRequest.accept();
+            cancelPendingByRequest(rideRequest);
         }
     }
 
@@ -159,6 +161,13 @@ public class RideBookingService {
     public void cancelPendingByOffer(Long rideOfferId) {
         rideBookingRepository
             .findByRideOfferIdAndStatusIn(rideOfferId, List.of(StatusBooking.PENDING))
+            .forEach(RideBooking::cancel);
+    }
+
+    @Transactional
+    public void cancelPendingByRequest(RideRequest rideRequest) {
+        rideBookingRepository
+            .findByRideRequestAndStatus(rideRequest, StatusBooking.PENDING)
             .forEach(RideBooking::cancel);
     }
 
