@@ -64,6 +64,7 @@ public class RideBookingService {
 
         return bookings
             .stream()
+            .filter(booking -> booking.getRideOffer().getStatus() == StatusOffer.AVAILABLE)
             .map(RideBookingDto::new)
             .toList();
     } 
