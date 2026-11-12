@@ -41,9 +41,9 @@ public class RideOfferController {
     }
 
     @GetMapping("/my-offers")
-    public ResponseEntity<List<RideOfferDto>> getMyOffers(@RequestParam RideListStatus status,
+    public ResponseEntity<List<RideOfferSummaryDto>> getMyOffers(@RequestParam RideListStatus status,
                                                           @AuthenticationPrincipal User user) {
-        List<RideOfferDto> response = rideOfferService.getMyOffers(status, user);
+        List<RideOfferSummaryDto> response = rideOfferService.getMyOffers(status, user);
         return ResponseEntity.ok(response);
     }
 

@@ -32,12 +32,12 @@ public class RideOfferService {
             .toList();
     }
 
-    public List<RideOfferDto> getMyOffers(RideListStatus status, User user) {
-        List<RideOffer> offers = status == RideListStatus.COMPLETED
-            ? rideOfferRepository.findCompletedByDriver(user)
-            : rideOfferRepository.findOpenByDriver(user);
+    public List<RideOfferSummaryDto> getMyOffers(RideListStatus status, User user) {
+        List<RideOffer> offers = status == RideListStatus.CLOSED
+                ? rideOfferRepository.findClosedByDriver(user)
+                : rideOfferRepository.findOpenByDriver(user);
 
-        return offers.stream().map(RideOfferDto::new).toList();
+        return offers.stream().map(RideOfferSummaryDto::new).toList();
     }
 
     public RideOfferDto get(Long rideOfferId) {
