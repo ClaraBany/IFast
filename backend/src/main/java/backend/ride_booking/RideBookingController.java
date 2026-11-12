@@ -49,7 +49,7 @@ public class RideBookingController {
                                                             @AuthenticationPrincipal User user) {
         List<RideBookingDto> response = rideBookingService.getForRequest(rideRequestId, status, user);
         return ResponseEntity.ok(response);
-    } //tirar status 
+    } 
 
     @PostMapping("/ride-offers/{rideOfferId}/bookings")
     public ResponseEntity<IdResponseDto> createForOffer(@PathVariable Long rideOfferId, @AuthenticationPrincipal User user) {
