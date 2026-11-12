@@ -187,7 +187,11 @@ public class RideBookingService {
     }
 
     private void ensureNoExistingBooking(User passenger, RideOffer rideOffer) {
-        if (rideBookingRepository.existsByPassengerAndRideOffer(passenger, rideOffer)) {
+        if (rideBookingRepository.existsByPassengerAndRideOfferAndStatusIn(
+            passenger,
+            rideOffer,
+            List.of(StatusBooking.PENDING, StatusBooking.ACCEPTED)
+        )) {
             throw new DuplicateRideBookingException();
         }
     }

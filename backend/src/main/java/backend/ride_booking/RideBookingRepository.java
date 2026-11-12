@@ -21,7 +21,11 @@ public interface RideBookingRepository extends JpaRepository<RideBooking, Long>{
     List<RideBooking> findByRideRequest(RideRequest rideRequest);
     List<RideBooking> findByRideRequestAndStatus(RideRequest rideRequest, StatusBooking status);
     List<RideBooking> findByRideOfferIdAndStatusIn(Long rideOfferId, Collection<StatusBooking> status);
-    boolean existsByPassengerAndRideOffer(User passenger, RideOffer rideOffer);
+    boolean existsByPassengerAndRideOfferAndStatusIn(
+        User passenger,
+        RideOffer rideOffer,
+        Collection<StatusBooking> statuses
+    );
 
     @Query("""
     select count(b) from RideBooking b
