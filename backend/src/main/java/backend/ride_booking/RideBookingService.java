@@ -155,6 +155,13 @@ public class RideBookingService {
             .forEach(RideBooking::cancel);
     }
 
+    @Transactional
+    public void cancelPendingByOffer(Long rideOfferId) {
+        rideBookingRepository
+            .findByRideOfferIdAndStatusIn(rideOfferId, List.of(StatusBooking.PENDING))
+            .forEach(RideBooking::cancel);
+    }
+
     private RideBooking getPendingBookingForAuthorizedUser(Long bookingId, User user) {
         RideBooking rideBooking = rideBookingRepository.findById(bookingId)
             .orElseThrow(EntityNotFoundException::new);
