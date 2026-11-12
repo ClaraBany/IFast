@@ -75,6 +75,9 @@ public class RideBookingService {
         if(rideOffer.getStatus() != StatusOffer.AVAILABLE){ 
             throw new InvalidRideOfferStateException();
         }
+        if (rideOffer.getDriver().getId().equals(user.getId())) {
+            throw new AccessDeniedException("Usuário não pode reservar sua própria oferta");
+        }
         ensureNoExistingBooking(user, rideOffer);
 
         RideBooking rideBooking = new RideBooking();
@@ -96,6 +99,12 @@ public class RideBookingService {
             .orElseThrow(EntityNotFoundException::new);
         rideRequest.requireOpen();
 
+        if (!rideOffer.getDriver().getId().equals(user.getId())) {
+            throw new AccessDeniedException("Usuário só pode responder ao pedido com sua própria oferta");
+        }
+        if (rideOffer.getDriver().getId().equals(rideRequest.getRequester().getId())) {
+            throw new AccessDeniedException("Usuário não pode responder ao seu próprio pedido");
+        }
         if(rideOffer.getStatus() != StatusOffer.AVAILABLE){ 
             throw new InvalidRideOfferStateException();
         }
