@@ -1,6 +1,7 @@
 package backend.ride_request;
 
 import backend.ride_offer.RideOfferRepository;
+import backend.ride_booking.RideBookingService;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.shared.dto.FilterRideDto;
 import backend.shared.dto.IdResponseDto;
@@ -22,6 +23,7 @@ import java.util.List;
 public class RideRequestService {
     private final RideRequestRepository rideRequestRepository;
     private final RideOfferRepository rideOfferRepository;
+    private final RideBookingService rideBookingService;
 
     public List<RideRequestDto> getAll(FilterRideDto filter, User user) {
         return rideRequestRepository
@@ -99,5 +101,6 @@ public class RideRequestService {
 
         request.cancel();
         rideRequestRepository.save(request);
+        rideBookingService.cancelPendingByRequest(request);
     }
 }
