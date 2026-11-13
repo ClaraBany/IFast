@@ -2,7 +2,7 @@ import { api } from "@shared/api";
 import type z from "zod";
 import type { CreateRideOffer, RideOffer, rideOfferSchema, RideOfferSummary } from "./offerTypes";
 import type { Filter } from "@shared/types/filter";
-import type { IdResponse } from "@shared/types/common";
+import type { IdResponse, RideListStatus } from "@shared/types/common";
 
 function toCreateRideOffer(form: z.infer<typeof rideOfferSchema>): CreateRideOffer {
   return {
@@ -28,6 +28,11 @@ function toCreateRideOffer(form: z.infer<typeof rideOfferSchema>): CreateRideOff
 
 export async function getAll(filters: Filter): Promise<RideOfferSummary[]> {
   const response = await api.get<RideOfferSummary[]>("/ride-offers", { params: filters });
+  return response.data;
+}
+
+export async function getMyOffers(status: RideListStatus): Promise<RideOfferSummary[]> {
+  const response = await api.get<RideOfferSummary[]>("/ride-offers/my-offers", { params: { status } });
   return response.data;
 }
 
