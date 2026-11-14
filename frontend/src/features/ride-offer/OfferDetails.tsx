@@ -13,9 +13,12 @@ import { DeleteModal } from "@shared/components/modals/DeleteModal";
 import { formatDepartureDateTime } from "@shared/utils/formatDateTime";
 import { SuccessModal } from "@shared/components/modals/SucessModal";
 import { NeighborhoodsLabels } from "@shared/types/neighborhoods";
+import { getByOffer, cancel as cancelBooking, createForOffer } from "@ride-booking/bookingService";
+import BookingOfferCard from "@ride-booking/BookingOfferCard";
 
 type OfferAction = {
   label: string;
+  buttonBg: "bg-primary" | "bg-danger";
   onClick?: () => void;
   isPending?: boolean;
   disabled?: boolean;
@@ -35,7 +38,7 @@ export default function OfferDetails() {
     refetch,
     isFetching,
   } = useQuery({
-    queryKey: ["ride-offers", id],
+    queryKey: ["ride-offers", Number(id)],
     queryFn: () => get(Number(id)),
   });
 
@@ -55,6 +58,37 @@ export default function OfferDetails() {
     },
   });
 
+  const {
+    data: bookings = [],
+    isLoading: isLoadingBookings,
+    isError: isBookingsError,
+    isFetching: isFetchingBookings,
+    refetch: refetchBookings,
+  } = useQuery({
+    queryKey: ["ride-offers", Number(id), "bookings"],
+    queryFn: () => getByOffer(Number(id)),
+    enabled: Boolean(offer),
+  });
+  const pendingBookings = bookings.filter((b) => b.status === "PENDING");
+  const passengers = bookings.filter((b) => b.status === "ACCEPTED");
+  const userBooking = bookings.find(
+    (b) => b.passenger.id === user?.id && (b.status === "ACCEPTED" || b.status === "PENDING"),
+  );
+
+  const { mutate: createBooking, isPending: isPendingCreateBooking } = useMutation({
+    mutationFn: (id: number) => createForOffer(id),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["ride-offers", Number(id), "bookings"] });
+    },
+  });
+
+  const { mutate: handleCancelBooking, isPending: isPendingCancelBooking } = useMutation({
+    mutationFn: (id: number) => cancelBooking(id),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["ride-offers", Number(id)] });
+    },
+  });
+
   if (isLoadingOffer) {
     return (
       <div className="flex-center flex-1">
@@ -68,29 +102,43 @@ export default function OfferDetails() {
   }
 
   const isDriver = offer.driver.id === user?.id;
+  const isOpen = offer.status === RideOfferStatus.AVAILABLE || offer.status === RideOfferStatus.FULL;
   const status = rideOfferStatusDisplay[offer.status];
   const { weekday, date, time } = formatDepartureDateTime(offer.departureDateTime);
   const hasDeparted = new Date() >= new Date(offer.departureDateTime);
 
   let action: OfferAction | null = null;
-  if (isDriver) {
-    if (offer.status === RideOfferStatus.AVAILABLE || offer.status === RideOfferStatus.FULL) {
+  if (isOpen) {
+    if (isDriver) {
       action = {
         label: "Concluir carona",
+        buttonBg: "bg-primary",
         onClick: () => completeOffer(offer.id),
         isPending: isPendingComplete,
         disabled: !hasDeparted,
       };
+    } else if (userBooking) {
+      action = {
+        label: userBooking.status === "ACCEPTED" ? "Sair da Carona" : "Cancelar Solicitação",
+        buttonBg: "bg-danger",
+        onClick: () => handleCancelBooking(userBooking.id),
+        isPending: isPendingCancelBooking,
+      };
+    } else if (offer.status === RideOfferStatus.AVAILABLE) {
+      action = {
+        label: "Solicitar vaga",
+        buttonBg: "bg-primary",
+        onClick: () => createBooking(offer.id),
+        isPending: isPendingCreateBooking,
+      };
     }
-  } else if (offer.status === RideOfferStatus.AVAILABLE) {
-    action = { label: "Solicitar vaga" };
   }
 
   return (
     <>
       <title>Detalhes Carona</title>
       <PageHeader title="Detalhes">
-        {isDriver && (offer.status === RideOfferStatus.AVAILABLE || offer.status === RideOfferStatus.FULL) && (
+        {isDriver && isOpen && (
           <>
             <Link to={`/offers/${offer.id}/edit`} className="icon-btn">
               <SquarePen className="text-secondary" size={24} />
@@ -163,39 +211,55 @@ export default function OfferDetails() {
           </div>
         </section>
       )}
-      {/* TODO: implementar na feat booking-request */}
-      {/* {isDriver && (
-        <section className="flex-column w-full gap-2.5">
-          <h3>Passageiros</h3>
 
-          <div className="w-full overflow-x-auto rounded-2xl bg-white">
-            <div className="flex-center w-max min-w-full gap-5 px-6 py-4">
-              {offer.passengers.length === 0 ? (
-                <p className="text-neutral-dark">Nenhum passageiro até o momento</p>
-              ) : (
-                offer.passengers.map((passenger) => (
-                  <Link
-                    key={passenger.id}
-                    to={`/users/${passenger.id}`}
-                    className="flex-center w-25 shrink-0 flex-col gap-1.25"
-                  >
-                    <ProfilePicture url={passenger.pictureUrl} size="lg" />
-                    <p className="text-center">{passenger.name}</p>
-                  </Link>
-                ))
-              )}
-            </div>
+      <section className="flex-column w-full gap-2.5">
+        <h3>Passageiros</h3>
+
+        <div className="w-full overflow-x-auto rounded-2xl bg-white">
+          <div className="flex-center w-max min-w-full gap-5 px-6 py-4">
+            {passengers.length === 0 ? (
+              <p className="text-neutral-dark">Nenhum passageiro até o momento</p>
+            ) : (
+              passengers.map((booking) => (
+                <Link
+                  key={booking.id}
+                  to={`/users/${booking.passenger.id}`}
+                  className="flex-center w-25 shrink-0 flex-col gap-1.25"
+                >
+                  <ProfilePicture url={booking.passenger.pictureUrl} size="lg" />
+                  <p className="text-center">{booking.passenger.name}</p>
+                </Link>
+              ))
+            )}
           </div>
-        </section>
-      )} */}
+        </div>
+      </section>
 
-      {isDriver && (
+      {isDriver && offer.status === "AVAILABLE" && (
         <section className="flex-column w-full gap-2.5">
           <h3>Solicitações</h3>
 
-          <div className="flex-column w-full gap-2.5 rounded-2xl bg-white px-6 py-4">
-            <p className="text-center text-neutral-dark">Nenhuma solicitação até o momento</p>
-          </div>
+          {isBookingsError ? (
+            <RetryError
+              onRetry={refetchBookings}
+              isFetching={isFetchingBookings}
+              message="Não foi possível carregar as solicitações."
+            />
+          ) : isLoadingBookings ? (
+            <div className="flex-center py-6">
+              <LoaderCircle className="animate-spin text-primary" size={36} />
+            </div>
+          ) : pendingBookings.length === 0 ? (
+            <div className="flex-center w-full rounded-2xl bg-white px-6 py-4">
+              <p className="text-neutral-dark">Nenhuma solicitação até o momento.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
+              {pendingBookings.map((booking) => (
+                <BookingOfferCard key={booking.id} booking={booking} />
+              ))}
+            </div>
+          )}
         </section>
       )}
 
@@ -207,7 +271,7 @@ export default function OfferDetails() {
             </p>
           )}
           <button
-            className="btn btn-lg bg-primary"
+            className={`btn btn-lg ${action.buttonBg}`}
             onClick={action.onClick}
             disabled={action.isPending || action.disabled}
           >
