@@ -37,11 +37,11 @@ public interface RideBookingRepository extends JpaRepository<RideBooking, Long>{
     @Query("""
     select b from RideBooking b
     where b.passenger = :passenger
-      and b.status <> backend.ride_booking.enums.StatusBooking.PENDING
-      and (
-        b.status <> backend.ride_booking.enums.StatusBooking.ACCEPTED
-        or b.rideOffer.status = backend.ride_offer.enums.StatusOffer.COMPLETED
-      )
+        and b.status = backend.ride_booking.enums.StatusBooking.ACCEPTED
+        and b.rideOffer.status in (
+            backend.ride_offer.enums.StatusOffer.COMPLETED,
+            backend.ride_offer.enums.StatusOffer.CANCELLED
+        )
     order by b.rideOffer.departureDateTime asc
     """)
     List<RideBooking> findClosedByPassenger(@Param("passenger") User passenger);
