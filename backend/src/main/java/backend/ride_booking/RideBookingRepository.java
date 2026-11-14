@@ -53,7 +53,10 @@ public interface RideBookingRepository extends JpaRepository<RideBooking, Long>{
         b.status = backend.ride_booking.enums.StatusBooking.PENDING
         or (
           b.status = backend.ride_booking.enums.StatusBooking.ACCEPTED
-          and b.rideOffer.status <> backend.ride_offer.enums.StatusOffer.COMPLETED
+          and b.rideOffer.status not in (
+              backend.ride_offer.enums.StatusOffer.COMPLETED,
+              backend.ride_offer.enums.StatusOffer.CANCELLED
+          )
         )
       )
     order by b.rideOffer.departureDateTime asc
