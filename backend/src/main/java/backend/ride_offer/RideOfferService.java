@@ -94,7 +94,7 @@ public class RideOfferService {
 
         rideOffer.cancel();
         rideOfferRepository.save(rideOffer);
-        rideBookingService.cancelAllByOffer(rideOffer.getId());
+        rideBookingService.cancelPendingByOffer(rideOffer.getId());
     }
 
     private void validateOffer(CreateRideOfferDto dto) {

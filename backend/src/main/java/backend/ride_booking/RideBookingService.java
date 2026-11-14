@@ -162,13 +162,6 @@ public class RideBookingService {
     }
 
     @Transactional
-    public void cancelAllByOffer(Long rideOfferId) {
-        rideBookingRepository
-            .findByRideOfferIdAndStatusIn(rideOfferId, List.of(StatusBooking.PENDING, StatusBooking.ACCEPTED))
-            .forEach(RideBooking::cancel);
-    }
-
-    @Transactional
     public void cancelPendingByOffer(Long rideOfferId) {
         rideBookingRepository
             .findByRideOfferIdAndStatusIn(rideOfferId, List.of(StatusBooking.PENDING))
