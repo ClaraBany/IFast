@@ -29,6 +29,7 @@ export default function OfferDetails() {
   const user = useAuthStore((state) => state.user);
   const [successOpen, setSuccessOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [cancelBookingOpen, setCancelBookingOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const {
@@ -74,6 +75,7 @@ export default function OfferDetails() {
   const userBooking = bookings.find(
     (b) => b.passenger.id === user?.id && (b.status === "ACCEPTED" || b.status === "PENDING"),
   );
+  const isAccepted = userBooking?.status === "ACCEPTED";
 
   const { mutate: createBooking, isPending: isPendingCreateBooking } = useMutation({
     mutationFn: (id: number) => createForOffer(id),
@@ -86,6 +88,7 @@ export default function OfferDetails() {
     mutationFn: (id: number) => cancelBooking(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["ride-offers", Number(id)] });
+      setCancelBookingOpen(false);
     },
   });
 
@@ -102,7 +105,7 @@ export default function OfferDetails() {
   }
 
   const isDriver = offer.driver.id === user?.id;
-  const isOpen = offer.status === RideOfferStatus.AVAILABLE || offer.status === RideOfferStatus.FULL;
+  const isOpen = offer.status === "AVAILABLE" || offer.status === "FULL";
   const status = rideOfferStatusDisplay[offer.status];
   const { weekday, date, time } = formatDepartureDateTime(offer.departureDateTime);
   const hasDeparted = new Date() >= new Date(offer.departureDateTime);
@@ -119,9 +122,9 @@ export default function OfferDetails() {
       };
     } else if (userBooking) {
       action = {
-        label: userBooking.status === "ACCEPTED" ? "Sair da Carona" : "Cancelar Solicitação",
+        label: isAccepted ? "Sair da Carona" : "Retirar Solicitação",
         buttonBg: "bg-danger",
-        onClick: () => handleCancelBooking(userBooking.id),
+        onClick: () => setCancelBookingOpen(true),
         isPending: isPendingCancelBooking,
       };
     } else if (offer.status === RideOfferStatus.AVAILABLE) {
@@ -292,6 +295,17 @@ export default function OfferDetails() {
         onConfirm={() => cancelOffer(offer.id)}
         onCancel={() => setDeleteOpen(false)}
       />
+      {userBooking && (
+        <DeleteModal
+          open={cancelBookingOpen}
+          title={isAccepted ? "Sair da Carona" : "Retirar Solicitação"}
+          message={isAccepted ? "Tem certeza que deseja sair dessa oferta?\nO motorista será notificado" : "Tem certeza que deseja retirar sua solicitação?"}
+          buttonLabel={isAccepted ? "Sair" : "Retirar"}
+          isLoading={isPendingCancelBooking}
+          onConfirm={() => handleCancelBooking(userBooking.id)}
+          onCancel={() => setCancelBookingOpen(false)}
+        />
+      )}
     </>
   );
 }
