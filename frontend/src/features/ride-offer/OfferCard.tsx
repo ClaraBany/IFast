@@ -8,10 +8,11 @@ import { NeighborhoodsLabels } from "@shared/types/neighborhoods";
 
 type OfferCardProps = {
   offer: RideOfferSummary;
+  style?: "ACCEPTED" | "PENDING";
 };
 
-export default function OfferCard({ offer }: OfferCardProps) {
-  const status = rideOfferStatusDisplay[offer.status];
+export default function OfferCard({ offer, style }: OfferCardProps) {
+  const status = rideOfferStatusDisplay[style ? style : offer.status];
   const { date, time } = formatDepartureDateTime(offer.departureDateTime);
 
   return (
@@ -22,7 +23,7 @@ export default function OfferCard({ offer }: OfferCardProps) {
 
       <Link
         to={`/offers/${offer.id}`}
-        className="flex flex-1 flex-col items-start gap-2.5 after:absolute after:inset-0 after:content-['']"
+        className="flex-center flex-1 flex-col items-start gap-2.5 after:absolute after:inset-0 after:content-['']"
       >
         <p>
           {NeighborhoodsLabels[offer.origin]} <ArrowRight className="mb-1 inline size-4" />{" "}
