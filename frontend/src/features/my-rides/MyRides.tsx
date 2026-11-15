@@ -7,8 +7,25 @@ import { getMyRequests } from "@ride-request/requestService";
 import RetryError from "@shared/components/RetryError";
 import { useQuery } from "@tanstack/react-query";
 import { CircleCheck, LoaderCircle, RotateCcwClock } from "lucide-react";
+import { useSearchParams } from "react-router";
 
 export default function MyRides() {
+  const TABS = ["driver", "passenger"] as const;
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const selectedIndex = Math.max(0, TABS.indexOf(searchParams.get("tab") as (typeof TABS)[number]));
+
+  function handleTabChange(index: number) {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.set("tab", TABS[index]);
+        return next;
+      },
+      { replace: true },
+    );
+  }
+
   const {
     data: myOffers = [],
     isLoading: isLoadingMyOffers,
@@ -49,7 +66,7 @@ export default function MyRides() {
       <h2>Minhas Caronas</h2>
       <title>Minhas Caronas</title>
 
-      <TabGroup className="flex-1">
+      <TabGroup className="flex-1" selectedIndex={selectedIndex} onChange={handleTabChange}>
         <TabList className="flex h-10.5 overflow-hidden rounded-full border border-primary bg-white">
           <Tab
             key={"driver"}
