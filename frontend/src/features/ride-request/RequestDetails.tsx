@@ -12,6 +12,8 @@ import { RideRequestStatus } from "./requestTypes";
 import { NeighborhoodsLabels } from "@shared/types/neighborhoods";
 import { DeleteModal } from "@shared/components/modals/DeleteModal";
 import { PageHeader } from "@shared/components/navigation/PageHeader";
+import BookingRequestCard from "@ride-booking/BookingRequestCard";
+import { getByRequest } from "@ride-booking/bookingService";
 
 export default function RequestDetails() {
   const { id } = useParams();
@@ -28,19 +30,32 @@ export default function RequestDetails() {
     isFetching: isFetchingRequest,
     refetch: refetchRequest,
   } = useQuery({
-    queryKey: ["ride-requests", id],
+    queryKey: ["ride-requests", Number(id)],
     queryFn: () => get(requestId),
     enabled: Number.isInteger(requestId) && requestId > 0,
+  });
+  const canManageRequest = request?.requester.id === user?.id && request?.status === RideRequestStatus.PENDING;
+
+  const {
+    data: bookingOffers = [],
+    isLoading: isLoadingBookingOffers,
+    isError: isBookingOffersError,
+    isFetching: isFetchingBookingOffers,
+    refetch: refetchBookingOffers,
+  } = useQuery({
+    queryKey: ["ride-requests", Number(id), "bookings"],
+    queryFn: () => getByRequest(requestId, "PENDING"),
+    enabled: canManageRequest,
   });
 
   const {
     data: compatibleOffers = [],
-    isLoading: isLoadingOffers,
-    isError: isOffersError,
-    isFetching: isFetchingOffers,
-    refetch: refetchOffers,
+    isLoading: isLoadingCompatibleOffers,
+    isError: isCompatibleOffersError,
+    isFetching: isFetchingCompatibleOffers,
+    refetch: refetchCompatibleOffers,
   } = useQuery({
-    queryKey: ["ride-requests", id, "matching-offers"],
+    queryKey: ["ride-requests", Number(id), "matching-offers"],
     queryFn: () => getMatchingOffers(requestId),
     enabled: Boolean(request),
   });
@@ -48,9 +63,9 @@ export default function RequestDetails() {
   const { mutate: cancelRequest, isPending: isDeleting } = useMutation({
     mutationFn: () => cancel(requestId),
     onSuccess: () => {
-      queryClient.removeQueries({ queryKey: ["ride-requests", id] });
+      queryClient.removeQueries({ queryKey: ["ride-requests", Number(id)] });
       queryClient.invalidateQueries({ queryKey: ["ride-requests"] });
-      navigate("/requests");
+      navigate(-1);
     },
   });
 
@@ -74,12 +89,11 @@ export default function RequestDetails() {
 
   const { weekday, date, time: startTime } = formatDepartureDateTime(request.desiredDepartureStart);
   const { time: endTime } = formatDepartureDateTime(request.desiredDepartureEnd);
-  const canManageRequest = request.requester.id === user?.id && request.status === RideRequestStatus.PENDING;
 
   return (
     <>
       <title>Detalhes do Pedido</title>
-      <PageHeader title="Detalhes do Pedido">
+      <PageHeader title="Detalhes">
         {canManageRequest && (
           <>
             <Link to={`/requests/${request.id}/edit`} className="icon-btn text-secondary" aria-label="Editar pedido">
@@ -116,21 +130,51 @@ export default function RequestDetails() {
         </p>
       </section>
 
+      {canManageRequest && (
+        <section className="flex-column w-full gap-3">
+          <h3>Ofertas</h3>
+
+          {isBookingOffersError ? (
+            <RetryError
+              onRetry={refetchBookingOffers}
+              isFetching={isFetchingBookingOffers}
+              message="Não foi possível carregar as ofertas."
+            />
+          ) : isLoadingBookingOffers ? (
+            <div className="flex-center py-6">
+              <LoaderCircle className="animate-spin text-primary" size={36} />
+            </div>
+          ) : bookingOffers.length === 0 ? (
+            <div className="flex-center w-full rounded-2xl bg-white px-6 py-4">
+              <p className="text-neutral-dark">Nenhuma oferta de carona até o momento.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
+              {bookingOffers.map((booking) => (
+                <BookingRequestCard key={booking.id} booking={booking} />
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
       <section className="flex-column w-full gap-3">
         <h3>Ofertas compatíveis</h3>
 
-        {isOffersError ? (
+        {isCompatibleOffersError ? (
           <RetryError
-            onRetry={refetchOffers}
-            isFetching={isFetchingOffers}
+            onRetry={refetchCompatibleOffers}
+            isFetching={isFetchingCompatibleOffers}
             message="Não foi possível carregar as ofertas compatíveis."
           />
-        ) : isLoadingOffers ? (
+        ) : isLoadingCompatibleOffers ? (
           <div className="flex-center py-6">
             <LoaderCircle className="animate-spin text-primary" size={36} />
           </div>
         ) : compatibleOffers.length === 0 ? (
-          <p className="text-neutral-dark">Ainda não há ofertas compatíveis com este pedido.</p>
+          <div className="flex-center w-full rounded-2xl bg-white px-6 py-4">
+            <p className="text-neutral-dark">Ainda não há ofertas compatíveis com este pedido.</p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
             {compatibleOffers.map((offer) => (

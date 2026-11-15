@@ -13,7 +13,10 @@ export const RideOfferStatus = {
 
 export type RideOfferStatus = (typeof RideOfferStatus)[keyof typeof RideOfferStatus];
 
-export const rideOfferStatusDisplay: Record<RideOfferStatus | "ACCEPTED" | "PENDING", { border: string; bg: string; label: string }> = {
+export const rideOfferStatusDisplay: Record<
+  RideOfferStatus | "ACCEPTED" | "PENDING",
+  { border: string; bg: string; label: string }
+> = {
   AVAILABLE: {
     border: "border-primary",
     bg: "bg-primary",

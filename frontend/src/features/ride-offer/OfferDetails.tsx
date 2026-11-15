@@ -299,7 +299,11 @@ export default function OfferDetails() {
         <DeleteModal
           open={cancelBookingOpen}
           title={isAccepted ? "Sair da Carona" : "Retirar Solicitação"}
-          message={isAccepted ? "Tem certeza que deseja sair dessa oferta?\nO motorista será notificado" : "Tem certeza que deseja retirar sua solicitação?"}
+          message={
+            isAccepted
+              ? "Tem certeza que deseja sair dessa oferta?\nO motorista será notificado"
+              : "Tem certeza que deseja retirar sua solicitação?"
+          }
           buttonLabel={isAccepted ? "Sair" : "Retirar"}
           isLoading={isPendingCancelBooking}
           onConfirm={() => handleCancelBooking(userBooking.id)}

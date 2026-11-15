@@ -1,4 +1,5 @@
 import type { RideOfferSummary } from "@ride-offer/offerTypes";
+import type { RideRequest } from "@ride-request/requestTypes";
 import type { UserSummary } from "@user/userTypes";
 
 export const RideBookingStatus = {
@@ -29,4 +30,12 @@ export interface RideBooking {
 
 export interface CreateRideBookingForRequestDto {
   rideOfferId: number;
+}
+
+export function ensureCompatible(offer: RideOfferSummary, request: RideRequest) {
+  if (offer.status !== "AVAILABLE") return false;
+  if (offer.departureDateTime > request.desiredDepartureEnd || offer.departureDateTime < request.desiredDepartureStart)
+    return false;
+
+  return true;
 }

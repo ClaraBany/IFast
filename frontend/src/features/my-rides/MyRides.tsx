@@ -103,7 +103,9 @@ export default function MyRides() {
                       Não encontramos nenhuma oferta confirmada sua.
                     </p>
                   ) : (
-                    acceptedBookings.map((booking) => <OfferCard key={booking.id} offer={booking.rideOffer} style="ACCEPTED" />)
+                    acceptedBookings.map((booking) => (
+                      <OfferCard key={booking.id} offer={booking.rideOffer} style="ACCEPTED" />
+                    ))
                   )}
                 </div>
               )}
@@ -127,7 +129,7 @@ export default function MyRides() {
                   ) : (
                     <>
                       {pendingBookings.map((booking) => (
-                        <OfferCard key={booking.id} offer={booking.rideOffer} style="PENDING"/>
+                        <OfferCard key={booking.id} offer={booking.rideOffer} style="PENDING" />
                       ))}
                       {myRequests.map((request) => (
                         <RequestCard key={request.id} request={request} />

@@ -1,5 +1,5 @@
 import { api } from "@shared/api";
-import type { CreateRideBookingForRequestDto, RideBooking } from "./bookingTypes";
+import type { CreateRideBookingForRequestDto, RideBooking, RideBookingStatus } from "./bookingTypes";
 import type { IdResponse, RideListStatus } from "@shared/types/common";
 
 export async function getMyBookings(status: RideListStatus): Promise<RideBooking[]> {
@@ -7,12 +7,12 @@ export async function getMyBookings(status: RideListStatus): Promise<RideBooking
   return response.data;
 }
 
-export async function getByOffer(offerId: number, status?: RideListStatus): Promise<RideBooking[]> {
+export async function getByOffer(offerId: number, status?: RideBookingStatus): Promise<RideBooking[]> {
   const response = await api.get<RideBooking[]>(`/ride-offers/${offerId}/bookings`, { params: { status } });
   return response.data;
 }
 
-export async function getByRequest(requestId: number, status?: RideListStatus): Promise<RideBooking[]> {
+export async function getByRequest(requestId: number, status?: RideBookingStatus): Promise<RideBooking[]> {
   const response = await api.get<RideBooking[]>(`/ride-requests/${requestId}/bookings`, { params: { status } });
   return response.data;
 }
