@@ -42,6 +42,17 @@ export default function BookingRequestModal({ open, onClose, request }: BookingR
     },
   });
 
+  const handleCreateOffer = () => {
+    const params = new URLSearchParams({
+      request_id: String(request.id),
+      origin: request.origin,
+      destination: request.destination,
+      start: request.desiredDepartureStart,
+      end: request.desiredDepartureEnd,
+    });
+    navigate(`/offers/create?${params.toString()}`);
+  };
+
   return (
     <Dialog.Root open={open} onOpenChange={(open) => !open && !isPending && onClose()}>
       <Dialog.Portal>
@@ -49,7 +60,11 @@ export default function BookingRequestModal({ open, onClose, request }: BookingR
         <Dialog.Content className="modal-content">
           <h3 className="text-center">Ofertar Carona</h3>
 
-          <button className="btn btn-sm bg-neutral-light text-slate-900">
+          <button
+            onClick={handleCreateOffer}
+            disabled={isPending}
+            className="btn btn-sm bg-neutral-light text-slate-900"
+          >
             <CirclePlus />
             Cadastrar Nova Oferta
           </button>
@@ -67,7 +82,7 @@ export default function BookingRequestModal({ open, onClose, request }: BookingR
           ) : isError ? (
             <RetryError onRetry={refetch} isFetching={isFetching} />
           ) : (
-            <div className="grid w-full grid-cols-1 gap-7.5">
+            <div className="grid w-full grid-cols-1 gap-3.5">
               {myOffers.length === 0 ? (
                 <p className="text-center text-pretty text-neutral-dark">
                   Nenhuma oferta sua é compatível com o pedido. Utilize o botão acima para criar uma nova
