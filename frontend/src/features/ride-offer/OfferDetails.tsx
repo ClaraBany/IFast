@@ -8,7 +8,7 @@ import ProfilePicture from "@shared/components/ProfilePicture";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { cancel, complete, get } from "./offerService";
 import RetryError from "@shared/components/RetryError";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DeleteModal } from "@shared/components/modals/DeleteModal";
 import { formatDepartureDateTime } from "@shared/utils/formatDateTime";
 import { SuccessModal } from "@shared/components/modals/SucessModal";
@@ -19,7 +19,7 @@ import BookingOfferCard from "@ride-booking/BookingOfferCard";
 type OfferAction = {
   label: string;
   icon?: React.ElementType;
-  buttonBg: "bg-primary" | "bg-danger";
+  buttonStyle: string;
   onClick?: () => void;
   isPending?: boolean;
   disabled?: boolean;
@@ -31,8 +31,18 @@ export default function OfferDetails() {
   const [successOpen, setSuccessOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [cancelBookingOpen, setCancelBookingOpen] = useState(false);
+  const [justRequested, setJustRequested] = useState(false);
+  const requestTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      if (requestTimeoutRef.current) {
+        clearTimeout(requestTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const {
     data: offer,
@@ -82,8 +92,19 @@ export default function OfferDetails() {
 
   const { mutate: createBooking, isPending: isPendingCreateBooking } = useMutation({
     mutationFn: (id: number) => createForOffer(id),
+    onMutate: () => {
+      setJustRequested(true);
+      if (requestTimeoutRef.current) clearTimeout(requestTimeoutRef.current);
+      requestTimeoutRef.current = setTimeout(() => {
+        setJustRequested(false);
+      }, 1800);
+    },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["ride-offers", Number(id), "bookings"] });
+    },
+    onError: () => {
+      if (requestTimeoutRef.current) clearTimeout(requestTimeoutRef.current);
+      setJustRequested(false);
     },
   });
 
@@ -134,8 +155,8 @@ export default function OfferDetails() {
   if (isOpen) {
     if (isDriver) {
       action = {
-        label: "Concluir carona",
-        buttonBg: "bg-primary",
+        label: "Concluir Carona",
+        buttonStyle: "bg-primary",
         onClick: () => completeOffer(offer.id),
         isPending: isPendingComplete,
         disabled: !hasDeparted,
@@ -144,21 +165,27 @@ export default function OfferDetails() {
       action = {
         label: "Aceitar",
         icon: Check,
-        buttonBg: "bg-primary",
+        buttonStyle: "bg-primary",
         onClick: () => acceptBooking(userBooking.id),
         isPending: isAcceptPending,
+      };
+    } else if (justRequested) {
+      action = {
+        label: "Vaga Solicitada!",
+        icon: Check,
+        buttonStyle: "bg-white border border-primary text-primary pointer-events-none",
       };
     } else if (userBooking) {
       action = {
         label: isAccepted ? "Sair da Carona" : "Retirar Solicitação",
-        buttonBg: "bg-danger",
+        buttonStyle: "bg-danger",
         onClick: () => setCancelBookingOpen(true),
         isPending: isPendingCancelBooking,
       };
     } else if (offer.status === RideOfferStatus.AVAILABLE) {
       action = {
-        label: "Solicitar vaga",
-        buttonBg: "bg-primary",
+        label: "Solicitar Vaga",
+        buttonStyle: "bg-primary",
         onClick: () => createBooking(offer.id),
         isPending: isPendingCreateBooking,
       };
@@ -303,7 +330,7 @@ export default function OfferDetails() {
           )}
           <div className="flex gap-2">
             <button
-              className={`btn btn-lg ${action.buttonBg}`}
+              className={`btn btn-lg transition-colors ${action.buttonStyle}`}
               onClick={action.onClick}
               disabled={action.isPending || action.disabled}
             >
