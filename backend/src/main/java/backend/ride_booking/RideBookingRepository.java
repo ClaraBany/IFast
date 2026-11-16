@@ -3,6 +3,7 @@ package backend.ride_booking;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -33,6 +34,14 @@ public interface RideBookingRepository extends JpaRepository<RideBooking, Long>{
       and b.rideOffer.status = backend.ride_offer.enums.StatusOffer.COMPLETED
     """)
     long countCompletedRidesByPassenger(@Param("passenger") User passenger);
+
+    @Query("""
+    select distinct b.rideRequest.id from RideBooking b
+    where b.rideOffer.driver = :driver
+      and b.rideRequest.status = backend.ride_request.enums.StatusRequest.PENDING
+      and b.status = backend.ride_booking.enums.StatusBooking.PENDING
+    """)
+    Set<Long> findPendingBookedRideRequestIdsByDriver(@Param("driver") User driver);
 
     @Query("""
     select b from RideBooking b

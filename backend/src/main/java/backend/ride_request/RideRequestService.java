@@ -1,5 +1,6 @@
 package backend.ride_request;
 
+import backend.ride_booking.RideBookingRepository;
 import backend.ride_offer.RideOfferRepository;
 import backend.ride_booking.RideBookingService;
 import backend.ride_offer.dto.RideOfferSummaryDto;
@@ -17,18 +18,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @Service
 public class RideRequestService {
     private final RideRequestRepository rideRequestRepository;
     private final RideOfferRepository rideOfferRepository;
+    private final RideBookingRepository rideBookingRepository;
     private final RideBookingService rideBookingService;
 
     public List<RideRequestDto> getAll(FilterRideDto filter, User user) {
+        Set<Long> bookedRequestIds = rideBookingRepository.findPendingBookedRideRequestIdsByDriver(user);
+
         return rideRequestRepository
             .findAll(RideRequestSpecs.withFilter(filter, user.getId()), Sort.by("desiredDepartureStart").ascending())
             .stream()
+            .filter(request -> !bookedRequestIds.contains(request.getId()))
             .map(RideRequestDto::new)
             .toList();
     }
