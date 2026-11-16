@@ -1,8 +1,8 @@
 import { PageHeader } from "@shared/components/navigation/PageHeader";
 import { RideOfferStatus, rideOfferStatusDisplay } from "./offerTypes";
 import { useAuthStore } from "@auth/authStore";
-import { Link, useParams } from "react-router";
-import { ArrowRight, Info, LoaderCircle, SquarePen, Trash2 } from "lucide-react";
+import { Link, useNavigate, useParams } from "react-router";
+import { ArrowRight, Check, Info, LoaderCircle, SquarePen, Trash2, X } from "lucide-react";
 import { Ripples } from "react-ripples-continued";
 import ProfilePicture from "@shared/components/ProfilePicture";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -13,11 +13,12 @@ import { DeleteModal } from "@shared/components/modals/DeleteModal";
 import { formatDepartureDateTime } from "@shared/utils/formatDateTime";
 import { SuccessModal } from "@shared/components/modals/SucessModal";
 import { NeighborhoodsLabels } from "@shared/types/neighborhoods";
-import { getByOffer, cancel as cancelBooking, createForOffer } from "@ride-booking/bookingService";
+import { getByOffer, cancel as cancelBooking, createForOffer, accept, reject } from "@ride-booking/bookingService";
 import BookingOfferCard from "@ride-booking/BookingOfferCard";
 
 type OfferAction = {
   label: string;
+  icon?: React.ElementType;
   buttonBg: "bg-primary" | "bg-danger";
   onClick?: () => void;
   isPending?: boolean;
@@ -31,6 +32,7 @@ export default function OfferDetails() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [cancelBookingOpen, setCancelBookingOpen] = useState(false);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const {
     data: offer,
@@ -76,6 +78,7 @@ export default function OfferDetails() {
     (b) => b.passenger.id === user?.id && (b.status === "ACCEPTED" || b.status === "PENDING"),
   );
   const isAccepted = userBooking?.status === "ACCEPTED";
+  const isByDriverPending = userBooking?.initiatedBy === "DRIVER" && userBooking.status === "PENDING";
 
   const { mutate: createBooking, isPending: isPendingCreateBooking } = useMutation({
     mutationFn: (id: number) => createForOffer(id),
@@ -89,6 +92,23 @@ export default function OfferDetails() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["ride-offers", Number(id)] });
       setCancelBookingOpen(false);
+    },
+  });
+
+  const { mutate: acceptBooking, isPending: isAcceptPending } = useMutation({
+    mutationFn: (id: number) => accept(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ride-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["ride-offers", Number(id)] });
+    },
+  });
+
+  const { mutate: rejectBooking, isPending: isRejectPending } = useMutation({
+    mutationFn: (id: number) => reject(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["ride-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["ride-offers", Number(id), "bookings"] });
+      navigate(-1);
     },
   });
 
@@ -119,6 +139,14 @@ export default function OfferDetails() {
         onClick: () => completeOffer(offer.id),
         isPending: isPendingComplete,
         disabled: !hasDeparted,
+      };
+    } else if (isByDriverPending) {
+      action = {
+        label: "Aceitar",
+        icon: Check,
+        buttonBg: "bg-primary",
+        onClick: () => acceptBooking(userBooking.id),
+        isPending: isAcceptPending,
       };
     } else if (userBooking) {
       action = {
@@ -273,14 +301,29 @@ export default function OfferDetails() {
               <Info className="mb-1 inline size-4" /> Será possível concluir a carona após o horário de saída
             </p>
           )}
-          <button
-            className={`btn btn-lg ${action.buttonBg}`}
-            onClick={action.onClick}
-            disabled={action.isPending || action.disabled}
-          >
-            {action.isPending ? <LoaderCircle className="animate-spin" /> : action.label}
-            <Ripples color="var(--ripple-light)" />
-          </button>
+          <div className="flex gap-2">
+            <button
+              className={`btn btn-lg ${action.buttonBg}`}
+              onClick={action.onClick}
+              disabled={action.isPending || action.disabled}
+            >
+              {action.icon && <action.icon />}
+              {action.isPending ? <LoaderCircle className="animate-spin" /> : action.label}
+              <Ripples color="var(--ripple-light)" />
+            </button>
+
+            {isByDriverPending && (
+              <button
+                className={`btn btn-lg bg-danger`}
+                onClick={() => rejectBooking(userBooking.id)}
+                disabled={isRejectPending || isAcceptPending}
+              >
+                <X />
+                {isRejectPending ? <LoaderCircle className="animate-spin" /> : "Recusar"}
+                <Ripples color="var(--ripple-light)" />
+              </button>
+            )}
+          </div>
         </div>
       )}
 

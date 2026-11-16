@@ -67,7 +67,7 @@ export default function BookingRequestModal({ open, onClose, request }: BookingR
           ) : isError ? (
             <RetryError onRetry={refetch} isFetching={isFetching} />
           ) : (
-            <div className="grid grid-cols-1 gap-7.5">
+            <div className="grid w-full grid-cols-1 gap-7.5">
               {myOffers.length === 0 ? (
                 <p className="text-center text-pretty text-neutral-dark">
                   Nenhuma oferta sua é compatível com o pedido. Utilize o botão acima para criar uma nova
