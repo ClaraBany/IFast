@@ -35,7 +35,7 @@ export default function BookingOfferCard({ booking }: BookingOfferCardProps) {
       </Link>
 
       {booking.initiatedBy === "DRIVER" ? (
-        <div className="mx-auto flex-center gap-2 rounded-2xl bg-pending px-1.5 py-2">
+        <div className="mx-auto flex-center px-2 py-1.5 h-8.5 w-fit rounded-2xl text-label text-slate-900 bg-pending">
           <RotateCcwClock />
           <p className="text-button">Aguardando Resposta</p>
         </div>
