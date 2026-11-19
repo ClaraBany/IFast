@@ -131,14 +131,14 @@ export default function OfferForm() {
       if (data.date !== requestDate) {
         setError("date", {
           type: "validate",
-          message: "A data deve ser a mesma do pedido",
+          message: "Para atender ao pedido, a data deve ser a mesma dele",
         });
         return;
       }
       if (data.departureTime < startTime || data.departureTime > endTime) {
         setError("departureTime", {
           type: "validate",
-          message: `O horário deve estar entre ${startTime} e ${endTime}`,
+          message: `Para atender ao pedido, o horário deve estar entre ${startTime} e ${endTime}`,
         });
         return;
       }

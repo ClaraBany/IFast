@@ -117,7 +117,7 @@ export default function MyRides() {
                 <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
                   {acceptedBookings.length === 0 ? (
                     <p className="text-pretty text-neutral-dark md:col-span-2">
-                      Não encontramos nenhuma oferta confirmada sua.
+                      Não encontramos nenhuma carona confirmada sua.
                     </p>
                   ) : (
                     acceptedBookings.map((booking) => (

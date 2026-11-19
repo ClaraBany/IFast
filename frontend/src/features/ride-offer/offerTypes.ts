@@ -47,7 +47,7 @@ export const rideOfferStatusDisplay: Record<
   PENDING: {
     border: "border-pending",
     bg: "bg-pending",
-    label: "Pendente",
+    label: "Aguardando",
   },
 };
 
