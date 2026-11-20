@@ -3,12 +3,16 @@ package backend.user;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import backend.shared.enums.Neighborhoods;
+import backend.user.dto.UserRole;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -50,6 +54,9 @@ public class User implements UserDetails{
     @Enumerated(EnumType.STRING)
     private Neighborhoods address;
 
+    @Enumerated(EnumType.STRING)
+    private UserRole role = UserRole.USER;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;
@@ -59,7 +66,7 @@ public class User implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
     }
 
     @Override
