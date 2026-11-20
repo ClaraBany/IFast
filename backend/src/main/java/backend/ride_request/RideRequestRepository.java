@@ -1,5 +1,6 @@
 package backend.ride_request;
 
+import backend.ride_request.enums.StatusRequest;
 import backend.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -27,4 +28,6 @@ public interface RideRequestRepository extends JpaRepository<RideRequest, Long>,
     order by r.desiredDepartureStart asc
     """)
     List<RideRequest> findOpenByRequester(@Param("requester") User requester);
+
+    long countByStatus(StatusRequest status);
 }

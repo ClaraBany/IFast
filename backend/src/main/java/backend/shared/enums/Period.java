@@ -12,4 +12,13 @@ public enum Period {
 
     private final int startHour;
     private final int endHour;
+
+    public static Period periodForHour(int hour) {
+        for (Period period : Period.values()) {
+            if (hour >= period.getStartHour() && hour < period.getEndHour()) {
+                return period;
+            }
+        }
+        return null;
+    }
 }

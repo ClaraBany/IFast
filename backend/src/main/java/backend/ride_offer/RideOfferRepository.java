@@ -1,6 +1,7 @@
 package backend.ride_offer;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,4 +53,26 @@ public interface RideOfferRepository extends JpaRepository<RideOffer, Long>, Jpa
             @Param("windowEnd") LocalDateTime windowEnd,
             @Param("requester") User requester,
             @Param("now") LocalDateTime now);
+
+    long countByStatusIn(Collection<StatusOffer> status);
+
+    @Query("""
+    select count(o) from RideOffer o
+    where o.status = :status
+      and (:startDate is null or o.departureDateTime >= :startDate)
+      and (:endDateExclusive is null or o.departureDateTime < :endDateExclusive)
+    """)
+    long countByStatusAndDateRange(
+            @Param("status") StatusOffer status,
+            @Param("startDate") LocalDateTime startDate,
+           @Param("endDateExclusive") LocalDateTime endDateExclusive);
+
+    @Query("""
+    select o from RideOffer o
+    where (:startDate is null or o.departureDateTime >= :startDate)
+      and (:endDateExclusive is null or o.departureDateTime < :endDateExclusive)
+    """)
+    List<RideOffer> findByDateRange(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDateExclusive") LocalDateTime endDateExclusive);
 } 

@@ -16,6 +16,7 @@ public class UserDto {
     private String pictureUrl;
     private String phoneNumber;
     private Neighborhoods address;
+    private UserRole role;
 
     public UserDto(User user) {
         this.id = user.getId();
@@ -24,5 +25,6 @@ public class UserDto {
         this.pictureUrl = user.getPictureUrl();
         this.phoneNumber = user.getPhoneNumber();
         this.address = user.getAddress();
+        this.role = user.getRole();
     }
 }   
