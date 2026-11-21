@@ -1,7 +1,12 @@
 package backend.ride_offer;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import backend.ride_booking.RideBookingRepository;
+import backend.ride_booking.enums.StatusBooking;
+import backend.shared.dto.IdCountDto;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -23,6 +28,7 @@ import jakarta.persistence.EntityNotFoundException;
 public class RideOfferService {
     private final RideOfferRepository rideOfferRepository;
     private final RideBookingService rideBookingService;
+    private final RideBookingRepository rideBookingRepository;
 
     public List<RideOfferSummaryDto> getAll(FilterRideDto filter, User user) {
         return rideOfferRepository
@@ -34,10 +40,20 @@ public class RideOfferService {
 
     public List<RideOfferSummaryDto> getMyOffers(RideListStatus status, User user) {
         List<RideOffer> offers = status == RideListStatus.CLOSED
-                ? rideOfferRepository.findClosedByDriver(user)
-                : rideOfferRepository.findOpenByDriver(user);
+            ? rideOfferRepository.findClosedByDriver(user)
+            : rideOfferRepository.findOpenByDriver(user);
 
-        return offers.stream().map(RideOfferSummaryDto::new).toList();
+        Map<Long, Long> pendingCounts = rideBookingRepository.countPendingByOfferForDriver(user)
+            .stream()
+            .collect(Collectors.toMap(IdCountDto::id, IdCountDto::count));
+
+        return offers.stream()
+            .map(offer -> {
+                RideOfferSummaryDto dto = new RideOfferSummaryDto(offer);
+                dto.setPendingBookingsCount(pendingCounts.getOrDefault(offer.getId(), 0L).intValue());
+                return dto;
+            })
+            .toList();
     }
 
     public RideOfferDto get(Long rideOfferId) {
