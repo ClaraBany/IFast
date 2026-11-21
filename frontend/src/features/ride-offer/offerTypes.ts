@@ -23,8 +23,8 @@ export const rideOfferStatusDisplay: Record<
     label: "Disponível",
   },
   FULL: {
-    border: "border-danger",
-    bg: "bg-danger",
+    border: "border-neutral-dark",
+    bg: "bg-neutral-dark",
     label: "Lotada",
   },
   CANCELLED: {
@@ -69,7 +69,9 @@ export interface RideOffer {
   description: string | null;
 }
 
-export type RideOfferSummary = Omit<RideOffer, "vehicle" | "description">;
+export type RideOfferSummary = Omit<RideOffer, "vehicle" | "description"> & {
+  pendingBookingsCount: number;
+};
 
 export interface CreateRideOffer {
   origin: Neighborhoods;

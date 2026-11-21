@@ -19,16 +19,22 @@ export default function RequestCard({ request }: RequestCardProps) {
   const [requestOfferOpen, setRequestOfferOpen] = useState(false);
   const { weekday, date, time: startTime } = formatDepartureDateTime(request.desiredDepartureStart);
   const { time: endTime } = formatDepartureDateTime(request.desiredDepartureEnd);
+  const needsAction = request.pendingBookingsCount > 0 && isRequester;
+  const style = {
+    bg: needsAction || !isRequester ? "bg-tertiary" : "bg-neutral-dark",
+    border: needsAction || !isRequester ? "border-tertiary" : "border-neutral-dark",
+    card: needsAction ? "bg-tertiary/10" : "",
+  };
 
   return (
-    <div className="card-container flex-col gap-2 border-tertiary">
+    <div className={`card-container flex-col gap-2 ${style.border} ${style.card}`}>
       <div className="flex">
-        <div className="card-badge bg-tertiary">
+        <div className={`card-badge ${style.bg}`}>
           <img src={RequestIcon} className="size-6" alt="icone pedido" />
         </div>
         <Link
           to={isRequester ? `/requests/${request.id}` : ""}
-          className="flex flex-1 flex-col justify-center gap-2.5 after:absolute after:inset-0 after:content-['']"
+          className="flex flex-1 flex-col items-start justify-center gap-2.5 after:absolute after:inset-0 after:content-['']"
         >
           <p>
             {NeighborhoodsLabels[request.origin]} <ArrowRight className="mb-1 inline size-4" />{" "}
@@ -40,11 +46,19 @@ export default function RequestCard({ request }: RequestCardProps) {
           <p>
             Horário: {startTime} - {endTime}
           </p>
+
+          {isRequester && (
+            <div className={`flex-center rounded-[20px] px-4 text-white ${style.bg}`}>
+              {needsAction
+                ? `${request.pendingBookingsCount} ${request.pendingBookingsCount === 1 ? "Oferta Recebida" : "Ofertas Recebidas"}`
+                : "Procurando Oferta"}
+            </div>
+          )}
         </Link>
-        <Link to={`/users/${request.requester.id}`} className="relative flex-center w-25 flex-col gap-1.25">
+        <div className="relative flex-center w-25 flex-col gap-1.25">
           <ProfilePicture url={request.requester.pictureUrl} size="lg" />
           <p className="text-center">{request.requester.name}</p>
-        </Link>
+        </div>
       </div>
 
       {!isRequester && (

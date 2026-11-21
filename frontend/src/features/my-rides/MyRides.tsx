@@ -6,7 +6,7 @@ import RequestCard from "@ride-request/RequestCard";
 import { getMyRequests } from "@ride-request/requestService";
 import RetryError from "@shared/components/RetryError";
 import { useQuery } from "@tanstack/react-query";
-import { CircleCheck, LoaderCircle, RotateCcwClock } from "lucide-react";
+import { BellRing, CircleCheck, LoaderCircle, RotateCcwClock } from "lucide-react";
 import { useSearchParams } from "react-router";
 
 export default function MyRides() {
@@ -59,7 +59,12 @@ export default function MyRides() {
     queryFn: () => getMyBookings("OPEN"),
   });
   const acceptedBookings = myBookings.filter((b) => b.status === "ACCEPTED");
-  const pendingBookings = myBookings.filter((b) => b.status === "PENDING");
+  const pendingBookings = myBookings.filter((b) => b.status === "PENDING" && b.initiatedBy === "PASSENGER");
+
+  const offersNeedingAction = myOffers.filter((o) => o.pendingBookingsCount > 0 && o.status === "AVAILABLE");
+  const otherOffers = myOffers.filter((o) => o.pendingBookingsCount === 0 || o.status === "FULL");
+  const requestsNeedingAction = myRequests.filter((r) => r.pendingBookingsCount > 0);
+  const searchingRequests = myRequests.filter((r) => r.pendingBookingsCount === 0);
 
   return (
     <>
@@ -83,7 +88,7 @@ export default function MyRides() {
         </TabList>
 
         <TabPanels className="mt-6">
-          <TabPanel key={"driver"}>
+          <TabPanel key={"driver"} className="flex flex-col gap-6">
             {isErrorMyOffers ? (
               <RetryError onRetry={refetchMyOffers} isFetching={isFetchingMyOffers} />
             ) : isLoadingMyOffers ? (
@@ -91,17 +96,61 @@ export default function MyRides() {
                 <LoaderCircle className="animate-spin text-primary" size={40} />
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
+              <>
                 {myOffers.length === 0 ? (
                   <p className="text-pretty text-neutral-dark md:col-span-2">Não encontramos nenhuma oferta sua.</p>
                 ) : (
-                  myOffers.map((offer) => <OfferCard key={offer.id} offer={offer} />)
+                  <>
+                    {offersNeedingAction.length > 0 && (
+                      <section>
+                        <div className="mb-3 flex items-center gap-2">
+                          <BellRing className="text-primary" />
+                          <h3>Ação Necessária</h3>
+                        </div>
+                        <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
+                          {offersNeedingAction.map((offer) => (
+                            <OfferCard key={offer.id} offer={offer} />
+                          ))}
+                        </div>
+                      </section>
+                    )}
+
+                    {otherOffers.length > 0 && (
+                      <section>
+                        {offersNeedingAction.length > 0 && (
+                          <div className="mb-3 flex items-center gap-2">
+                            <CircleCheck className="text-primary" />
+                            <h3>Confirmadas</h3>
+                          </div>
+                        )}
+                        <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
+                          {otherOffers.map((offer) => (
+                            <OfferCard key={offer.id} offer={offer} />
+                          ))}
+                        </div>
+                      </section>
+                    )}
+                  </>
                 )}
-              </div>
+              </>
             )}
           </TabPanel>
 
           <TabPanel key={"passenger"} className="flex flex-col gap-6">
+            {requestsNeedingAction.length > 0 && (
+              <section>
+                <div className="mb-3 flex items-center gap-2">
+                  <BellRing className="text-tertiary" />
+                  <h3>Ação Necessária</h3>
+                </div>
+                <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
+                  {requestsNeedingAction.map((request) => (
+                    <RequestCard key={request.id} request={request} />
+                  ))}
+                </div>
+              </section>
+            )}
+
             <section>
               <div className="mb-3 flex items-center gap-2">
                 <CircleCheck className="text-primary" />
@@ -131,7 +180,7 @@ export default function MyRides() {
             <section>
               <div className="mb-3 flex items-center gap-2">
                 <RotateCcwClock className="text-pending" />
-                <h3>Pendentes</h3>
+                <h3>Em Espera</h3>
               </div>
               {isErrorMyRequests ? (
                 <RetryError onRetry={refetchMyRequests} isFetching={isFetchingMyRequests} />
@@ -141,14 +190,14 @@ export default function MyRides() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
-                  {pendingBookings.length === 0 && myRequests.length === 0 ? (
+                  {pendingBookings.length === 0 && searchingRequests.length === 0 ? (
                     <p className="text-pretty text-neutral-dark md:col-span-2">Não encontramos nenhum pedido seu.</p>
                   ) : (
                     <>
                       {pendingBookings.map((booking) => (
                         <OfferCard key={booking.id} offer={booking.rideOffer} style="PENDING" />
                       ))}
-                      {myRequests.map((request) => (
+                      {searchingRequests.map((request) => (
                         <RequestCard key={request.id} request={request} />
                       ))}
                     </>

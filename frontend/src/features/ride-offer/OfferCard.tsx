@@ -14,7 +14,11 @@ type OfferCardProps = {
 };
 
 export default function OfferCard({ offer, style, onSelect, disabled }: OfferCardProps) {
+  const needsAction = offer.pendingBookingsCount > 0 && offer.status === "AVAILABLE";
   const status = rideOfferStatusDisplay[style ? style : offer.status];
+  const statusLabel = needsAction
+    ? `${offer.pendingBookingsCount} ${offer.pendingBookingsCount === 1 ? "Solicitação" : "Solicitações"}`
+    : status.label;
   const { date, time } = formatDepartureDateTime(offer.departureDateTime);
 
   const details = (
@@ -35,7 +39,7 @@ export default function OfferCard({ offer, style, onSelect, disabled }: OfferCar
       )}
 
       <div className={`flex-center rounded-[20px] px-4 text-white ${status.bg}`}>
-        <p>{status.label}</p>
+        <p>{statusLabel}</p>
       </div>
     </>
   );
@@ -48,7 +52,9 @@ export default function OfferCard({ offer, style, onSelect, disabled }: OfferCar
   );
 
   return (
-    <div className={`card-container ${status.border} ${disabled ? "opacity-60" : ""}`}>
+    <div
+      className={`card-container ${status.border} ${needsAction ? "bg-primary/10" : ""} ${disabled ? "opacity-60" : ""}`}
+    >
       <div className={`card-badge ${status.bg}`}>
         <img src={OfferIcon} className="size-6" alt="icone oferta" />
       </div>
@@ -75,9 +81,7 @@ export default function OfferCard({ offer, style, onSelect, disabled }: OfferCar
             {details}
           </Link>
 
-          <Link to={`/users/${offer.driver.id}`} className="relative flex-center w-25 flex-col gap-1.25">
-            {driver}
-          </Link>
+          <div className="relative flex-center w-25 flex-col gap-1.25">{driver}</div>
         </>
       )}
     </div>
