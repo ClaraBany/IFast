@@ -1,4 +1,4 @@
-import type { IdResponse } from "@shared/types/common";
+import type { IdResponse, RideListStatus } from "@shared/types/common";
 import type { CreateRideRequest, RideRequest, requestSchema } from "./requestTypes";
 import type z from "zod";
 import type { Filter } from "@shared/types/filter";
@@ -16,6 +16,11 @@ function toCreateRideRequest(form: z.infer<typeof requestSchema>): CreateRideReq
 
 export async function getAll(filters: Filter): Promise<RideRequest[]> {
   const response = await api.get<RideRequest[]>("/ride-requests", { params: filters });
+  return response.data;
+}
+
+export async function getMyRequests(status: RideListStatus): Promise<RideRequest[]> {
+  const response = await api.get<RideRequest[]>("/ride-requests/my-requests", { params: { status } });
   return response.data;
 }
 

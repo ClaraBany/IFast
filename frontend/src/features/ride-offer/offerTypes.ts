@@ -13,15 +13,18 @@ export const RideOfferStatus = {
 
 export type RideOfferStatus = (typeof RideOfferStatus)[keyof typeof RideOfferStatus];
 
-export const rideOfferStatusDisplay: Record<RideOfferStatus, { border: string; bg: string; label: string }> = {
+export const rideOfferStatusDisplay: Record<
+  RideOfferStatus | "ACCEPTED" | "PENDING",
+  { border: string; bg: string; label: string }
+> = {
   AVAILABLE: {
     border: "border-primary",
     bg: "bg-primary",
     label: "Disponível",
   },
   FULL: {
-    border: "border-danger",
-    bg: "bg-danger",
+    border: "border-neutral-dark",
+    bg: "bg-neutral-dark",
     label: "Lotada",
   },
   CANCELLED: {
@@ -33,6 +36,18 @@ export const rideOfferStatusDisplay: Record<RideOfferStatus, { border: string; b
     border: "border-secondary",
     bg: "bg-secondary",
     label: "Concluída",
+  },
+
+  // styles for my-rides
+  ACCEPTED: {
+    border: "border-primary",
+    bg: "bg-primary",
+    label: "Confirmado",
+  },
+  PENDING: {
+    border: "border-pending",
+    bg: "bg-pending",
+    label: "Aguardando",
   },
 };
 
@@ -54,7 +69,9 @@ export interface RideOffer {
   description: string | null;
 }
 
-export type RideOfferSummary = Omit<RideOffer, "vehicle" | "description">;
+export type RideOfferSummary = Omit<RideOffer, "vehicle" | "description"> & {
+  pendingBookingsCount: number;
+};
 
 export interface CreateRideOffer {
   origin: Neighborhoods;

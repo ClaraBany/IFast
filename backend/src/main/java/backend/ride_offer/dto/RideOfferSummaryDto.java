@@ -23,6 +23,7 @@ public class RideOfferSummaryDto {
     private Neighborhoods destination;
     private LocalDateTime departureDateTime;
     private StatusOffer status;
+    private int pendingBookingsCount = 0;
 
     public RideOfferSummaryDto(RideOffer rideOffer) {
         this.id = rideOffer.getId();

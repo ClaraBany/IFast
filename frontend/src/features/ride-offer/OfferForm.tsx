@@ -1,7 +1,7 @@
 import { PageHeader } from "@shared/components/navigation/PageHeader";
 import SubmitButton from "@shared/components/form/SubmitButton";
 import { Check, ChevronDown, CirclePlus, LoaderCircle, Minus, Plus } from "lucide-react";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router";
 import * as Switch from "@radix-ui/react-switch";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { SuccessModal } from "@shared/components/modals/SucessModal";
@@ -18,6 +18,10 @@ import NeighborhoodCombobox from "@shared/components/form/NeighborhoodCombobox";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
 import { getCounterpart, Neighborhoods } from "@shared/types/neighborhoods";
 import { getMaxDate, getMinDate } from "@shared/utils/dateLimits";
+import { createForRequest } from "@ride-booking/bookingService";
+
+const isNeighborhood = (value: string | null): value is Neighborhoods =>
+  Object.values(Neighborhoods).includes(value as Neighborhoods);
 
 export default function OfferForm() {
   const { id } = useParams();
@@ -27,22 +31,34 @@ export default function OfferForm() {
   const navigate = useNavigate();
   const userAddress = useAuthStore((s) => s.user?.address);
 
+  const [searchParams] = useSearchParams();
+
+  const requestId = !isEdit ? Number(searchParams.get("request_id")) || null : null;
+  const originParam = searchParams.get("origin");
+  const destinationParam = searchParams.get("destination");
+  const startParam = requestId ? searchParams.get("start") : null;
+  const endParam = requestId ? searchParams.get("end") : null;
+  const requestDate = startParam?.slice(0, 10);
+  const startTime = startParam?.slice(11, 16);
+  const endTime = endParam?.slice(11, 16);
+
   const {
     register,
     handleSubmit,
     reset,
     control,
     setValue,
+    setError,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(rideOfferSchema),
     mode: "onTouched",
     shouldUnregister: true,
     defaultValues: {
-      origin: userAddress ?? undefined,
-      destination: Neighborhoods.IFNMG,
+      origin: isNeighborhood(originParam) ? originParam : (userAddress ?? undefined),
+      destination: isNeighborhood(destinationParam) ? destinationParam : Neighborhoods.IFNMG,
       isRoundTrip: false,
-      date: getMinDate(),
+      date: requestDate ?? getMinDate(),
       seatsCapacity: 1,
     },
   });
@@ -99,13 +115,36 @@ export default function OfferForm() {
     data: responseId,
   } = useMutation({
     mutationFn: (data: z.infer<typeof rideOfferSchema>) => (isEdit ? update(Number(id), data) : create(data)),
-    onSuccess: () => {
+    onSuccess: async (created) => {
+      if (requestId) {
+        await createForRequest(requestId, { rideOfferId: created.id });
+        queryClient.invalidateQueries({ queryKey: ["ride-requests", requestId, "bookings"] });
+        queryClient.invalidateQueries({ queryKey: ["ride-offers", Number(created.id), "bookings"] });
+      }
       queryClient.invalidateQueries({ queryKey: ["ride-offers"] });
       setSuccessOpen(true);
     },
   });
 
-  const onSubmit = (data: z.infer<typeof rideOfferSchema>) => saveOffer(data);
+  const onSubmit = (data: z.infer<typeof rideOfferSchema>) => {
+    if (requestDate && startTime && endTime) {
+      if (data.date !== requestDate) {
+        setError("date", {
+          type: "validate",
+          message: "Para atender ao pedido, a data deve ser a mesma dele",
+        });
+        return;
+      }
+      if (data.departureTime < startTime || data.departureTime > endTime) {
+        setError("departureTime", {
+          type: "validate",
+          message: `Para atender ao pedido, o horário deve estar entre ${startTime} e ${endTime}`,
+        });
+        return;
+      }
+    }
+    saveOffer(data);
+  };
 
   const syncCounterpart = (other: "origin" | "destination") => (value: Neighborhoods | null) => {
     if (!value) return;
@@ -142,7 +181,7 @@ export default function OfferForm() {
             onValueChange={syncCounterpart("origin")}
           />
 
-          {!isEdit && (
+          {!isEdit && !requestId && (
             <Controller
               name="isRoundTrip"
               control={control}
@@ -169,8 +208,10 @@ export default function OfferForm() {
               aria-invalid={errors.date ? "true" : "false"}
               type="date"
               id="date"
-              min={getMinDate()}
-              max={getMaxDate()}
+              className="read-only:cursor-not-allowed read-only:opacity-60"
+              readOnly={!!requestDate}
+              min={requestDate ?? getMinDate()}
+              max={requestDate ?? getMaxDate()}
             ></input>
             {errors.date && <span>{errors.date.message}</span>}
           </div>

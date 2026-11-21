@@ -40,8 +40,8 @@ public class RideBookingService {
         return bookings.stream().map(RideBookingDto::new).toList();
     }
 
-    public List<RideBookingDto> getForOffer(Long rideOfferId, StatusBooking status, User user) {
-        RideOffer rideOffer = rideOfferRepository.findByIdAndDriver(rideOfferId, user)
+    public List<RideBookingDto> getForOffer(Long rideOfferId, StatusBooking status) {
+        RideOffer rideOffer = rideOfferRepository.findById(rideOfferId)
             .orElseThrow(EntityNotFoundException::new);
 
         List<RideBooking> bookings = status == null
@@ -159,13 +159,6 @@ public class RideBookingService {
         boolean hadSeat = booking.getStatus() == StatusBooking.ACCEPTED;
         booking.cancel();
         if (hadSeat) offer.releaseSeat();
-    }
-
-    @Transactional
-    public void cancelAllByOffer(Long rideOfferId) {
-        rideBookingRepository
-            .findByRideOfferIdAndStatusIn(rideOfferId, List.of(StatusBooking.PENDING, StatusBooking.ACCEPTED))
-            .forEach(RideBooking::cancel);
     }
 
     @Transactional

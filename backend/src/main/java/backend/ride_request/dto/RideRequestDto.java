@@ -21,7 +21,7 @@ public class RideRequestDto {
     private Neighborhoods destination;
     private LocalDateTime desiredDepartureStart;
     private LocalDateTime desiredDepartureEnd;
-
+    private int pendingBookingsCount = 0;
 
     public RideRequestDto(RideRequest rideRequest) {
         this.id = rideRequest.getId();

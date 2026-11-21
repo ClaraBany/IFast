@@ -10,6 +10,7 @@
       "@user/*": ["./src/features/user/*"],
       "@ride-offer/*": ["./src/features/ride-offer/*"],
       "@ride-request/*": ["./src/features/ride-request/*"],
+      "@ride-booking/*": ["./src/features/ride-booking/*"],
       "@vehicle/*": ["./src/features/vehicle/*"]
     },
 

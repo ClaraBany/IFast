@@ -149,7 +149,7 @@ export default function RequestForm() {
                 />
                 {errors.startTime && <span>{errors.startTime.message}</span>}
               </div>
-              <span className="mt-4 shrink-0">Até as</span>
+              <span className="mt-3.75 shrink-0">Até as</span>
               <div className="field w-full">
                 <input
                   {...register("endTime")}
