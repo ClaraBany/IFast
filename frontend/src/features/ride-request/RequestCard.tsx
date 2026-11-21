@@ -55,7 +55,7 @@ export default function RequestCard({ request }: RequestCardProps) {
             </div>
           )}
         </Link>
-        <div className="relative flex-center w-25 flex-col gap-1.25">
+        <div className="flex-center w-25 flex-col gap-1.25">
           <ProfilePicture url={request.requester.pictureUrl} size="lg" />
           <p className="text-center">{request.requester.name}</p>
         </div>

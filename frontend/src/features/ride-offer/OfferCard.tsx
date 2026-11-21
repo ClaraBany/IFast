@@ -81,7 +81,7 @@ export default function OfferCard({ offer, style, onSelect, disabled }: OfferCar
             {details}
           </Link>
 
-          <div className="relative flex-center w-25 flex-col gap-1.25">{driver}</div>
+          <div className="flex-center w-25 flex-col gap-1.25">{driver}</div>
         </>
       )}
     </div>
