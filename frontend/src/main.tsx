@@ -26,6 +26,8 @@ import OfferDetails from "@ride-offer/OfferDetails";
 import OfferForm from "@ride-offer/OfferForm";
 import NotFoundPage from "./NotFoundPage";
 import History from "@ride-offer/History";
+import RequireAdmin from "@auth/RequireAdmin";
+import Dashboard from "@dashboard/Dashboard";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -70,6 +72,10 @@ const router = createBrowserRouter([
           { path: "/vehicles", element: <Vehicles /> },
           { path: "/vehicles/create", element: <VehicleForm /> },
           { path: "/vehicles/:id/edit", element: <VehicleForm /> },
+          {
+            element: <RequireAdmin />,
+            children: [{ path: "/dashboard", element: <Dashboard /> }],
+          },
         ],
       },
     ],

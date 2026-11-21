@@ -4,6 +4,7 @@ import { Ripples } from "react-ripples-continued";
 import { Link } from "react-router";
 import { Drawer } from "vaul";
 import ProfilePicture from "../ProfilePicture";
+import { UserRole } from "@user/userTypes";
 
 interface SideMenuProps {
   open: boolean;
@@ -55,11 +56,13 @@ export default function SideMenu({ open, setOpen }: SideMenuProps) {
               <Ripples color="var(--ripple-dark)" />
             </Link>
 
-            <Link to={""} className="btn btn-side-menu" onClick={() => setOpen(false)}>
-              <LayoutDashboard />
-              Dashboard
-              <Ripples color="var(--ripple-dark)" />
-            </Link>
+            {user?.role === UserRole.ADMIN && (
+              <Link to={"/dashboard"} className="btn btn-side-menu" onClick={() => setOpen(false)}>
+                <LayoutDashboard />
+                Dashboard
+                <Ripples color="var(--ripple-dark)" />
+              </Link>
+            )}
 
             <button onClick={logout} className="btn btn-side-menu mt-auto bg-danger/20 text-danger">
               <LogOut />
