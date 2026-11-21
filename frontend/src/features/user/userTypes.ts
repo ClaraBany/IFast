@@ -15,6 +15,13 @@ export const updateProfileSchema = z.object({
   address: z.enum(Neighborhoods, { message: "Selecione um bairro da lista" }).exclude([Neighborhoods.IFNMG]).nullable(),
 });
 
+export const UserRole = {
+  USER: "USER",
+  ADMIN: "ADMIN",
+} as const;
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
+
 export interface User {
   id: number;
   name: string;
@@ -22,6 +29,7 @@ export interface User {
   pictureUrl: string;
   phoneNumber?: string;
   address?: Neighborhoods;
+  role: UserRole;
 }
 
 export interface UserSummary {
