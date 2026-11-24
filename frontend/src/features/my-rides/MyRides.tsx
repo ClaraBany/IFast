@@ -137,74 +137,74 @@ export default function MyRides() {
           </TabPanel>
 
           <TabPanel key={"passenger"} className="flex flex-col gap-6">
-            {requestsNeedingAction.length > 0 && (
-              <section>
-                <div className="mb-3 flex items-center gap-2">
-                  <BellRing className="text-tertiary" />
-                  <h3>Ação Necessária</h3>
-                </div>
-                <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
-                  {requestsNeedingAction.map((request) => (
-                    <RequestCard key={request.id} request={request} />
-                  ))}
-                </div>
-              </section>
+            {isErrorMyBookings || isErrorMyRequests ? (
+              <RetryError
+                onRetry={() => {
+                  if (isErrorMyBookings) refetchMyBookings();
+                  if (isErrorMyRequests) refetchMyRequests();
+                }}
+                isFetching={isFetchingMyBookings || isFetchingMyRequests}
+              />
+            ) : isLoadingMyBookings || isLoadingMyRequests ? (
+              <div className="flex-center flex-1">
+                <LoaderCircle className="animate-spin text-primary" size={40} />
+              </div>
+            ) : (
+              <>
+                {myBookings.length === 0 && myRequests.length === 0 ? (
+                  <p className="text-pretty text-neutral-dark md:col-span-2">Você não possui nenhuma carona como passageiro.</p>
+                ) : (
+                  <>
+                    {requestsNeedingAction.length > 0 && (
+                      <section>
+                        <div className="mb-3 flex items-center gap-2">
+                          <BellRing className="text-tertiary" />
+                          <h3>Ação Necessária</h3>
+                        </div>
+                        <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
+                          {requestsNeedingAction.map((request) => (
+                            <RequestCard key={request.id} request={request} />
+                          ))}
+                        </div>
+                      </section>
+                    )}
+
+                    {acceptedBookings.length > 0 && (
+                      <section>
+                        <div className="mb-3 flex items-center gap-2">
+                          <CircleCheck className="text-primary" />
+                          <h3>Confirmadas</h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
+                          {acceptedBookings.map((booking) => (
+                            <OfferCard key={booking.id} offer={booking.rideOffer} style="ACCEPTED" />
+                          ))}
+                        </div>
+                      </section>
+                    )}
+
+                    {(pendingBookings.length > 0 || searchingRequests.length > 0) && (
+                      <section>
+                        <div className="mb-3 flex items-center gap-2">
+                          <RotateCcwClock className="text-pending" />
+                          <h3>Em Espera</h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
+                          {pendingBookings.map((booking) => (
+                            <OfferCard key={booking.id} offer={booking.rideOffer} style="PENDING" />
+                          ))}
+                          {searchingRequests.map((request) => (
+                            <RequestCard key={request.id} request={request} />
+                          ))}
+                        </div>
+                      </section>
+                    )}
+                  </>
+                )}
+              </>
             )}
-
-            <section>
-              <div className="mb-3 flex items-center gap-2">
-                <CircleCheck className="text-primary" />
-                <h3>Confirmadas</h3>
-              </div>
-              {isErrorMyBookings ? (
-                <RetryError onRetry={refetchMyBookings} isFetching={isFetchingMyBookings} />
-              ) : isLoadingMyBookings ? (
-                <div className="flex-center flex-1">
-                  <LoaderCircle className="animate-spin text-primary" size={40} />
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
-                  {acceptedBookings.length === 0 ? (
-                    <p className="text-pretty text-neutral-dark md:col-span-2">
-                      Não encontramos nenhuma carona confirmada sua.
-                    </p>
-                  ) : (
-                    acceptedBookings.map((booking) => (
-                      <OfferCard key={booking.id} offer={booking.rideOffer} style="ACCEPTED" />
-                    ))
-                  )}
-                </div>
-              )}
-            </section>
-
-            <section>
-              <div className="mb-3 flex items-center gap-2">
-                <RotateCcwClock className="text-pending" />
-                <h3>Em Espera</h3>
-              </div>
-              {isErrorMyRequests ? (
-                <RetryError onRetry={refetchMyRequests} isFetching={isFetchingMyRequests} />
-              ) : isLoadingMyRequests ? (
-                <div className="flex-center flex-1">
-                  <LoaderCircle className="animate-spin text-primary" size={40} />
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
-                  {pendingBookings.length === 0 && searchingRequests.length === 0 ? (
-                    <p className="text-pretty text-neutral-dark md:col-span-2">Não encontramos nenhum pedido seu.</p>
-                  ) : (
-                    <>
-                      {pendingBookings.map((booking) => (
-                        <OfferCard key={booking.id} offer={booking.rideOffer} style="PENDING" />
-                      ))}
-                      {searchingRequests.map((request) => (
-                        <RequestCard key={request.id} request={request} />
-                      ))}
-                    </>
-                  )}
-                </div>
-              )}
-            </section>
           </TabPanel>
         </TabPanels>
       </TabGroup>
