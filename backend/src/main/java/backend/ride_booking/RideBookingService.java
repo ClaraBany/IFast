@@ -40,13 +40,24 @@ public class RideBookingService {
         return bookings.stream().map(RideBookingDto::new).toList();
     }
 
-    public List<RideBookingDto> getForOffer(Long rideOfferId, StatusBooking status) {
+    public List<RideBookingDto> getForOffer(Long rideOfferId, StatusBooking status, User user) {
         RideOffer rideOffer = rideOfferRepository.findById(rideOfferId)
             .orElseThrow(EntityNotFoundException::new);
 
-        List<RideBooking> bookings = status == null
-            ? rideBookingRepository.findByRideOffer(rideOffer)
-            : rideBookingRepository.findByRideOfferAndStatus(rideOffer, status);
+        boolean canSeeAccepted = canSeeAccepted(rideOffer, user);
+
+        if (status == StatusBooking.ACCEPTED && !canSeeAccepted) {
+            return List.of();
+        }
+
+        List<RideBooking> bookings;
+        if (status != null) {
+            bookings = rideBookingRepository.findByRideOfferAndStatus(rideOffer, status);
+        } else if (canSeeAccepted) {
+            bookings = rideBookingRepository.findByRideOffer(rideOffer);
+        } else {
+            bookings = rideBookingRepository.findByRideOfferAndStatusNot(rideOffer, StatusBooking.ACCEPTED);
+        }
 
         return bookings
             .stream()
@@ -212,5 +223,11 @@ public class RideBookingService {
             case DRIVER -> rideBooking.getPassenger().getId().equals(user.getId());
             case PASSENGER -> rideBooking.getRideOffer().getDriver().getId().equals(user.getId());
         };
+    }
+
+    private boolean canSeeAccepted(RideOffer rideOffer, User currentUser) {
+        return rideOffer.getDriver().getId().equals(currentUser.getId())
+                || rideBookingRepository.existsByPassengerAndRideOfferAndStatusIn(
+                currentUser, rideOffer, List.of(StatusBooking.ACCEPTED));
     }
 }

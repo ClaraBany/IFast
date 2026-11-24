@@ -36,8 +36,9 @@ public class RideBookingController {
 
     @GetMapping("/ride-offers/{rideOfferId}/bookings")
     public ResponseEntity<List<RideBookingDto>> getByOffer(@PathVariable Long rideOfferId, 
-                                                            @RequestParam(required = false) StatusBooking status) {
-        List<RideBookingDto> response = rideBookingService.getForOffer(rideOfferId, status);
+                                                           @RequestParam(required = false) StatusBooking status,
+                                                           @AuthenticationPrincipal User user) {
+        List<RideBookingDto> response = rideBookingService.getForOffer(rideOfferId, status, user);
         return ResponseEntity.ok(response);
     }
 

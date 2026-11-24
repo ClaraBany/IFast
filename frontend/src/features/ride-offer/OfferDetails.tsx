@@ -270,15 +270,13 @@ export default function OfferDetails() {
         </section>
       )}
 
-      <section className="flex-column w-full gap-2.5">
-        <h3>Passageiros</h3>
+      {passengers.length > 0 && (
+        <section className="flex-column w-full gap-2.5">
+          <h3>Passageiros</h3>
 
-        <div className="w-full overflow-x-auto rounded-2xl bg-white">
-          <div className="flex-center w-max min-w-full gap-5 px-6 py-4">
-            {passengers.length === 0 ? (
-              <p className="text-neutral-dark">Nenhum passageiro até o momento</p>
-            ) : (
-              passengers.map((booking) => (
+          <div className="w-full overflow-x-auto rounded-2xl bg-white">
+            <div className="flex-center w-max min-w-full gap-5 px-6 py-4">
+              {passengers.map((booking) => (
                 <Link
                   key={booking.id}
                   to={`/users/${booking.passenger.id}`}
@@ -287,11 +285,11 @@ export default function OfferDetails() {
                   <ProfilePicture url={booking.passenger.pictureUrl} size="lg" />
                   <p className="text-center">{booking.passenger.name}</p>
                 </Link>
-              ))
-            )}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {isDriver && offer.status === "AVAILABLE" && (
         <section className="flex-column w-full gap-2.5">

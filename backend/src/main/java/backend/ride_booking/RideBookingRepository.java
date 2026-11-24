@@ -22,6 +22,7 @@ public interface RideBookingRepository extends JpaRepository<RideBooking, Long>{
     List<RideBooking> findByRideRequest(RideRequest rideRequest);
     List<RideBooking> findByRideRequestAndStatus(RideRequest rideRequest, StatusBooking status);
     List<RideBooking> findByRideOfferIdAndStatusIn(Long rideOfferId, Collection<StatusBooking> status);
+    List<RideBooking> findByRideOfferAndStatusNot(RideOffer rideOffer, StatusBooking status);
     boolean existsByPassengerAndRideOfferAndStatusIn(
         User passenger,
         RideOffer rideOffer,
