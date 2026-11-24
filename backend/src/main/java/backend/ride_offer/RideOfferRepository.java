@@ -29,7 +29,9 @@ public interface RideOfferRepository extends JpaRepository<RideOffer, Long>, Jpa
     select o from RideOffer o
     where o.driver = :driver
       and o.status in (backend.ride_offer.enums.StatusOffer.AVAILABLE, backend.ride_offer.enums.StatusOffer.FULL)
-    order by o.departureDateTime asc
+    order by
+      o.status asc,
+      o.departureDateTime asc
     """)
     List<RideOffer> findOpenByDriver(@Param("driver") User driver);
 

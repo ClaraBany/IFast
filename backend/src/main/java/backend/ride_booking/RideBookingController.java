@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import backend.ride_booking.dto.CreateRideBookingForRequestDto;
 import backend.ride_booking.dto.RideBookingDto;
@@ -37,8 +36,8 @@ public class RideBookingController {
 
     @GetMapping("/ride-offers/{rideOfferId}/bookings")
     public ResponseEntity<List<RideBookingDto>> getByOffer(@PathVariable Long rideOfferId, 
-                                                            @RequestParam(required = false) StatusBooking status,
-                                                            @AuthenticationPrincipal User user) {
+                                                           @RequestParam(required = false) StatusBooking status,
+                                                           @AuthenticationPrincipal User user) {
         List<RideBookingDto> response = rideBookingService.getForOffer(rideOfferId, status, user);
         return ResponseEntity.ok(response);
     }

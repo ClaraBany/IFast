@@ -25,7 +25,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import OfferDetails from "@ride-offer/OfferDetails";
 import OfferForm from "@ride-offer/OfferForm";
 import NotFoundPage from "./NotFoundPage";
-import History from "@ride-offer/History";
+import History from "@my-rides/History";
 
 const queryClient = new QueryClient({
   defaultOptions: {

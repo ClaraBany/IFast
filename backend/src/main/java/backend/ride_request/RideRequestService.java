@@ -1,9 +1,11 @@
 package backend.ride_request;
 
+import backend.ride_booking.RideBookingRepository;
 import backend.ride_offer.RideOfferRepository;
 import backend.ride_booking.RideBookingService;
 import backend.ride_offer.dto.RideOfferSummaryDto;
 import backend.shared.dto.FilterRideDto;
+import backend.shared.dto.IdCountDto;
 import backend.shared.dto.IdResponseDto;
 import backend.ride_request.dto.CreateRideRequestDto;
 import backend.ride_request.dto.RideRequestDto;
@@ -17,18 +19,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
 public class RideRequestService {
     private final RideRequestRepository rideRequestRepository;
     private final RideOfferRepository rideOfferRepository;
+    private final RideBookingRepository rideBookingRepository;
     private final RideBookingService rideBookingService;
 
     public List<RideRequestDto> getAll(FilterRideDto filter, User user) {
+        Set<Long> bookedRequestIds = rideBookingRepository.findPendingBookedRideRequestIdsByDriver(user);
+
         return rideRequestRepository
             .findAll(RideRequestSpecs.withFilter(filter, user.getId()), Sort.by("desiredDepartureStart").ascending())
             .stream()
+            .filter(request -> !bookedRequestIds.contains(request.getId()))
             .map(RideRequestDto::new)
             .toList();
     }
@@ -38,7 +47,17 @@ public class RideRequestService {
             ? rideRequestRepository.findClosedByRequester(user)
             : rideRequestRepository.findOpenByRequester(user);
 
-        return requests.stream().map(RideRequestDto::new).toList();
+        Map<Long, Long> pendingCounts = rideBookingRepository.countPendingByRequestForRequester(user)
+            .stream()
+            .collect(Collectors.toMap(IdCountDto::id, IdCountDto::count));
+
+        return requests.stream()
+            .map(request -> {
+                RideRequestDto dto = new RideRequestDto(request);
+                dto.setPendingBookingsCount(pendingCounts.getOrDefault(request.getId(), 0L).intValue());
+                return dto;
+            })
+            .toList();
     }
 
     public RideRequestDto get(Long rideRequestId) {

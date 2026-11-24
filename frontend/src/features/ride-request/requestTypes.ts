@@ -20,6 +20,7 @@ export interface RideRequest {
   destination: Neighborhoods;
   desiredDepartureStart: string;
   desiredDepartureEnd: string;
+  pendingBookingsCount: number;
 }
 
 export interface CreateRideRequest {
