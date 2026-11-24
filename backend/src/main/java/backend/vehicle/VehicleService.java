@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import backend.shared.dto.IdResponseDto;
 import backend.user.User;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service 
 public class VehicleService {

@@ -30,6 +30,17 @@ public interface RideBookingRepository extends JpaRepository<RideBooking, Long>{
     );
 
     @Query("""
+    select distinct p from RideBooking b
+    join b.passenger p
+    where b.rideOffer.id = :rideOfferId
+      and b.status in :statuses
+    """)
+    List<User> findPassengersByRideOfferIdAndStatusIn(
+            @Param("rideOfferId") Long rideOfferId,
+            @Param("statuses") Collection<StatusBooking> statuses
+    );
+
+    @Query("""
     select count(b) from RideBooking b
     where b.passenger = :passenger
       and b.status = backend.ride_booking.enums.StatusBooking.ACCEPTED

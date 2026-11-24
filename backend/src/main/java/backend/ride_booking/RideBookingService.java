@@ -1,7 +1,9 @@
 package backend.ride_booking;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import backend.notification.NotificationService;
 import org.springframework.stereotype.Service;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ public class RideBookingService {
     private final RideBookingRepository rideBookingRepository;
     private final RideOfferRepository rideOfferRepository;
     private final RideRequestRepository rideRequestRepository;
+    private final NotificationService notificationService;
 
     public List<RideBookingDto> getMyBookings(RideListStatus status, User user) {
         List<RideBooking> bookings = status == RideListStatus.CLOSED
@@ -100,6 +103,10 @@ public class RideBookingService {
 
         rideBookingRepository.save(rideBooking);
 
+        String message = user.getName() + " solicitou uma vaga na sua oferta do dia " +
+                rideOffer.getDepartureDateTime().format(DateTimeFormatter.ofPattern("dd/MM"));
+        notificationService.create("Vaga Solicitada", message, rideOffer, rideOffer.getDriver());
+
         return new IdResponseDto(rideBooking.getId());
     }
 
@@ -132,6 +139,10 @@ public class RideBookingService {
 
         rideBookingRepository.save(rideBooking);
 
+        String message = user.getName() + " ofertou uma carona para seu pedido do dia " +
+                rideRequest.getDesiredDepartureStart().format(DateTimeFormatter.ofPattern("dd/MM"));
+        notificationService.create("Carona Ofertada", message, rideOffer, rideRequest.getRequester());
+
         return new IdResponseDto(rideBooking.getId());
     }
 
@@ -148,12 +159,35 @@ public class RideBookingService {
             rideRequest.accept();
             cancelPendingByRequest(rideRequest);
         }
+
+        boolean initiatedByDriver = rideBooking.getInitiatedBy() == InitiatedBy.DRIVER;
+
+        User receiver = initiatedByDriver ? rideOffer.getDriver()
+                : rideBooking.getPassenger();
+        String content = initiatedByDriver ? " aceitou a oferta de carona do dia "
+                : " aceitou a solicitação para participar da carona do dia ";
+
+        String message = user.getName() + content +
+                rideOffer.getDepartureDateTime().format(DateTimeFormatter.ofPattern("dd/MM"));
+        notificationService.create("Solicitação Aceita", message, rideOffer, receiver);
     }
 
     @Transactional 
     public void reject(Long bookingId, User user) {
         RideBooking rideBooking = getPendingBookingForAuthorizedUser(bookingId, user);
         rideBooking.reject();
+
+        RideOffer rideOffer = rideBooking.getRideOffer();
+        boolean initiatedByDriver = rideBooking.getInitiatedBy() == InitiatedBy.DRIVER;
+
+        User receiver = initiatedByDriver ? rideOffer.getDriver()
+                : rideBooking.getPassenger();
+        String content = initiatedByDriver ? " recusou a oferta de carona do dia "
+                : " recusou a solicitação para participar da carona do dia ";
+
+        String message = user.getName() + content +
+                rideOffer.getDepartureDateTime().format(DateTimeFormatter.ofPattern("dd/MM"));
+        notificationService.create("Solicitação Recusada", message, rideOffer, receiver);
     }
 
     @Transactional
@@ -165,11 +199,17 @@ public class RideBookingService {
             throw new AccessDeniedException("Você não pode cancelar esta reserva");
         }
 
-        RideOffer offer = booking.getRideOffer();
+        RideOffer rideOffer = booking.getRideOffer();
 
         boolean hadSeat = booking.getStatus() == StatusBooking.ACCEPTED;
         booking.cancel();
-        if (hadSeat) offer.releaseSeat();
+        if (hadSeat) {
+            rideOffer.releaseSeat();
+
+            String message = user.getName() + " saiu da sua carona do dia " +
+                    rideOffer.getDepartureDateTime().format(DateTimeFormatter.ofPattern("dd/MM"));
+            notificationService.create("Saída da Carona", message, rideOffer, rideOffer.getDriver());
+        }
     }
 
     @Transactional
