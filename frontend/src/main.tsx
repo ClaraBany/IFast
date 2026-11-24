@@ -26,6 +26,7 @@ import OfferDetails from "@ride-offer/OfferDetails";
 import OfferForm from "@ride-offer/OfferForm";
 import NotFoundPage from "./NotFoundPage";
 import History from "@my-rides/History";
+import Notifications from "@notification/Notifications";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -67,6 +68,7 @@ const router = createBrowserRouter([
           { path: "/requests/:id/edit", element: <RequestForm /> },
           { path: "/users/:id", element: <Profile /> },
           { path: "/profile/edit", element: <ProfileForm /> },
+          { path: "/notifications", element: <Notifications /> },
           { path: "/vehicles", element: <Vehicles /> },
           { path: "/vehicles/create", element: <VehicleForm /> },
           { path: "/vehicles/:id/edit", element: <VehicleForm /> },
