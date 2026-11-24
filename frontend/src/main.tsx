@@ -76,10 +76,6 @@ const router = createBrowserRouter([
             element: <RequireAdmin />,
             children: [{ path: "/dashboard", element: <Dashboard /> }],
           },
-          {
-            element: <RequireAdmin />,
-            children: [{ path: "/dashboard", element: <Dashboard /> }],
-          },
         ],
       },
     ],
